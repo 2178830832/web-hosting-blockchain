@@ -6,7 +6,7 @@ module.exports = defineConfig({
     port: 8090,
     proxy: {
       'api': {
-        target: 'http://localhost:8000', // change to the port of springboot
+        target: 'https://localhost:8000', // change to the port of springboot
         changeOrigin: true,
         pathRewrite: {
           '^/api': ""
