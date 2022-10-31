@@ -9,8 +9,9 @@ public class Tester {
     EdgeOptions edgeOptions = new EdgeOptions();
     EdgeDriver driver = new EdgeDriver(edgeOptions);
     try {
-      driver.navigate().to("http://10.201.112.80:8090");
-      Thread.sleep(500);
+      driver.navigate().to("https://www.google.com");
+//      System.out.println("Success");
+//      Thread.sleep(500);
     } finally {
       driver.quit();
     }

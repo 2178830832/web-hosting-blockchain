@@ -1,13 +1,13 @@
-package org.nottingham.serviceclient;
+package org.nottingham.dashboard;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ServiceClientApplication {
+public class DashboardApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(ServiceClientApplication.class, args);
+    SpringApplication.run(DashboardApplication.class, args);
   }
 
 }
