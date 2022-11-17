@@ -1,0 +1,31 @@
+version: '3.4'
+
+services:
+
+##### IPFS NODE 0 #####
+
+  ipfs0:
+    container_name: ipfs0
+    image: ipfs/kubo:latest
+    ports:
+      - "4001:4001" # ipfs swarm - expose if needed/wanted
+      - "5001:5001" # ipfs api - expose if needed/wanted
+      - "8080:8080" # ipfs gateway - expose if needed/wanted
+    volumes:
+      - ./compose/ipfs0:/data/ipfs
+
+##### IPFS NODE 1 #####
+
+  ipfs1:
+    container_name: ipfs1
+    image: ipfs/kubo:latest
+    volumes:
+      - ./compose/ipfs1:/data/ipfs
+
+##### IPFS NODE 2 #####
+
+  ipfs2:
+    container_name: ipfs2
+    image: ipfs/kubo:latest
+    volumes:
+      - ./compose/ipfs2:/data/ipfs

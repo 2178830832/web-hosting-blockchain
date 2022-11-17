@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.nottingham.dashboard.dao.ClusterMapper">
+
+  <resultMap id="clusterMap" type="org.nottingham.dashboard.entity.Cluster">
+    <id column="cluster_id" property="clusterId"/>
+    <result column="is_healthy" property="isHealthy"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <insert id="insertCluster" parameterType="Node" useGeneratedKeys="true" keyProperty="clusterId"
+    keyColumn="cluster_id">
+    insert into cluster (is_healthy, create_time, update_time)
+    values (#{isHealthy}, #{createTime}, #{updateTime})
+  </insert>
+
+  <delete id="deleteByClusterId">
+    delete
+    from cluster
+    where cluster_id = #{clusterId}
+  </delete>
+
+  <update id="updateCluster" parameterType="Cluster">
+    update cluster
+    set is_healthy  = #{isHealthy},
+        update_time = #{updateTime}
+    where cluster_id = #{clusterId}
+  </update>
+
+  <select id="selectByClusterId" resultMap="clusterMap">
+    select *
+    from cluster
+    where cluster_id = #{clusterId}
+  </select>
+
+  <select id="selectAllCluster" resultMap="clusterMap">
+    select *
+    from cluster
+  </select>
+</mapper>

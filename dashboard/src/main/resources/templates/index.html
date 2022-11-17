@@ -78,32 +78,32 @@
       <h2>Dashboard</h2>
     </div>
 
-    <div class="row g-5">
-      <div class="col-md-7 col-lg-8">
-        <h4 class="mb-3">Enter Configuration</h4>
-        <form class="needs-validation" novalidate>
+    <div class="row">
+      <div class="col">
+        <h4 class="mb-3">Host a Website</h4>
+        <form th:action="@{/submit}" method="post" class="needs-validation" novalidate>
 
             <div class="col-12">
-              <label for="address" class="form-label">URL</label>
-              <input type="text" class="form-control" id="address" placeholder="https://domain"
+              <label class="form-label">Website Folder</label>
+              <input type="text" id="folderPath" name="folderPath" class="form-control" placeholder="D:\"
                      required>
               <div class="invalid-feedback">
-                Please enter your shipping address.
+                Please enter the path of your website folder.
               </div>
             </div>
 
-            <div class="col-12">
-              <label for="address2" class="form-label">Number of  <span
-                  class="text-muted">(Optional)</span></label>
-              <input type="text" class="form-control" id="address2"
-                     placeholder="100">
-            </div>
+<!--            <div class="col-12">-->
+<!--              <label for="address2" class="form-label">Number of  <span-->
+<!--                  class="text-muted">(Optional)</span></label>-->
+<!--              <input type="text" class="form-control" id="address2"-->
+<!--                     placeholder="100">-->
+<!--            </div>-->
 
-          <hr class="my-4">
+<!--          <hr class="my-4">-->
 
-          <h4 class="mb-3">HTTP</h4>
+<!--          <h4 class="mb-3">HTTP</h4>-->
 
-          <div class="row gy-3">
+<!--          <div class="row gy-3">-->
 <!--            <div class="col-md-6">-->
 <!--              <label for="cc-name" class="form-label">Name on card</label>-->
 <!--              <input type="text" class="form-control" id="cc-name" placeholder="" required>-->
@@ -113,15 +113,15 @@
 <!--              </div>-->
 <!--            </div>-->
 
-            <div class="col-md-3">
-              <label for="cc-expiration" class="form-label">URL</label>
-              <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
-              <div class="invalid-feedback">
-                Expiration date required
-              </div>
-            </div>
+<!--            <div class="col-md-3">-->
+<!--              <label for="cc-expiration" class="form-label">URL</label>-->
+<!--              <input type="text" class="form-control" id="cc-expiration" placeholder="" required>-->
+<!--              <div class="invalid-feedback">-->
+<!--                Expiration date required-->
+<!--              </div>-->
+<!--            </div>-->
 
-          </div>
+<!--          </div>-->
 
           <hr class="my-4">
 
@@ -132,11 +132,9 @@
   </main>
 
   <footer class="my-5 pt-5 text-muted text-center text-small">
-    <p class="mb-1">&copy; 2017–2022 Company Name</p>
+    <p class="mb-1">&copy; 2022-2023 University of Nottingham Ningbo China</p>
     <ul class="list-inline">
-      <li class="list-inline-item"><a href="#">Privacy</a></li>
-      <li class="list-inline-item"><a href="#">Terms</a></li>
-      <li class="list-inline-item"><a href="#">Support</a></li>
+      <li class="list-inline-item"><a href="#">Website</a></li>
     </ul>
   </footer>
 </div>
