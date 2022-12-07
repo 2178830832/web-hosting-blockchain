@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.yujie.dashboard.dao.WebsiteMapper">
+
+  <resultMap id="websiteMap" type="pers.yujie.dashboard.entity.Website">
+    <id column="website_id" property="websiteId"/>
+    <result column="content_identifier" property="cid"/>
+    <result column="cluster_status" property="clusterStatus"/>
+    <result column="is_online" property="isOnline"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <insert id="insertWebsite" parameterType="Website" useGeneratedKeys="true">
+    alter table website
+      AUTO_INCREMENT = 1;
+    insert into website (content_identifier, cluster_status, create_time, update_time)
+    values (#{cid}, #{clusterStatus}, #{createTime}, #{updateTime})
+    ON DUPLICATE KEY UPDATE update_time = VALUES(update_time)
+  </insert>
+
+  <delete id="deleteByWebsiteId">
+    delete
+    from website
+    where website_id = #{websiteId}
+  </delete>
+
+  <update id="updateWebsite" parameterType="Website">
+    update website
+    set content_identifier = #{cid},
+        cluster_status     = #{clusterStatus},
+        is_online          = #{isOnline},
+        update_time        = #{updateTime}
+    where website_id = #{websiteId}
+  </update>
+
+  <select id="selectByWebsiteId" resultMap="websiteMap">
+    select *
+    from website
+    where website_id = #{websiteId}
+  </select>
+
+  <select id="selectAllWebsite" resultMap="websiteMap">
+    select *
+    from website
+    where website_id = #{websiteId}
+  </select>
+</mapper>

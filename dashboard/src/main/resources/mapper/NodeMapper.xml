@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.nottingham.dashboard.dao.NodeMapper">
+<mapper namespace="pers.yujie.dashboard.dao.NodeMapper">
 
-  <resultMap id="nodeMap" type="org.nottingham.dashboard.entity.Node">
+  <resultMap id="nodeMap" type="pers.yujie.dashboard.entity.Node">
     <id column="node_id" property="nodeId"/>
     <result column="cluster_id" property="clusterId"/>
+    <result column="node_name" property="nodeName"/>
     <result column="is_healthy" property="isHealthy"/>
+    <result column="is_master" property="isMaster"/>
+    <result column="used_Space" property="usedSpace"/>
+    <result column="total_Space" property="totalSpace"/>
     <result column="create_time" property="createTime"/>
     <result column="update_time" property="updateTime"/>
   </resultMap>
 
-  <insert id="insertNode" parameterType="Node" useGeneratedKeys="true" keyProperty="nodeId"
-    keyColumn="node_id">
-    insert into node (cluster_id, is_healthy, create_time, update_time)
-    values (#{clusterId}, #{isHealthy}, #{createTime}, #{updateTime})
+  <insert id="insertNode" parameterType="Node" keyProperty="nodeId" keyColumn="node_id">
+    insert into node (node_id, cluster_id, node_name, is_healthy, is_master, total_space,
+                      create_time, update_time)
+    values (#{nodeId}, #{clusterId}, #{nodeName}, #{isHealthy}, #{isMaster}, #{totalSpace},
+            #{createTime}, #{updateTime})
+    ON DUPLICATE KEY UPDATE update_time = VALUES(update_time),
+                            cluster_id  = VALUES(cluster_id),
+                            is_master   = VALUES(is_master);
   </insert>
 
   <delete id="deleteByNodeId">
@@ -26,9 +34,25 @@
   <update id="updateNode" parameterType="Node">
     update node
     set cluster_id  = #{clusterId},
+        node_name   = #{nodeName},
         is_healthy  = #{isHealthy},
+        used_space = #{usedSpace},
+        is_master   = #{isMaster},
         update_time = #{updateTime}
     where node_id = #{nodeId}
+  </update>
+
+  <update id="updateNodeBatch" parameterType="java.util.List">
+    update node
+    <foreach collection="list" item="item" index="index" open="" close="" separator=",">
+      set cluster_id = #{item.clusterId},
+      node_name = #{item.nodeName},
+      is_healthy = #{item.isHealthy},
+      is_master = #{item.isMaster},
+      used_space = #{item.usedSpace},
+      update_time = #{item.updateTime}
+      where node_id = #{item.nodeId}
+    </foreach>
   </update>
 
   <select id="selectByNodeId" resultMap="nodeMap">
@@ -37,9 +61,40 @@
     where node_id = #{nodeId}
   </select>
 
-  <select id="selectByClusterId" parameterType="int" resultMap="nodeMap">
+  <select id="selectByClusterId" resultMap="nodeMap">
     select *
     from node
     where cluster_id = #{clusterId}
+  </select>
+
+  <select id="selectMasterNodeByCluster" resultMap="nodeMap">
+    select *
+    from node
+    where is_master = 1
+      and cluster_id = #{clusterId}
+  </select>
+
+  <select id="selectHealthyByClusterId" resultMap="nodeMap">
+    select *
+    from node
+    where is_healthy = 1
+      and cluster_id = #{clusterId}
+  </select>
+
+  <select id="selectMaxNodeId">
+    select max(node_id)
+    from node
+  </select>
+
+  <select id="selectAllFreeSpace">
+    select sum(total_space) - sum(used_space)
+    from node
+  </select>
+
+  <select id="selectMaxNodeByClusterId" resultMap="nodeMap">
+    SELECT *
+    FROM node
+    WHERE (total_space - used_space) = (SELECT MAX(total_space - used_space) FROM node)
+      AND cluster_id = #{clusterId}
   </select>
 </mapper>

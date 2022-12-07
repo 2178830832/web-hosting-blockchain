@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.nottingham.dashboard.dao.ClusterMapper">
+<mapper namespace="pers.yujie.dashboard.dao.ClusterMapper">
 
-  <resultMap id="clusterMap" type="org.nottingham.dashboard.entity.Cluster">
+  <resultMap id="clusterMap" type="pers.yujie.dashboard.entity.Cluster">
     <id column="cluster_id" property="clusterId"/>
     <result column="is_healthy" property="isHealthy"/>
+    <result column="used_Space" property="usedSpace"/>
+    <result column="total_Space" property="totalSpace"/>
     <result column="create_time" property="createTime"/>
     <result column="update_time" property="updateTime"/>
   </resultMap>
 
-  <insert id="insertCluster" parameterType="Node" useGeneratedKeys="true" keyProperty="clusterId"
-    keyColumn="cluster_id">
-    insert into cluster (is_healthy, create_time, update_time)
-    values (#{isHealthy}, #{createTime}, #{updateTime})
+  <insert id="insertCluster" parameterType="Cluster" keyProperty="clusterId" keyColumn="cluster_id">
+    insert into cluster (cluster_id, is_healthy, create_time, update_time)
+    values (#{clusterId}, #{isHealthy}, #{createTime}, #{updateTime})
+    ON DUPLICATE KEY UPDATE update_time = VALUES(update_time)
   </insert>
 
   <delete id="deleteByClusterId">
@@ -29,6 +31,23 @@
     where cluster_id = #{clusterId}
   </update>
 
+  <update id="updateClusterSpace">
+    update cluster
+    set used_space  = (select sum(node.used_space) from node),
+        total_space = (select sum(node.total_space) from node),
+        update_time = #{updateTime}
+    where cluster_id = #{clusterId}
+  </update>
+
+  <update id="updateClusterBatch" parameterType="java.util.List">
+    update cluster
+    <foreach collection="list" item="item" index="index" open="" close="" separator=",">
+      set is_healthy = #{item.isHealthy},
+      update_time = #{item.updateTime}
+      where cluster_id = #{item.clusterId}
+    </foreach>
+  </update>
+
   <select id="selectByClusterId" resultMap="clusterMap">
     select *
     from cluster
@@ -38,5 +57,17 @@
   <select id="selectAllCluster" resultMap="clusterMap">
     select *
     from cluster
+  </select>
+
+  <select id="selectAllHealthyCluster" resultMap="clusterMap">
+    select *
+    from cluster
+    where is_healthy = 1
+  </select>
+
+  <select id="selectMinCluster" resultMap="clusterMap">
+    SELECT *
+    FROM cluster
+    WHERE (total_space - used_space) = (SELECT MAX(total_space - used_space) FROM cluster)
   </select>
 </mapper>
