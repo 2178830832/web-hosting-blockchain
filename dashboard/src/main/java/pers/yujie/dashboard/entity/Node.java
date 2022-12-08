@@ -1,38 +1,49 @@
 package pers.yujie.dashboard.entity;
 
 import java.math.BigInteger;
-import java.util.Date;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
+import org.web3j.abi.datatypes.Bool;
+import org.web3j.abi.datatypes.DynamicArray;
+import org.web3j.abi.datatypes.DynamicStruct;
+import org.web3j.abi.datatypes.StaticStruct;
+import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.Uint;
+import org.web3j.abi.datatypes.Utf8String;
+import org.web3j.utils.Convert.Unit;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
-public class Node {
+public class Node extends DynamicStruct {
 
-  public Node(BigInteger nodeId, BigInteger clusterId) {
-    this.nodeId = nodeId;
-    this.clusterId = clusterId;
-    this.setMaster(true);
-    nodeName = "ipfs" + nodeId;
-    createTime = new Date();
-    updateTime = new Date();
+  public Node(Utf8String clusterName, Utf8String name, Bool isOnline, Uint usedSpace,
+      Uint totalSpace) {
+    super(clusterName, name, isOnline, usedSpace, totalSpace);
+    this.clusterName = clusterName.getValue();
+    this.name = name.getValue();
+    this.isOnline = isOnline.getValue();
+    this.usedSpace = usedSpace.getValue();
+    this.totalSpace = totalSpace.getValue();
   }
 
-  private BigInteger nodeId;
+  public Node(String clusterName, String name, boolean isOnline, BigInteger usedSpace,
+      BigInteger totalSpace) {
+    super(new Utf8String(clusterName), new Utf8String(name), new Bool(isOnline),
+        new Uint(usedSpace), new Uint(totalSpace));
+    this.clusterName = clusterName;
+    this.name = name;
+    this.isOnline = isOnline;
+    this.usedSpace = usedSpace;
+    this.totalSpace = totalSpace;
+  }
 
-  private BigInteger clusterId;
+  private String clusterName;
 
-  private String nodeName;
+  private String name;
 
-  private boolean isHealthy;
+  private boolean isOnline;
 
-  private boolean isMaster;
+  private BigInteger usedSpace;
 
-  private int usedSpace;
-
-  private int totalSpace;
-
-  private Date createTime;
-
-  private Date updateTime;
+  private BigInteger totalSpace;
 }

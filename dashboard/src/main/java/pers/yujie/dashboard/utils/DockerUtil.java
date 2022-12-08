@@ -1,9 +1,11 @@
 package pers.yujie.dashboard.utils;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.Image;
+import com.github.dockerjava.api.model.PullResponseItem;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientConfig;
@@ -12,6 +14,7 @@ import com.github.dockerjava.core.command.ExecStartResultCallback;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
+import io.netty.channel.ConnectTimeoutException;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -21,8 +24,11 @@ import java.util.List;
 import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import pers.yujie.dashboard.Common.Constants;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import pers.yujie.dashboard.common.Constants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -42,10 +48,13 @@ public class DockerUtil {
 
   private DockerClient docker;
 
+  @Resource
+  ApplicationContext ctx;
+
   @PostConstruct
   private void initDocker() {
-//    connectDocker();
-//    checkIPFSImage();
+    connectDocker();
+    checkIPFSImage();
   }
 
   @PreDestroy
@@ -64,19 +73,27 @@ public class DockerUtil {
         .connectionTimeout(Duration.ofSeconds(10))
         .build();
     docker = DockerClientImpl.getInstance(config, httpClient);
-    if (docker == null) {
+    try {
+      docker.infoCmd().exec();
+    } catch (RuntimeException e) {
       log.info("Unable to connect to docker at: " + config.getDockerHost());
-      AppUtil.exitApplication();
+      AppUtil.exitApplication(ctx, 2);
     }
     log.info("Connected to docker at: " + config.getDockerHost());
   }
 
   private void checkIPFSImage() {
-    List<Image> images = docker.listImagesCmd().withImageNameFilter("ipfs/kubo").exec();
-    if (images.isEmpty()) {
-      log.info("Linux does not contain IPFS docker image, start pulling from the hub");
-      docker.pullImageCmd("busybox:latest").exec(new PullImageResultCallback()).awaitSuccess();
+    try {
+      List<Image> images = docker.listImagesCmd().withImageNameFilter("ipfs/kubo").exec();
+      if (images.isEmpty()) {
+        log.info("Linux does not contain IPFS docker image, start pulling from the hub");
+        docker.pullImageCmd("ipfs/kubo:latest")
+            .exec(new PullImageResultCallback()).awaitCompletion();
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
+
   }
 
   public List<String> getNameContainerList() {
@@ -106,10 +123,9 @@ public class DockerUtil {
     }
     String status = containers.get(0).getStatus().toLowerCase(Locale.ROOT);
     if (status.contains("created")) {
-      docker.startContainerCmd(containerName).exec();
+      docker.startContainerCmd(containers.get(0).getId()).exec();
     } else if (status.contains("exited")) {
-      System.out.println(containerName.getClass());
-      docker.restartContainerCmd(containerName).exec();
+      docker.restartContainerCmd(containers.get(0).getId()).exec();
     }
   }
 

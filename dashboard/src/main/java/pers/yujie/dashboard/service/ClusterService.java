@@ -6,8 +6,6 @@ import pers.yujie.dashboard.entity.Cluster;
 
 public interface ClusterService {
 
-  void checkClusterStatus();
-
   String distributeWebsite(String cid);
 
   List<BigInteger> removeWebsite(String cid);

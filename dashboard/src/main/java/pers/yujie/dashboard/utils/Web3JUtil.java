@@ -1,41 +1,77 @@
 package pers.yujie.dashboard.utils;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.web3j.abi.FunctionEncoder;
+import org.web3j.abi.FunctionReturnDecoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.Type;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.admin.Admin;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.Transaction;
+import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Convert;
 
+@Component
 public class Web3JUtil {
-    private static String ip = "http://127.0.0.1:8545";
 
-    private Web3JUtil() {
-    }
+  private static final String ip = "http://127.0.0.1:8545";
+  private volatile static Web3j web3j;
+  private static final String account = "0xF5d97270dD56963Fd971b414B0eaE4c0B2974aa2";
+  private static final String contract = "0x4Cde9c3710708992F0b5189C57F396fAE9E6B0d2";
+  private static final BigInteger gasLimit = BigInteger.valueOf(3000000);
 
-    private volatile static Web3j web3j;
-    private volatile static Admin admin;
-
-    public static Web3j getClient() {
+  public static Web3j getClient() {
+    if (web3j == null) {
+      synchronized (Web3JUtil.class) {
         if (web3j == null) {
-            synchronized (Web3JUtil.class) {
-                if (web3j == null) {
-
-                    web3j = Web3j.build(new HttpService(ip));
-                }
-            }
+          web3j = Web3j.build(new HttpService(ip));
         }
-        return web3j;
+      }
     }
+    return web3j;
+  }
 
-    public static Admin getAdmin() {
-        if (admin == null) {
-            synchronized (Web3JUtil.class) {
-                if (admin == null) {
+  @SuppressWarnings({"rawtypes"})
+  public static List<Type> sendQuery(String functionName, List<Type> inputParameters,
+      List<TypeReference<?>> outputParameters)
+      throws ExecutionException, InterruptedException {
+    Function function = new Function(functionName, inputParameters, outputParameters);
 
+    String encodedFunction = FunctionEncoder.encode(function);
+    EthCall response = getClient().ethCall(
+        Transaction.createEthCallTransaction(account, contract, encodedFunction),
+        DefaultBlockParameterName.LATEST).sendAsync().get();
+    return FunctionReturnDecoder.decode(response.getValue(), function.getOutputParameters());
+  }
 
-                    admin = Admin.build(new HttpService(ip));
-                }
-            }
-        }
-        return admin;
-    }
+  @SuppressWarnings({"rawtypes"})
+  public static EthSendTransaction sendTransaction(String functionName, List<Type> inputParameters)
+      throws ExecutionException, InterruptedException {
+    Function function = new Function(functionName, inputParameters, Collections.emptyList());
+    String encodedFunction = FunctionEncoder.encode(function);
+
+    BigInteger nonce = getClient().ethGetTransactionCount(
+        account, DefaultBlockParameterName.LATEST)
+        .sendAsync().get().getTransactionCount();
+
+    return getClient().ethSendTransaction(
+        Transaction.createFunctionCallTransaction(
+            account, nonce, BigInteger.ZERO, gasLimit, contract, encodedFunction))
+        .sendAsync().get();
+  }
+
 }
 
