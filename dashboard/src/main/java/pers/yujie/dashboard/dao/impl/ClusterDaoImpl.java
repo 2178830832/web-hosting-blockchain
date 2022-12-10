@@ -9,7 +9,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.DynamicArray;
@@ -71,10 +70,10 @@ public class ClusterDaoImpl implements ClusterDao {
       EthSendTransaction response = Web3JUtil.sendTransaction("updateClusterBatch",
           Collections.singletonList(new DynamicArray(DynamicStruct.class, clusters)));
       if (response.getError() == null) {
-        log.info("Transaction receipt: " + response.getResult());
+        log.info("Transaction succeeded: " + response.getResult());
         this.clusters = clusters;
       } else {
-        log.warn("Transaction encountered error: " + response.getError().toString());
+        log.error("Transaction encountered error: " + response.getError().getMessage());
       }
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();

@@ -8,29 +8,27 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import pers.yujie.dashboard.common.Constants;
 
 @Component
 public class IPFSUtil {
 
-  private static String ipfsPort;
   @Value("${local.ipfs.port}")
   private String ipfs_port;
 
   private volatile static IPFS ipfs;
   private static List<Multihash> blockHashList;
 
-//  @PostConstruct
-//  private void initIPFS() {
-//    ipfs = new IPFS(Constants.IPFS_PORT);
-//  }
-//
-//  @Value("${local.ipfs.port}")
-//  private void setIpfsPort(String port) {
-//    ipfsPort = port;
-//  }
+  @PostConstruct
+  private void initIPFS() {
+//    String ipfsPort = "/ip4/10.176.32.128/tcp/5001";
+//    ipfs = new IPFS(ipfsPort);
+  }
 
   private static IPFS getClient() {
     if (ipfs == null) {

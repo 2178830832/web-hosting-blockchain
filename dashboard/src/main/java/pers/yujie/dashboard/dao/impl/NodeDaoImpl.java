@@ -8,7 +8,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.DynamicArray;
@@ -61,10 +60,10 @@ public class NodeDaoImpl implements NodeDao {
       EthSendTransaction response = Web3JUtil.sendTransaction("updateNodeBatch",
           Collections.singletonList(new DynamicArray(DynamicStruct.class, nodes)));
       if (response.getError() == null) {
-        log.info("Transaction receipt: " + response.getResult());
+        log.info("Transaction succeeded: " + response.getResult());
         this.nodes = nodes;
       } else {
-        log.warn("Transaction encountered error: " + response.getError().toString());
+        log.error("Transaction encountered error: " + response.getError().getMessage());
       }
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();

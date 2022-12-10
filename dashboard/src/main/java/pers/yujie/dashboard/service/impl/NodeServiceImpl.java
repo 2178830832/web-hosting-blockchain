@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.entity.Node;
 import pers.yujie.dashboard.service.NodeService;
 import pers.yujie.dashboard.utils.DockerUtil;
 import pers.yujie.dashboard.utils.IPFSUtil;
-import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
@@ -70,7 +70,6 @@ public class NodeServiceImpl implements NodeService {
       for (Multihash hash : part) {
 
         String blockString = hash.toString();
-//        dockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX, "get", blockString);
         dockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX,
             "block", "pin", "add", "--recursive=false", blockString);
         dockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX, "repo", "gc");

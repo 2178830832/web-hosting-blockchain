@@ -1,11 +1,11 @@
 package pers.yujie.dashboard.utils;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.async.ResultCallback;
+import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.Image;
-import com.github.dockerjava.api.model.PullResponseItem;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientConfig;
@@ -14,7 +14,7 @@ import com.github.dockerjava.core.command.ExecStartResultCallback;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
-import io.netty.channel.ConnectTimeoutException;
+import io.ipfs.api.IPFS;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -26,11 +26,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
-import pers.yujie.dashboard.common.Constants;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import pers.yujie.dashboard.common.Constants;
 
 @Component
 @Slf4j
@@ -114,11 +113,11 @@ public class DockerUtil {
         .exec();
 
     if (containers.size() < 1) {
-      docker.createContainerCmd("ipfs/kubo:latest")
+      CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo:latest")
           .withName(containerName)
           .withVolumes(Volume.parse(volumes + containerName + ":/data/ipfs"))
           .exec();
-      docker.startContainerCmd(containerName).exec();
+      docker.startContainerCmd(container.getId()).exec();
       return;
     }
     String status = containers.get(0).getStatus().toLowerCase(Locale.ROOT);

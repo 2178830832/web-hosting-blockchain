@@ -1,6 +1,5 @@
 package pers.yujie.dashboard.dao.impl;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -8,7 +7,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.DynamicArray;
@@ -47,11 +45,11 @@ public class WebsiteDaoImpl implements WebsiteDao {
       EthSendTransaction response = Web3JUtil.sendTransaction("insertWebsite",
           Collections.singletonList(website));
       if (response.getError() == null) {
-        log.info("Transaction receipt: " + response.getResult());
+        log.info("Transaction succeeded: " + response.getResult());
         websites.add(website);
         return true;
       } else {
-        log.warn("Transaction encountered error: " + response.getError().toString());
+        log.error("Transaction encountered error: " + response.getError().getMessage());
         return false;
       }
     } catch (ExecutionException | InterruptedException e) {

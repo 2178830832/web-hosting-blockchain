@@ -1,13 +1,9 @@
 package pers.yujie.dashboard.entity;
 
-import java.math.BigInteger;
-import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.DynamicStruct;
-import org.web3j.abi.datatypes.StaticStruct;
-import org.web3j.abi.datatypes.Uint;
 import org.web3j.abi.datatypes.Utf8String;
 
 @EqualsAndHashCode(callSuper = true)
