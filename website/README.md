@@ -1,4 +1,4 @@
-# webchain
+# website
 
 ## Project setup
 ```

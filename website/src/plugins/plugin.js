@@ -1,9 +1,8 @@
 import * as WebVitals from 'web-vitals'
-import {axios} from '@/main'
 
 let body
 
-function getMetric() {
+function getMetric(axios) {
 
   function sendToAnalytics(metric) {
     console.log(metric)

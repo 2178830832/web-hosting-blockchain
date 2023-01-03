@@ -16,7 +16,7 @@ module.exports = {
       {test: /\.js$/, loader: 'babel-loader'},
       {test: /\.css$/, use: ['vue-style-loader', 'css-loader']},
       {
-        test: /\.jpg|png|gif$/, loader: 'url-loader',
+        test: /\.jpg|png|gif|mp3|mp4$/, loader: 'url-loader',
         options: {
           limit: 8192,
           esModule: false
