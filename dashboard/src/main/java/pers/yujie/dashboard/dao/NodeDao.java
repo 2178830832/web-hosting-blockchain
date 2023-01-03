@@ -8,6 +8,8 @@ public interface NodeDao {
   List<Node> selectOnlineByCluster(String clusterName);
 
   void updateNodeBatch(List<Node> nodes);
+
+  void updateNodeBatchByCluster(List<Node> nodes);
 //void insertNode(Node node);
 //
 //  void deleteByNodeId(BigInteger node_id);

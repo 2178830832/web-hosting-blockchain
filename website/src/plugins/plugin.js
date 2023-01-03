@@ -7,7 +7,8 @@ function getMetric() {
 
   function sendToAnalytics(metric) {
     console.log(metric)
-    axios.post('/request/index', JSON.stringify(metric))
+    axios.post('/request/index', JSON.stringify(metric)).then(
+        r => console.log(r))
   }
 
   WebVitals.onTTFB(sendToAnalytics)

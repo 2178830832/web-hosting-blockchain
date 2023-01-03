@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import pers.yujie.dashboard.common.Constants;
 
 @Component
+@Slf4j
 public class IPFSUtil {
 
   @Value("${local.ipfs.port}")
@@ -26,8 +28,8 @@ public class IPFSUtil {
 
   @PostConstruct
   private void initIPFS() {
-//    String ipfsPort = "/ip4/10.176.32.128/tcp/5001";
-//    ipfs = new IPFS(ipfsPort);
+    ipfs = new IPFS(Constants.IPFS_PORT);
+    log.info("Connected to IPFS at: " + Constants.IPFS_PORT);
   }
 
   private static IPFS getClient() {

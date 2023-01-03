@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
@@ -18,13 +20,20 @@ import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.http.HttpService;
 
 @Component
+@Slf4j
 public class Web3JUtil {
 
   private static final String ip = "http://127.0.0.1:8545";
   private volatile static Web3j web3j;
   private static final String account = "0xa2Cba398E8E4378803b071c68556D24bE51D4B0b";
-  private static final String contract = "0xCB5C9434453D544ae03dBB39D58Ddafb8Ec5B429";
+  private static final String contract = "0x93335cA438449dDc0B089163b7e953E21EAFF7C5";
   private static final BigInteger gasLimit = BigInteger.valueOf(3000000);
+
+  @PostConstruct
+  private void initWeb3J() {
+    web3j = Web3j.build(new HttpService(ip));
+    log.info("Connected to Web3J at: " + ip);
+  }
 
   public static Web3j getClient() {
     if (web3j == null) {

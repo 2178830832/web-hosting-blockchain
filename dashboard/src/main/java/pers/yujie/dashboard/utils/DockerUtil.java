@@ -78,7 +78,7 @@ public class DockerUtil {
       log.info("Unable to connect to docker at: " + config.getDockerHost());
       AppUtil.exitApplication(ctx, 2);
     }
-    log.info("Connected to docker at: " + config.getDockerHost());
+    log.info("Connected to Docker at: " + config.getDockerHost());
   }
 
   private void checkIPFSImage() {

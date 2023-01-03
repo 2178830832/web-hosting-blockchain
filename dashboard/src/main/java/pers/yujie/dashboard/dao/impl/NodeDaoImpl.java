@@ -69,4 +69,30 @@ public class NodeDaoImpl implements NodeDao {
       e.printStackTrace();
     }
   }
+
+  @Override
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  public void updateNodeBatchByCluster(List<Node> nodes) {
+    try {
+      EthSendTransaction response = Web3JUtil.sendTransaction("updateNodeBatchByCluster",
+          Collections.singletonList(new DynamicArray(DynamicStruct.class, nodes)));
+      if (response.getError() == null) {
+        log.info("Transaction succeeded: " + response.getResult());
+        String clusterName = nodes.get(0).getClusterName();
+        int i = 0;
+        for (Node node : this.nodes) {
+          if (node.getClusterName().equals(clusterName)) {
+            this.nodes.set(this.nodes.indexOf(node), nodes.get(i++));
+            if (i >= nodes.size()) {
+              return;
+            }
+          }
+        }
+      } else {
+        log.error("Transaction encountered error: " + response.getError().getMessage());
+      }
+    } catch (ExecutionException | InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
 }

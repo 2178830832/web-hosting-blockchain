@@ -42,7 +42,7 @@ public class NodeServiceImpl implements NodeService {
     try {
       distributePointerBlocks();
       distributeStorageBlocks();
-      nodeDao.updateNodeBatch(nodes);
+      nodeDao.updateNodeBatchByCluster(nodes);
     } catch (IOException e) {
       e.printStackTrace();
     }
