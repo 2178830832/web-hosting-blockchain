@@ -28,15 +28,15 @@ public class WebsiteDaoImpl implements WebsiteDao {
   @PostConstruct
   @SuppressWarnings({"unchecked", "rawtypes"})
   private void initWebsiteDao() {
-    try {
-      websites = (List) Web3JUtil.sendQuery("selectAllWebsites",
-          Collections.emptyList(),
-          Collections.singletonList(new TypeReference<DynamicArray<Website>>() {
-          })).get(0).getValue();
-    } catch (ExecutionException | InterruptedException e) {
-      log.info("Unable to request local ganache server");
-      AppUtil.exitApplication(ctx, 1);
-    }
+//    try {
+//      websites = (List) Web3JUtil.sendQuery("selectAllWebsites",
+//          Collections.emptyList(),
+//          Collections.singletonList(new TypeReference<DynamicArray<Website>>() {
+//          })).get(0).getValue();
+//    } catch (ExecutionException | InterruptedException e) {
+//      log.info("Unable to request local ganache server");
+//      AppUtil.exitApplication(ctx, 1);
+//    }
   }
 
   @Override

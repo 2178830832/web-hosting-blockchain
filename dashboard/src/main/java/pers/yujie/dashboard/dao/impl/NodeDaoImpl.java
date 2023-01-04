@@ -30,15 +30,15 @@ public class NodeDaoImpl implements NodeDao {
   @PostConstruct
   @SuppressWarnings({"unchecked", "rawtypes"})
   private void initWebsiteDao() {
-    try {
-      nodes = (List) Web3JUtil.sendQuery("selectAllNodes",
-          Collections.emptyList(),
-          Collections.singletonList(new TypeReference<DynamicArray<Node>>() {
-          })).get(0).getValue();
-    } catch (InterruptedException | ExecutionException e) {
-      log.info("Unable to request local ganache server");
-      AppUtil.exitApplication(ctx, 1);
-    }
+//    try {
+//      nodes = (List) Web3JUtil.sendQuery("selectAllNodes",
+//          Collections.emptyList(),
+//          Collections.singletonList(new TypeReference<DynamicArray<Node>>() {
+//          })).get(0).getValue();
+//    } catch (InterruptedException | ExecutionException e) {
+//      log.info("Unable to request local ganache server");
+//      AppUtil.exitApplication(ctx, 1);
+//    }
   }
 
   @Override

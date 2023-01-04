@@ -52,8 +52,8 @@ public class DockerUtil {
 
   @PostConstruct
   private void initDocker() {
-    connectDocker();
-    checkIPFSImage();
+//    connectDocker();
+//    checkIPFSImage();
   }
 
   @PreDestroy

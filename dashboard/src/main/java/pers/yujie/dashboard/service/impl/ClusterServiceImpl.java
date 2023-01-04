@@ -36,18 +36,18 @@ public class ClusterServiceImpl implements ClusterService {
 
   @PostConstruct
   private void initClusterService() {
-    List<Cluster> clusters = clusterDao.selectAllHealthyCluster();
-    for (Cluster cluster : clusters) {
-      List<Node> nodes = nodeDao.selectOnlineByCluster(cluster.getName());
-      List<String> containerNameList = dockerUtil.getNameContainerList();
-
-      for (Node node : nodes) {
-        String nodeName = "/" + node.getName();
-        if (!containerNameList.contains(nodeName) && node.isOnline()) {
-          dockerUtil.startContainer(nodeName);
-        }
-      }
-    }
+//    List<Cluster> clusters = clusterDao.selectAllHealthyCluster();
+//    for (Cluster cluster : clusters) {
+//      List<Node> nodes = nodeDao.selectOnlineByCluster(cluster.getName());
+//      List<String> containerNameList = dockerUtil.getNameContainerList();
+//
+//      for (Node node : nodes) {
+//        String nodeName = "/" + node.getName();
+//        if (!containerNameList.contains(nodeName) && node.isOnline()) {
+//          dockerUtil.startContainer(nodeName);
+//        }
+//      }
+//    }
   }
 
   @Override

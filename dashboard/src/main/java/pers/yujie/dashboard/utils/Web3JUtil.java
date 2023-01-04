@@ -31,8 +31,8 @@ public class Web3JUtil {
 
   @PostConstruct
   private void initWeb3J() {
-    web3j = Web3j.build(new HttpService(ip));
-    log.info("Connected to Web3J at: " + ip);
+//    web3j = Web3j.build(new HttpService(ip));
+//    log.info("Connected to Web3J at: " + ip);
   }
 
   public static Web3j getClient() {

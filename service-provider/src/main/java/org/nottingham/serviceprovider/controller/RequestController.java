@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class RequestController {
   @PostMapping("/index")
   public void getRequest(@RequestBody JSONObject matrix){
-    System.out.println(matrix.get("value"));
+    System.out.println(matrix);
   }
 }

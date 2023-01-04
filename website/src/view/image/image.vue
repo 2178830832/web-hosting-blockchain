@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {getMetric} from '@/plugins/plugin'
+import {sendReport} from '@/plugins/plugin'
 import {axios} from "@/view/image/image"
 
 const imageContext = require.context('@/assets/image', false, /\.(jpg)$/);
@@ -20,7 +20,7 @@ export default {
     }
   },
   mounted() {
-    getMetric(axios)
+    sendReport(axios)
   },
   name: 'ImagePage',
   props: {

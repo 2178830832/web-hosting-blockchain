@@ -3,8 +3,9 @@
 </template>
 
 <script>
-import {getMetric} from '@/plugins/plugin'
+import {sendReport} from '@/plugins/plugin'
 import {axios} from "@/view/text/text"
+import content from 'raw-loader!@/assets/text/The Art Of Travel.txt';
 
 export default {
   data() {
@@ -13,21 +14,11 @@ export default {
     }
   },
   created() {
-    this.fileContents = require('@/assets/text/The Art Of Travel.txt')
-
+    // this.fileContents = require('@/assets/text/The Art Of Travel.txt')
+    this.fileContents = content
   },
   mounted() {
-    getMetric(axios)
-  },
-  methods: {
-    async readFile(filePath) {
-      const file = new File([filePath], 'The Art Of Travel.txt')
-      const fileReader = new FileReader()
-      fileReader.onload = (event) => {
-        this.fileContents = event.target.result
-      }
-      fileReader.readAsText(file)
-    },
+    sendReport(axios)
   },
   name: 'TextPage',
   props: {

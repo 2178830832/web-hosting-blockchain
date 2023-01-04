@@ -1,17 +1,19 @@
 import * as WebVitals from 'web-vitals'
 
-let body
-
-function getMetric(axios) {
+function sendReport(axios) {
 
   function sendToAnalytics(metric) {
     console.log(metric)
-    axios.post('/request/index', JSON.stringify(metric)).then(
+    axios.post('/test/metric', JSON.stringify(metric)).then(
         r => console.log(r))
   }
 
-  WebVitals.onTTFB(sendToAnalytics)
-  return body
+  WebVitals.onTTFB(r => sendToAnalytics(r))
+  WebVitals.onFCP(r => sendToAnalytics(r))
+  // WebVitals.onLCP(r => sendToAnalytics(r))
+  WebVitals.getFID(r => sendToAnalytics(r))
 }
 
-export {getMetric}
+
+
+export {sendReport}

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {getMetric} from '@/plugins/plugin'
+import {sendReport} from '@/plugins/plugin'
 import {axios} from "@/view/audio/audio"
 
 const audioContext = require.context('@/assets/audio', false, /\.(mp3)$/);
@@ -20,7 +20,7 @@ export default {
     }
   },
   mounted() {
-    getMetric(axios)
+    sendReport(axios)
   },
   name: 'AudioPage',
   props: {

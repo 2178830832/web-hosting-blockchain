@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {getMetric} from '@/plugins/plugin'
+import {sendReport} from '@/plugins/plugin'
 import {axios} from "@/view/video/video"
 
 const videoContext = require.context('@/assets/video', false, /\.(mp4)$/);
@@ -19,8 +19,9 @@ export default {
       videos
     }
   },
-  mounted() {
-    getMetric(axios)
+  async mounted() {
+    sendReport(axios)
+
   },
   name: 'VideoPage',
   props: {

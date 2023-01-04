@@ -28,8 +28,8 @@ public class IPFSUtil {
 
   @PostConstruct
   private void initIPFS() {
-    ipfs = new IPFS(Constants.IPFS_PORT);
-    log.info("Connected to IPFS at: " + Constants.IPFS_PORT);
+//    ipfs = new IPFS(Constants.IPFS_PORT);
+//    log.info("Connected to IPFS at: " + Constants.IPFS_PORT);
   }
 
   private static IPFS getClient() {

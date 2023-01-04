@@ -11,14 +11,10 @@ import pers.yujie.dashboard.service.WebsiteService;
 
 @Controller
 @Slf4j
+@RequestMapping("/website")
 public class WebsiteController {
   @Resource
   private WebsiteService websiteService;
-
-  @RequestMapping("/home")
-  public String getHomePage() {
-    return "index";
-  }
 
   @RequestMapping("/submit")
   public String submitForm(@RequestParam("websitePath") String websitePath) {

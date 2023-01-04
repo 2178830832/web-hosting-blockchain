@@ -31,15 +31,15 @@ public class ClusterDaoImpl implements ClusterDao {
   @PostConstruct
   @SuppressWarnings({"unchecked", "rawtypes"})
   private void initClusterDao() {
-    try {
-      clusters = (List) Web3JUtil.sendQuery("selectAllClusters",
-          Collections.emptyList(),
-          Collections.singletonList(new TypeReference<DynamicArray<Cluster>>() {
-          })).get(0).getValue();
-    } catch (ExecutionException | InterruptedException e) {
-      log.info("Unable to request local ganache server");
-      AppUtil.exitApplication(ctx, 1);
-    }
+//    try {
+//      clusters = (List) Web3JUtil.sendQuery("selectAllClusters",
+//          Collections.emptyList(),
+//          Collections.singletonList(new TypeReference<DynamicArray<Cluster>>() {
+//          })).get(0).getValue();
+//    } catch (ExecutionException | InterruptedException e) {
+//      log.info("Unable to request local ganache server");
+//      AppUtil.exitApplication(ctx, 1);
+//    }
   }
 
   @Override
