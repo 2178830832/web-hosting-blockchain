@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<header class="main-header" th:fragment="header-fragment"><!-- Logo -->
+  <a href="" class="logo"><!-- mini logo -->
+    <div class="logo-mini">
+      <span class="light-logo"><img th:src="@{/img/logoko.png}" alt="logo"></span>
+    </div>
+    <!-- logo-->
+  </a><!-- Header Navbar -->
+  <nav class="navbar navbar-static-top">
+    <div class="app-menu">
+      <ul class="header-megamenu nav">
+        <li class="btn-group nav-item"><a href="#"
+                                          class="waves-effect waves-light nav-link rounded"
+                                          data-toggle="push-menu" role="button"><i
+            class="nav-link-icon ti-align-left text-white"></i></a></li>
+        <li class="btn-group nav-item"><a href="#" data-provide="fullscreen"
+                                          class="waves-effect waves-light nav-link rounded"
+                                          title="Full Screen"><i
+            class="nav-link-icon mdi mdi-crop-free text-white"></i></a></li>
+      </ul>
+    </div>
+    <div class="navbar-custom-menu r-side">
+      <ul class="nav navbar-nav"><!-- full Screen -->
+        <!--        <li class="search-bar d-sm-inline-flex d-none">-->
+        <!--          <div class="lookup lookup-circle lookup-right"><label>-->
+        <!--            <input type="text" name="s">-->
+        <!--          </label></div>-->
+        <!--        </li>&lt;!&ndash; search &ndash;&gt;-->
+        <li><a href="#" data-toggle="control-sidebar" title="Setting"
+               class="waves-effect waves-light"><i class="ti-settings"></i></a></li>
+      </ul>
+    </div>
+  </nav>
+</header><!-- Content Wrapper. Contains page content -->
+</html>

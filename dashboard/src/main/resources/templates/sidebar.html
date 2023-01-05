@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<aside class="main-sidebar" th:fragment="sidebar-fragment"><!-- Sidebar-->
+  <section class="sidebar"><!-- sidebar menu-->
+    <ul class="sidebar-menu" data-widget="tree">
+      <li><a href=""><i class="mdi mdi-minus-network"></i><span>Dashboard</span></a></li>
+    </ul>
+  </section>
+</aside>
+
+<aside class="control-sidebar" th:fragment="control-sidebar-fragment">
+  <div class="rpanel-title"><span
+      class="waves-effect waves-light pull-right btn btn-circle btn-danger"><i
+      class="ion ion-close text-white" data-toggle="control-sidebar"></i></span>
+  </div>
+  <ul class="nav nav-tabs control-sidebar-tabs">
+    <!--      <li class="nav-item"><a href="#control-sidebar-home-tab" data-toggle="tab"-->
+    <!--                              title="Notifications"><i class="ti-comment-alt"></i></a></li>-->
+  </ul><!-- Tab panes -->
+  <div class="tab-content"><!-- Home tab content -->
+    <div class="tab-pane" id="control-sidebar-home-tab">
+    </div><!-- /.tab-pane --><!-- Settings tab content -->
+  </div>
+</aside><!-- Control-sidebar -->
+</html>
