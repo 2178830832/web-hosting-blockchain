@@ -7,9 +7,10 @@
   <meta name="description" content="">
   <meta name="author" content="Yujie Chen, and Bootstrap contributors">
   <title>WebChain</title><!-- Bootstrap 4.0-->
-  <link rel="stylesheet" th:href="@{/css/bootstrap.css}"><!-- theme style -->
-  <link rel="stylesheet" th:href="@{/css/style.css}"><!-- DashboardX Admin skins -->
-  <link rel="stylesheet" th:href="@{/css/skin_color.css}">
+  <link rel="stylesheet" th:href="@{/Bootstrap/css/bootstrap.css}"><!-- theme style -->
+  <link rel="stylesheet" th:href="@{/Bootstrap/css/style.css}"><!-- DashboardX Admin skins -->
+  <link rel="stylesheet" th:href="@{/Bootstrap/css/skin_color.css}">
+  <link rel="stylesheet" th:href="@{/DataTables/DataTables-1.13.1/css/jquery.dataTables.min.css}">
   <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon-32.png}"/>
 
 </head>
@@ -29,33 +30,26 @@
             <div class="mr-auto"><h3 class="page-title">Dashboard</h3>
             </div>
           </div>
-        </div>
+        </div><!-- /.content-header -->
         <div class="row">
           <div class="col-12">
-            <div class="box">
-              <div class="box-header with-border"><h4 class="box-title">Website List</h4>
-                <div class="box-controls pull-right">
-                  <div class="lookup lookup-circle lookup-right"><label>
-                    <input type="text" name="s"></label>
-                  </div>
-                </div>
-              </div><!-- /.box-header -->
-              <div class="box-body no-padding">
-                <div class="table-responsive">
-                  <table class="table table-hover">
-                    <tr>
-                      <th>NO.</th>
-                      <th>CID</th>
-                      <!--                      <th>Date</th>-->
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </table>
-                </div>
-              </div><!-- /.box-body --></div><!-- /.box --></div>
+            <table id="websites" class="display" style="width:100%">
+              <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>CID</th>
+                <th>Status</th>
+                <th>Create Time</th>
+                <th>Update Time</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+            </table>
+          </div>
         </div>
       </section><!-- /.content -->
-    </div><!-- Panel -->
+    </div><!-- /.container -->
   </div><!-- /.content-wrapper -->
 
   <!-- Import footer -->
@@ -67,21 +61,25 @@
   <div class="control-sidebar-bg"></div>
 
 </div><!-- ./wrapper --><!-- jQuery 3 -->
-<script th:src="@{/js/jquery-3.3.1.js}"></script><!-- fullscreen -->
-<script th:src="@{/js/screenfull.js}"></script><!-- popper -->
-<script th:src="@{/js/popper.min.js}"></script><!-- Bootstrap 4.0-->
-<script th:src="@{/js/bootstrap.js}"></script><!-- Slimscroll -->
-<script th:src="@{/js/jquery.slimscroll.js}"></script><!-- FastClick -->
-<script th:src="@{/js/fastclick.js}"></script><!-- Sparkline -->
-<script th:src="@{/js/jquery.sparkline.min.js}"></script><!-- amchart -->
-<script th:src="@{/js/core.js}"></script>
-<script th:src="@{/js/charts.js}"></script>
-<script th:src="@{/js/animated.js}"></script><!-- apexcharts -->
-<script th:src="@{/js/irregular-data-series.js}"></script>
-<script th:src="@{/js/apexcharts.js}"></script><!-- DashboardX Admin App -->
-<script th:src="@{/js/template.js}"></script>
-
+<script th:src="@{/Bootstrap/js/jquery-3.3.1.js}"></script><!-- fullscreen -->
+<script th:src="@{/Bootstrap/js/screenfull.js}"></script><!-- popper -->
+<script th:src="@{/Bootstrap/js/popper.min.js}"></script><!-- Bootstrap 4.0-->
+<script th:src="@{/Bootstrap/js/bootstrap.js}"></script><!-- Slimscroll -->
+<script th:src="@{/Bootstrap/js/jquery.slimscroll.js}"></script><!-- FastClick -->
+<script th:src="@{/Bootstrap/js/fastclick.js}"></script><!-- Sparkline -->
+<script th:src="@{/Bootstrap/js/jquery.sparkline.min.js}"></script><!-- amchart -->
+<script th:src="@{/Bootstrap/js/core.js}"></script>
+<script th:src="@{/Bootstrap/js/charts.js}"></script>
+<script th:src="@{/Bootstrap/js/animated.js}"></script><!-- apexcharts -->
+<script th:src="@{/Bootstrap/js/irregular-data-series.js}"></script>
+<script th:src="@{/Bootstrap/js/apexcharts.js}"></script><!-- DashboardX Admin App -->
+<script th:src="@{/Bootstrap/js/template.js}"></script>
 <!--<script th:src="@{/js/dashboard.js}"></script>&lt;!&ndash; DashboardX Admin for demo purposes &ndash;&gt;-->
-<script th:src="@{/js/demo.js}"></script>
+<script th:src="@{/Bootstrap/js/demo.js}"></script>
+
+<!-- datatables -->
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/DataTables/DataTables-1.13.1/js/jquery.dataTables.min.js}"></script>
+
 </body>
 </html>
