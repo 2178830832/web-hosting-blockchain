@@ -15,12 +15,17 @@ import pers.yujie.dashboard.entity.Cluster;
 import pers.yujie.dashboard.entity.Website;
 
 @Controller
-public class HomeController {
+public class PageController {
 
-  @GetMapping({"", "/", "/index", "/index.html"})
-  public String getHomePage() {
-    return "index";
-  }
+//  @GetMapping({"", "/", "/index", "/index.html"})
+//  public String getHomePage() {
+//    return "index";
+//  }
+//
+//  @GetMapping({ "/website"})
+//  public String getWebsitePage() {
+//    return "website";
+//  }
 
   @GetMapping({"/test"})
   public ResponseEntity<String> test() {
@@ -35,12 +40,5 @@ public class HomeController {
     jsonObject.put("recordsTotal", 20);
     jsonObject.put("recordsFiltered", 20);
     return new ResponseEntity<>(jsonObject.toJSONString(), HttpStatus.OK);
-//    return new ResponseEntity<>(JSONObject.toJSONString(list), HttpStatus.OK);
   }
-
-//  private class Website {
-//    private Website() {
-//
-//    }
-//  }
 }
