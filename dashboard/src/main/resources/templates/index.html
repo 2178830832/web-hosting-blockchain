@@ -7,10 +7,10 @@
   <meta name="description" content="">
   <meta name="author" content="Yujie Chen, and Bootstrap contributors">
   <title>WebChain</title><!-- Bootstrap 4.0-->
-  <link rel="stylesheet" th:href="@{/Bootstrap/css/bootstrap.css}"><!-- theme style -->
-  <link rel="stylesheet" th:href="@{/Bootstrap/css/style.css}"><!-- DashboardX Admin skins -->
+  <link rel="stylesheet" th:href="@{/Bootstrap/css/bootstrap.min.css}"><!-- theme style -->
+  <link rel="stylesheet" th:href="@{/Bootstrap/css/style.css}"><!-- Admin skins -->
   <link rel="stylesheet" th:href="@{/Bootstrap/css/skin_color.css}">
-  <link rel="stylesheet" th:href="@{/DataTables/DataTables-1.13.1/css/jquery.dataTables.min.css}">
+  <link rel="stylesheet" th:href="@{/Bootstrap/css/pace.min.css}"><!-- Pace style -->
   <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon-32.png}"/>
 
 </head>
@@ -33,19 +33,64 @@
         </div><!-- /.content-header -->
         <div class="row">
           <div class="col-12">
-            <table id="websites" class="display" style="width:100%">
-              <thead>
-              <tr>
-                <th></th>
-                <th>Name</th>
-                <th>CID</th>
-                <th>Status</th>
-                <th>Create Time</th>
-                <th>Update Time</th>
-                <th>Action</th>
-              </tr>
-              </thead>
-            </table>
+            <div class="callout callout-info"><h4>Tip</h4>
+              <p>You can set your own custom ports for the IPFS, Ethereum (Ganache), and Docker.</p>
+            </div>
+            <div class="box">
+              <div class="box-header with-border"><h4 class="box-title">IPFS</h4>
+                <ul class="box-controls pull-right">
+                  <li><a class="box-btn-slide" href="#"></a></li>
+                  <li><a class="box-btn-fullscreen" href="#"></a></li>
+                </ul>
+              </div>
+              <div class="box-body">Pace
+                <div class="row">
+                  <div class="col-12 text-center">
+                    <button id="ipfs" type="button" class="btn btn-info btn-rounded ajax"
+                            title="Ajax Request"><i class="fa fa-spin fa-refresh"></i>&nbsp; Get
+                      External Content
+                    </button>
+                  </div>
+                </div>
+                <div class="ajax-content"></div>
+              </div><!-- /.box-body -->
+            </div><!-- /.box -->
+            <div class="box">
+              <div class="box-header with-border"><h4 class="box-title">Ethereum</h4>
+                <ul class="box-controls pull-right">
+                  <li><a class="box-btn-slide" href="#"></a></li>
+                  <li><a class="box-btn-fullscreen" href="#"></a></li>
+                </ul>
+              </div>
+              <div class="box-body">Pace
+                <div class="row">
+                  <div class="col-12 text-center">
+                    <button id="web3" type="button" class="btn btn-info btn-rounded ajax"
+                            title="Ajax Request"><i class="fa fa-spin fa-refresh"></i>&nbsp; Get
+                      External Content
+                    </button>
+                  </div>
+                </div>
+              </div><!-- /.box-body -->
+            </div><!-- /.box -->
+            <div class="box">
+              <div class="box-header with-border"><h4 class="box-title">Docker</h4>
+                <ul class="box-controls pull-right">
+                  <li><a class="box-btn-slide" href="#"></a></li>
+                  <li><a class="box-btn-fullscreen" href="#"></a></li>
+                </ul>
+              </div>
+              <div class="box-body">Pace
+                <div class="row">
+                  <div class="col-12 text-center">
+                    <button id="docker" type="button" class="btn btn-info btn-rounded ajax"
+                            title="Ajax Request"><i class="fa fa-spin fa-refresh"></i>&nbsp; Get
+                      External Content
+                    </button>
+                  </div>
+                </div>
+              </div><!-- /.box-body -->
+            </div><!-- /.box -->
           </div>
         </div>
       </section><!-- /.content -->
@@ -65,6 +110,7 @@
 <script th:src="@{/Bootstrap/js/screenfull.js}"></script><!-- popper -->
 <script th:src="@{/Bootstrap/js/popper.min.js}"></script><!-- Bootstrap 4.0-->
 <script th:src="@{/Bootstrap/js/bootstrap.js}"></script><!-- Slimscroll -->
+<script th:src="@{/Bootstrap/js/pace.min.js}"></script><!-- PACE -->
 <script th:src="@{/Bootstrap/js/jquery.slimscroll.js}"></script><!-- FastClick -->
 <script th:src="@{/Bootstrap/js/fastclick.js}"></script><!-- Sparkline -->
 <script th:src="@{/Bootstrap/js/jquery.sparkline.min.js}"></script><!-- amchart -->
@@ -77,9 +123,7 @@
 <!--<script th:src="@{/js/dashboard.js}"></script>&lt;!&ndash; DashboardX Admin for demo purposes &ndash;&gt;-->
 <script th:src="@{/Bootstrap/js/demo.js}"></script>
 
-<!-- datatables -->
-<script th:src="@{/js/website.js}"></script>
-<script th:src="@{/DataTables/DataTables-1.13.1/js/jquery.dataTables.min.js}"></script>
-
+<!--<script th:src="@{/Bootstrap/js/pace.js}"></script>-->
+<script th:src="@{/js/index.js}"></script>
 </body>
 </html>

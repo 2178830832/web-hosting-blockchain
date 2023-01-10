@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.DependsOn;
@@ -20,10 +23,12 @@ import pers.yujie.dashboard.common.Constants;
 @Slf4j
 public class IPFSUtil {
 
-  @Value("${local.ipfs.port}")
-  private String ipfs_port;
+//  @Value("${local.ipfs.port}")
+//  private String ipfs_port;
 
-  private volatile static IPFS ipfs;
+  @Getter
+  @Setter
+  private static IPFS ipfs;
   private static List<Multihash> blockHashList;
 
   @PostConstruct

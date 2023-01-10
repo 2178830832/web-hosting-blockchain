@@ -34,6 +34,7 @@ public class ClusterServiceImpl implements ClusterService {
   @Resource
   private IPFSUtil ipfsUtil;
 
+
   @PostConstruct
   private void initClusterService() {
 //    List<Cluster> clusters = clusterDao.selectAllHealthyCluster();

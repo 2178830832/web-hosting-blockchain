@@ -12,10 +12,10 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
 import com.github.dockerjava.core.command.PullImageResultCallback;
-import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
 import io.ipfs.api.IPFS;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,15 +25,18 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import pers.yujie.dashboard.common.Constants;
 
 @Component
 @Slf4j
-@SuppressWarnings("deprecation")
+//@SuppressWarnings("deprecation")
 public class DockerUtil {
 
   @Value("${linux.ip}")
@@ -45,10 +48,9 @@ public class DockerUtil {
   @Value("${linux.docker.volumes}")
   private String volumes;
 
-  private DockerClient docker;
-
-  @Resource
-  ApplicationContext ctx;
+  @Getter
+  @Setter
+  private static DockerClient docker;
 
   @PostConstruct
   private void initDocker() {
@@ -56,30 +58,35 @@ public class DockerUtil {
 //    checkIPFSImage();
   }
 
-  @PreDestroy
-  private void exitDocker() {
-    if (docker != null) {
-      docker.disconnectFromNetworkCmd().exec();
-    }
-  }
+//  @PreDestroy
+//  private void exitDocker() {
+//    if (docker != null) {
+//      try {
+//        docker.close();
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//        log.warn("Docker is not properly exited");
+//      }
+//    }
+//  }
 
-  private void connectDocker() {
-    DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-        .withDockerHost("tcp://" + linuxIp + ":" + linuxDockerPort)
-        .build();
-    DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
-        .dockerHost(config.getDockerHost())
-        .connectionTimeout(Duration.ofSeconds(10))
-        .build();
-    docker = DockerClientImpl.getInstance(config, httpClient);
-    try {
-      docker.infoCmd().exec();
-    } catch (RuntimeException e) {
-      log.info("Unable to connect to docker at: " + config.getDockerHost());
-      AppUtil.exitApplication(ctx, 2);
-    }
-    log.info("Connected to Docker at: " + config.getDockerHost());
-  }
+//  private void connectDocker() {
+//    DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
+//        .withDockerHost("tcp://" + linuxIp + ":" + linuxDockerPort)
+//        .build();
+//    DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
+//        .dockerHost(config.getDockerHost())
+//        .connectionTimeout(Duration.ofSeconds(10))
+//        .build();
+//    docker = DockerClientImpl.getInstance(config, httpClient);
+//    try {
+//      docker.infoCmd().exec();
+//    } catch (RuntimeException e) {
+//      log.info("Unable to connect to docker at: " + config.getDockerHost());
+//      AppUtil.exitApplication(ctx, 2);
+//    }
+//    log.info("Connected to Docker at: " + config.getDockerHost());
+//  }
 
   private void checkIPFSImage() {
     try {

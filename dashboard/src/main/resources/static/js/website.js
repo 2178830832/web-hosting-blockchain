@@ -1,5 +1,5 @@
-$(document).ready(function () {
-  const t = $('#websites').DataTable({
+$(function() {
+  const t = $('#website').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
@@ -15,14 +15,7 @@ $(document).ready(function () {
       {data: 'typeAsString'},
       {data: 'value'},
     ],
-    columnDefs: [
-      {
-        searchable: false,
-        orderable: false,
-        targets: 0,
-      },
-    ],
-    order: [[1, 'asc']],
+    order: [[0, 'asc']],
   });
 
 });

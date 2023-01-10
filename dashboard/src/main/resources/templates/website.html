@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="Yujie Chen, and Bootstrap contributors">
   <title>WebChain</title><!-- Bootstrap 4.0-->
-  <link rel="stylesheet" th:href="@{/Bootstrap/css/bootstrap.css}"><!-- theme style -->
+  <link rel="stylesheet" th:href="@{/Bootstrap/css/bootstrap.min.css}"><!-- theme style -->
   <link rel="stylesheet" th:href="@{/Bootstrap/css/style.css}"><!-- DashboardX Admin skins -->
   <link rel="stylesheet" th:href="@{/Bootstrap/css/skin_color.css}">
   <link rel="stylesheet" th:href="@{/DataTables/DataTables-1.13.1/css/jquery.dataTables.min.css}">
@@ -33,19 +33,25 @@
         </div><!-- /.content-header -->
         <div class="row">
           <div class="col-12">
-            <table id="websites" class="display" style="width:100%">
-              <thead>
-              <tr>
-                <th></th>
-                <th>Name</th>
-                <th>CID</th>
-                <th>Status</th>
-                <th>Create Time</th>
-                <th>Update Time</th>
-                <th>Action</th>
-              </tr>
-              </thead>
-            </table>
+            <div class="box">
+              <div class="box-body">
+                <div class="table-hover">
+                  <table id="website" class="display" style="width:100%">
+                    <thead>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                      <th>CID</th>
+                      <th>Status</th>
+                      <th>Create Time</th>
+                      <th>Update Time</th>
+                      <th>Action</th>
+                    </tr>
+                    </thead>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section><!-- /.content -->

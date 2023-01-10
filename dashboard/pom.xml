@@ -80,13 +80,20 @@
     <dependency>
       <groupId>com.github.docker-java</groupId>
       <artifactId>docker-java</artifactId>
-      <version>3.2.13</version>
+      <version>3.2.14</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-jdk14</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.github.docker-java/docker-java-core -->
+    <dependency>
+      <groupId>com.github.docker-java</groupId>
+      <artifactId>docker-java-core</artifactId>
+      <version>3.2.14</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.web3j/core -->
@@ -99,10 +106,12 @@
   </dependencies>
 
   <repositories>
+    <!-- java-ipfs-api -->
     <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
     </repository>
+
   </repositories>
 
   <build>
