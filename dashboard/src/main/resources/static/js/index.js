@@ -1,6 +1,6 @@
-const button = document.getElementById('ipfs-button');
-const input = document.getElementById('ipfs-port');
-const ipfs = document.getElementById('ipfs');
+// const button = document.getElementById('ipfs-button');
+// const input = document.getElementById('ipfs-port');
+// const ipfs = document.getElementById('ipfs');
 //
 // button.addEventListener('click', () => {
 //   const value = Number(input.value);
@@ -26,11 +26,11 @@ $(function () {
   });
 });
 
-ipfs.onclick = function () {
-  $.ajax({
-    url: "#", success: function (a) {
-      $(".ajax-content").html("<hr>Ajax Request Completed !")
-    }
-  })
-}
+// ipfs.onclick = function () {
+//   $.ajax({
+//     url: "#", success: function () {
+//       $(".ajax-content").html("<hr>Ajax Request Completed !")
+//     }
+//   })
+// }
 

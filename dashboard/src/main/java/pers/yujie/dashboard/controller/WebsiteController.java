@@ -13,6 +13,7 @@ import pers.yujie.dashboard.service.WebsiteService;
 @Slf4j
 @RequestMapping("/website")
 public class WebsiteController {
+
   @Resource
   private WebsiteService websiteService;
 

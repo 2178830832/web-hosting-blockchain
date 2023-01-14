@@ -9,13 +9,11 @@ import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
-import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.DynamicStruct;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.entity.Node;
-import pers.yujie.dashboard.utils.AppUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
 @Repository

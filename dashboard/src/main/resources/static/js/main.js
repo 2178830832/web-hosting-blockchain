@@ -1,4 +1,3 @@
-
 const button = document.getElementById('ipfs-button');
 // const input = document.getElementById('ipfs-port');
 const pace = document.getElementById('test');

@@ -4,34 +4,19 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.model.Container;
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.Image;
 import com.github.dockerjava.api.model.Volume;
-import com.github.dockerjava.core.DefaultDockerClientConfig;
-import com.github.dockerjava.core.DockerClientConfig;
-import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
-import com.github.dockerjava.core.command.PullImageResultCallback;
-import com.github.dockerjava.transport.DockerHttpClient;
-import io.ipfs.api.IPFS;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import pers.yujie.dashboard.common.Constants;
 
 @Component
@@ -52,55 +37,10 @@ public class DockerUtil {
   @Setter
   private static DockerClient docker;
 
-  @PostConstruct
-  private void initDocker() {
-//    connectDocker();
-//    checkIPFSImage();
-  }
+  @Getter
+  @Setter
+  private static String port;
 
-//  @PreDestroy
-//  private void exitDocker() {
-//    if (docker != null) {
-//      try {
-//        docker.close();
-//      } catch (IOException e) {
-//        e.printStackTrace();
-//        log.warn("Docker is not properly exited");
-//      }
-//    }
-//  }
-
-//  private void connectDocker() {
-//    DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-//        .withDockerHost("tcp://" + linuxIp + ":" + linuxDockerPort)
-//        .build();
-//    DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
-//        .dockerHost(config.getDockerHost())
-//        .connectionTimeout(Duration.ofSeconds(10))
-//        .build();
-//    docker = DockerClientImpl.getInstance(config, httpClient);
-//    try {
-//      docker.infoCmd().exec();
-//    } catch (RuntimeException e) {
-//      log.info("Unable to connect to docker at: " + config.getDockerHost());
-//      AppUtil.exitApplication(ctx, 2);
-//    }
-//    log.info("Connected to Docker at: " + config.getDockerHost());
-//  }
-
-  private void checkIPFSImage() {
-    try {
-      List<Image> images = docker.listImagesCmd().withImageNameFilter("ipfs/kubo").exec();
-      if (images.isEmpty()) {
-        log.info("Linux does not contain IPFS docker image, start pulling from the hub");
-        docker.pullImageCmd("ipfs/kubo:latest")
-            .exec(new PullImageResultCallback()).awaitCompletion();
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-
-  }
 
   public List<String> getNameContainerList() {
     List<Container> containers = docker.listContainersCmd().withNameFilter(

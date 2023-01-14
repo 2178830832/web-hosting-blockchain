@@ -21,7 +21,8 @@ public class Cluster extends DynamicStruct {
   }
 
   public Cluster(String name, boolean isHealthy, BigInteger usedSpace, BigInteger totalSpace) {
-    super(new Utf8String(name), new Bool(isHealthy), new Uint256(usedSpace), new Uint256(totalSpace));
+    super(new Utf8String(name), new Bool(isHealthy), new Uint256(usedSpace),
+        new Uint256(totalSpace));
     this.name = name;
     this.isHealthy = isHealthy;
     this.usedSpace = usedSpace;

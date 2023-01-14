@@ -4,7 +4,6 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,15 +29,13 @@ public class Web3JUtil {
   @Getter
   @Setter
   private static Web3j web3;
+
+  @Getter
+  @Setter
+  private static String port;
   private static final String account = "0xa2Cba398E8E4378803b071c68556D24bE51D4B0b";
   private static final String contract = "0x93335cA438449dDc0B089163b7e953E21EAFF7C5";
   private static final BigInteger gasLimit = BigInteger.valueOf(3000000);
-
-  @PostConstruct
-  private void initWeb3J() {
-//    web3j = Web3j.build(new HttpService(ip));
-//    log.info("Connected to Web3J at: " + ip);
-  }
 
 
   public static Web3j getClient() {

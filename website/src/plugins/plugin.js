@@ -10,8 +10,7 @@ function sendReport(axios) {
 
   WebVitals.onTTFB(r => sendToAnalytics(r))
   WebVitals.onFCP(r => sendToAnalytics(r))
-  // WebVitals.onLCP(r => sendToAnalytics(r))
-  WebVitals.getFID(r => sendToAnalytics(r))
+  WebVitals.onLCP(r => sendToAnalytics(r))
 }
 
 

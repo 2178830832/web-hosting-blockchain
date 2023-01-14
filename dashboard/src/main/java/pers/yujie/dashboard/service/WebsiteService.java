@@ -10,5 +10,4 @@ public interface WebsiteService {
   boolean deleteWebsite(BigInteger website_id);
 
 
-
 }

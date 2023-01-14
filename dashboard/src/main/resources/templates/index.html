@@ -43,13 +43,13 @@
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
-              <div class="box-body">Pace
+              <div class="box-body" th:text="'iam' + ${test}">Pace
                 <div class="row">
                   <div class="col-12 text-center">
-                    <button id="ipfs" type="button" class="btn btn-info btn-rounded ajax"
-                            title="Ajax Request"><i class="fa fa-spin fa-refresh"></i>&nbsp; Get
-                      External Content
-                    </button>
+<!--                    <button id="ipfs" type="button" class="btn btn-info btn-rounded ajax"-->
+<!--                            title="Ajax Request"><i class="fa fa-spin fa-refresh"></i>&nbsp; Get-->
+<!--                      External Content-->
+<!--                    </button>-->
                   </div>
                 </div>
                 <div class="ajax-content"></div>
@@ -123,7 +123,6 @@
 <!--<script th:src="@{/js/dashboard.js}"></script>&lt;!&ndash; DashboardX Admin for demo purposes &ndash;&gt;-->
 <script th:src="@{/Bootstrap/js/demo.js}"></script>
 
-<!--<script th:src="@{/Bootstrap/js/pace.js}"></script>-->
 <script th:src="@{/js/index.js}"></script>
 </body>
 </html>

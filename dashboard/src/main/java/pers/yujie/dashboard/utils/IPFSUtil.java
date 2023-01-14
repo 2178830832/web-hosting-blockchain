@@ -8,14 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import pers.yujie.dashboard.common.Constants;
 
@@ -29,13 +24,12 @@ public class IPFSUtil {
   @Getter
   @Setter
   private static IPFS ipfs;
+
+  @Getter
+  @Setter
+  private static String port;
   private static List<Multihash> blockHashList;
 
-  @PostConstruct
-  private void initIPFS() {
-//    ipfs = new IPFS(Constants.IPFS_PORT);
-//    log.info("Connected to IPFS at: " + Constants.IPFS_PORT);
-  }
 
   private static IPFS getClient() {
     if (ipfs == null) {

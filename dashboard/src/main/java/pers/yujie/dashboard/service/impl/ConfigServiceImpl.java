@@ -1,5 +1,6 @@
 package pers.yujie.dashboard.service.impl;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
@@ -9,10 +10,12 @@ import io.ipfs.api.IPFS;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.print.Doc;
 import javax.ws.rs.ProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
 import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.service.ConfigService;
@@ -23,6 +26,8 @@ import pers.yujie.dashboard.utils.Web3JUtil;
 @Service
 @Slf4j
 public class ConfigServiceImpl implements ConfigService {
+
+  private static JSONObject defaultObj = new JSONObject();
 
   @PostConstruct
   private void initConfig() {
@@ -58,9 +63,10 @@ public class ConfigServiceImpl implements ConfigService {
   public void connectIPFS(String port) {
     try {
       IPFSUtil.setIpfs(new IPFS(port));
-      log.info("Connected to IPFS at: " + Constants.IPFS_PORT);
+      log.info("Connected to IPFS at: " + port);
+      IPFSUtil.setPort(port);
     } catch (RuntimeException e) {
-      log.warn("Unable to connect to the default IPFS address: " + Constants.IPFS_PORT);
+      log.warn("Unable to connect to the default IPFS address: " + port);
       IPFSUtil.setIpfs(null);
     }
   }
@@ -83,9 +89,10 @@ public class ConfigServiceImpl implements ConfigService {
 
     try {
       DockerUtil.getDocker().infoCmd().exec();
-      log.info("Connected to docker at: " + Constants.DOCKER_PORT);
+      log.info("Connected to Docker at: " + port);
+      DockerUtil.setPort(port);
     } catch (ProcessingException e) {
-      log.warn("Unable to connect to the default docker address: " + Constants.DOCKER_PORT);
+      log.warn("Unable to connect to the default docker address: " + port);
       DockerUtil.setDocker(null);
     }
   }
@@ -96,11 +103,60 @@ public class ConfigServiceImpl implements ConfigService {
 
     try {
       Web3JUtil.getWeb3().web3ClientVersion().send().getWeb3ClientVersion();
-      log.info("Connected to Web3J at: " + Constants.WEB3_PORT);
+      log.info("Connected to Web3 at: " + port);
+      Web3JUtil.setPort(port);
     } catch (IOException e) {
-      log.info("Unable to connect to the default web3J address: " + Constants.WEB3_PORT);
+      log.info("Unable to connect to the default web3J address: " + port);
       Web3JUtil.setWeb3(null);
     }
   }
 
+  @Override
+  public JSONObject getIPFSStatus() {
+    if (IPFSUtil.getIpfs() == null) {
+      return defaultObj;
+    }
+
+    try {
+      JSONObject status = JSONObject.parseObject(JSONObject.toJSONString(IPFSUtil.getIpfs().id()));
+      status.put("Port", IPFSUtil.getPort());
+      return status;
+    } catch (IOException e) {
+      log.error("Error when requesting ipfs id");
+    }
+    return defaultObj;
+  }
+
+  @Override
+  public JSONObject getDockerStatus() {
+    if (DockerUtil.getDocker() == null) {
+      return defaultObj;
+    }
+    try {
+      JSONObject status = JSONObject.parseObject(JSONObject
+          .toJSONString(DockerUtil.getDocker().infoCmd().exec()));
+      status.put("Port", DockerUtil.getPort());
+      return status;
+    } catch (ProcessingException e) {
+      log.error("Error when requesting docker info");
+    }
+    return defaultObj;
+  }
+
+  @Override
+  public JSONObject getWeb3Status() {
+    if (Web3JUtil.getWeb3() == null) {
+      return defaultObj;
+    }
+
+    try {
+      JSONObject status = new JSONObject();
+      status.put("Client", Web3JUtil.getWeb3().web3ClientVersion().send().getWeb3ClientVersion());
+      status.put("Port", Web3JUtil.getPort());
+      return status;
+    } catch (IOException e) {
+      log.error("Error when requesting web3j info");
+    }
+    return defaultObj;
+  }
 }

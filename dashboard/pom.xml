@@ -13,7 +13,7 @@
   <artifactId>dashboard</artifactId>
   <version>1.0.1</version>
   <name>dashboard</name>
-  <description>Demo project for Spring Boot</description>
+  <description>Dashboard application for decentralised web hosting</description>
   <properties>
     <java.version>1.8</java.version>
   </properties>

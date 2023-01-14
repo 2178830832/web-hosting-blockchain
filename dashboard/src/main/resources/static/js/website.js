@@ -1,5 +1,5 @@
-$(function() {
-  const t = $('#website').DataTable({
+$(function () {
+  $('#website').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
@@ -7,7 +7,6 @@ $(function() {
       dataSrc: 'data'
     },
     columns: [
-      {data: 'cid'},
       {data: 'cid'},
       {data: 'componentType'},
       {data: 'location'},
