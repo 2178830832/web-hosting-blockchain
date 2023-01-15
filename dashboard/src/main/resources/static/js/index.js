@@ -1,36 +1,57 @@
-// const button = document.getElementById('ipfs-button');
-// const input = document.getElementById('ipfs-port');
-// const ipfs = document.getElementById('ipfs');
-//
-// button.addEventListener('click', () => {
-//   const value = Number(input.value);
-//   if (value < 1 || value > 10) {
-//     // alert('Please enter a number between 1 and 10');
-//     $.toast({
-//       heading: "Welcome to my DashboardX Admin",
-//       text: "Use the predefined ones, or specify a custom position object.",
-//       position: "top-right",
-//       loaderBg: "#ff6849",
-//       icon: "info",
-//       hideAfter: 3000,
-//       stack: 6
-//     })
-//   }
-//
-//   // button click action
+// $(document).ajaxStart(function() {
+//   Pace.restart();
 // });
+window.paceOptions = {
+  ajax: {
+    trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE']
+  },
+  restartOnRequestAfter: true
+};
 
-$(function () {
-  $(document).ajaxStart(function () {
-    Pace.restart()
-  });
-});
+const buttons = $('.btn')
+const inputs = $('input')
 
-// ipfs.onclick = function () {
-//   $.ajax({
-//     url: "#", success: function () {
-//       $(".ajax-content").html("<hr>Ajax Request Completed !")
-//     }
-//   })
-// }
+$('form').each(function (index) {
+  this.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      buttons[index].click();
+    }
+  })
+})
+
+buttons[0].onclick = function () {
+  connect('ipfs', inputs[0].value)
+}
+
+buttons[1].onclick = function () {
+  connect('web3', inputs[1].value)
+}
+
+buttons[2].onclick = function () {
+  connect('docker', inputs[2].value)
+};
+
+function connect(url, data) {
+  $.ajax({
+    url: 'config/' + url,
+    type: 'post',
+    contentType: "application/json",
+    data: JSON.stringify({address: data}),
+    success: function () {
+      Swal.fire('Connection established', 'Address: ' + data, 'success')
+      .then(function () {
+        location.reload()
+      })
+    },
+    error: function (response) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Unable to establish connection',
+        text: response.responseText,
+      })
+    }
+  })
+}
+
 

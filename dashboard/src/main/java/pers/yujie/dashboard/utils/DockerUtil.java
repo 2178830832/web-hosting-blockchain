@@ -39,7 +39,7 @@ public class DockerUtil {
 
   @Getter
   @Setter
-  private static String port;
+  private static String address;
 
 
   public List<String> getNameContainerList() {

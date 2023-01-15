@@ -17,6 +17,7 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.protocol.http.HttpService;
 
@@ -32,9 +33,17 @@ public class Web3JUtil {
 
   @Getter
   @Setter
-  private static String port;
-  private static final String account = "0xa2Cba398E8E4378803b071c68556D24bE51D4B0b";
-  private static final String contract = "0x93335cA438449dDc0B089163b7e953E21EAFF7C5";
+  private static String address;
+
+  @Getter
+  @Setter
+  private static String account;
+
+  @Getter
+  @Setter
+  private static String contract;
+//  private static final String account = "0xa2Cba398E8E4378803b071c68556D24bE51D4B0b";
+//  private static final String contract = "0x93335cA438449dDc0B089163b7e953E21EAFF7C5";
   private static final BigInteger gasLimit = BigInteger.valueOf(3000000);
 
 
@@ -47,6 +56,12 @@ public class Web3JUtil {
       }
     }
     return web3;
+  }
+
+  public static BigInteger getAccountBalance() throws ExecutionException, InterruptedException {
+    EthGetBalance ethGetBalance = web3.ethGetBalance(account, DefaultBlockParameterName.LATEST)
+        .sendAsync().get();
+    return ethGetBalance.getBalance();
   }
 
   @SuppressWarnings({"rawtypes"})

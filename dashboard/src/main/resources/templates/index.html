@@ -11,6 +11,7 @@
   <link rel="stylesheet" th:href="@{/Bootstrap/css/style.css}"><!-- Admin skins -->
   <link rel="stylesheet" th:href="@{/Bootstrap/css/skin_color.css}">
   <link rel="stylesheet" th:href="@{/Bootstrap/css/pace.min.css}"><!-- Pace style -->
+  <link rel="stylesheet" th:href="@{/plugin/css/sweetalert2.min.css}"><!--Sweetalert2 -->
   <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon-32.png}"/>
 
 </head>
@@ -43,16 +44,27 @@
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
-              <div class="box-body" th:text="'iam' + ${test}">Pace
+              <div class="box-body">
                 <div class="row">
-                  <div class="col-12 text-center">
-<!--                    <button id="ipfs" type="button" class="btn btn-info btn-rounded ajax"-->
-<!--                            title="Ajax Request"><i class="fa fa-spin fa-refresh"></i>&nbsp; Get-->
-<!--                      External Content-->
-<!--                    </button>-->
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Address: ' + ${ipfsAddress}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Version: ' + ${ipfsVersion}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'ID: ' + ${ipfsID}"></div>
+                </div>
+                <div class="row">
+                  <div class="col-12"><p><br></p>
+                    <form>
+                      <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Set custom IPFS">
+                        <div class="input-group-append">
+                          <button class="btn btn-info" type="button">Connect</button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
-                <div class="ajax-content"></div>
               </div><!-- /.box-body -->
             </div><!-- /.box -->
             <div class="box">
@@ -62,13 +74,29 @@
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
-              <div class="box-body">Pace
+              <div class="box-body">
                 <div class="row">
-                  <div class="col-12 text-center">
-                    <button id="web3" type="button" class="btn btn-info btn-rounded ajax"
-                            title="Ajax Request"><i class="fa fa-spin fa-refresh"></i>&nbsp; Get
-                      External Content
-                    </button>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Address: ' + ${web3Address}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Client: ' + ${web3Client}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Account: ' + ${web3Account}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Balance: ' + ${web3Balance}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Contract: ' + ${web3Contract}"></div>
+                </div>
+                <div class="row">
+                  <div class="col-12"><p><br></p>
+                    <form>
+                      <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Set custom Ethereum">
+                        <div class="input-group-append">
+                          <button class="btn btn-info" type="button">Connect</button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div><!-- /.box-body -->
@@ -80,13 +108,31 @@
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
-              <div class="box-body">Pace
+              <div class="box-body">
                 <div class="row">
-                  <div class="col-12 text-center">
-                    <button id="docker" type="button" class="btn btn-info btn-rounded ajax"
-                            title="Ajax Request"><i class="fa fa-spin fa-refresh"></i>&nbsp; Get
-                      External Content
-                    </button>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Address: ' + ${dockerAddress}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Version: ' + ${dockerVersion}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'OS: ' + ${dockerSystem}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'OS Name: ' + ${dockerName}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Containers: ' + ${dockerContainer}"></div>
+                  <div class="col-6" style="display:inline-block"
+                       th:text="'Running Containers: ' + ${dockerRunning}"></div>
+                </div>
+                <div class="row">
+                  <div class="col-12"><p><br></p>
+                    <form>
+                      <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Set custom Docker">
+                        <div class="input-group-append">
+                          <button class="btn btn-info" type="button">Connect</button>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div><!-- /.box-body -->
@@ -106,22 +152,16 @@
   <div class="control-sidebar-bg"></div>
 
 </div><!-- ./wrapper --><!-- jQuery 3 -->
-<script th:src="@{/Bootstrap/js/jquery-3.3.1.js}"></script><!-- fullscreen -->
-<script th:src="@{/Bootstrap/js/screenfull.js}"></script><!-- popper -->
-<script th:src="@{/Bootstrap/js/popper.min.js}"></script><!-- Bootstrap 4.0-->
-<script th:src="@{/Bootstrap/js/bootstrap.js}"></script><!-- Slimscroll -->
+<script th:src="@{/Bootstrap/js/jquery-3.3.1.js}"></script>
+<script th:src="@{/Bootstrap/js/screenfull.js}"></script><!-- fullscreen -->
+<script th:src="@{/Bootstrap/js/popper.min.js}"></script><!-- popper -->
+<script th:src="@{/Bootstrap/js/bootstrap.min.js}"></script><<!-- Bootstrap 4.0-->
 <script th:src="@{/Bootstrap/js/pace.min.js}"></script><!-- PACE -->
-<script th:src="@{/Bootstrap/js/jquery.slimscroll.js}"></script><!-- FastClick -->
-<script th:src="@{/Bootstrap/js/fastclick.js}"></script><!-- Sparkline -->
-<script th:src="@{/Bootstrap/js/jquery.sparkline.min.js}"></script><!-- amchart -->
-<script th:src="@{/Bootstrap/js/core.js}"></script>
-<script th:src="@{/Bootstrap/js/charts.js}"></script>
-<script th:src="@{/Bootstrap/js/animated.js}"></script><!-- apexcharts -->
-<script th:src="@{/Bootstrap/js/irregular-data-series.js}"></script>
-<script th:src="@{/Bootstrap/js/apexcharts.js}"></script><!-- DashboardX Admin App -->
-<script th:src="@{/Bootstrap/js/template.js}"></script>
-<!--<script th:src="@{/js/dashboard.js}"></script>&lt;!&ndash; DashboardX Admin for demo purposes &ndash;&gt;-->
+<script th:src="@{/Bootstrap/js/jquery.slimscroll.min.js}"></script><!-- Slimscroll -->
+<script th:src="@{/Bootstrap/js/jquery.sparkline.min.js}"></script><!-- Sparkline -->
+<script th:src="@{/Bootstrap/js/template.js}"></script><!-- DashboardX Admin App -->
 <script th:src="@{/Bootstrap/js/demo.js}"></script>
+<script th:src="@{/plugin/js/sweetalert2.min.js}"></script><!-- Sweetalert2  -->
 
 <script th:src="@{/js/index.js}"></script>
 </body>

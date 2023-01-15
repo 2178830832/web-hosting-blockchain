@@ -4,11 +4,11 @@ import com.alibaba.fastjson2.JSONObject;
 
 public interface ConfigService {
 
-  void connectIPFS(String port);
+  String connectIPFS(String address);
 
-  void connectDocker(String port);
+  String connectDocker(String address);
 
-  void connectWeb3(String port);
+  String connectWeb3(String address);
 
   JSONObject getIPFSStatus();
 

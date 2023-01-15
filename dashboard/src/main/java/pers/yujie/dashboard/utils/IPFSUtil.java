@@ -27,7 +27,7 @@ public class IPFSUtil {
 
   @Getter
   @Setter
-  private static String port;
+  private static String address;
   private static List<Multihash> blockHashList;
 
 
@@ -35,7 +35,7 @@ public class IPFSUtil {
     if (ipfs == null) {
       synchronized (IPFSUtil.class) {
         if (ipfs == null) {
-          ipfs = new IPFS(Constants.IPFS_PORT);
+          ipfs = new IPFS(Constants.IPFS_ADDRESS);
         }
       }
     }
