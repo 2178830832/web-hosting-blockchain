@@ -1,12 +1,19 @@
 package pers.yujie.dashboard.service.impl;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.FunctionReturnDecoder;
@@ -21,7 +28,12 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.request.EthFilter;
 import org.web3j.protocol.core.methods.request.Transaction;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetCode;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Convert;
+import org.web3j.utils.Convert.Unit;
 import pers.yujie.dashboard.entity.Cluster;
 import pers.yujie.dashboard.entity.Node;
 import pers.yujie.dashboard.entity.Website;
@@ -30,10 +42,33 @@ import pers.yujie.dashboard.utils.Web3JUtil;
 @Slf4j
 class GanacheServiceImplTest {
 
+  static Web3j web3;
+
+  @BeforeAll
+  static void setUp() {
+    web3 = Web3j.build(new HttpService("http://127.0.0.1:8545",
+        new OkHttpClient.Builder().readTimeout(3, TimeUnit.SECONDS).build()));
+  }
 
   @Test
+  void testBalance() throws ExecutionException, InterruptedException {
+    EthGetBalance ethGetBalance = web3.ethGetBalance("0xa2Cba398E8E4378803b071c68556D24bE51D4B0b", DefaultBlockParameterName.LATEST)
+        .sendAsync().get();
+    EthGetCode ethGetCode = web3.ethGetCode("0xcB95417EE2124D4e7C5C3Ab56cc8b198BD1E553", DefaultBlockParameterName.LATEST).sendAsync().get();
+    BigInteger balance = ethGetBalance.getBalance();
+    BigDecimal data = Convert.fromWei(new BigDecimal(balance), Unit.ETHER).setScale(2, RoundingMode.HALF_UP);
+    System.out.println(data);
+    System.out.println(ethGetCode.getCode().equals("0x"));
+    JSONObject obj =  JSONUtil.createObj();
+    obj.set("data", "99.99");
+    System.out.println(obj.toString());
+  }
+
+//100000000000000000000
+//1000000000000000000
+  @Test
   void testWeb3() throws IOException, ExecutionException, InterruptedException {
-    Web3j web3j = Web3JUtil.getClient();
+    Web3j web3j = Web3JUtil.getWeb3();
 
     List<Type> inputParameters = new ArrayList<>();
 //    Arrays.asList(new Type(value);
@@ -47,51 +82,50 @@ class GanacheServiceImplTest {
         inputParameters,outputParameters);
     String encodedFunction = FunctionEncoder.encode(function);
     org.web3j.protocol.core.methods.response.EthCall response = web3j.ethCall(
-        Transaction.createEthCallTransaction("0xF5d97270dD56963Fd971b414B0eaE4c0B2974aa2",
-            "0xA902F52C1B9eF46C15E2f777fefc6206e01AC4F7", encodedFunction),
+        Transaction.createEthCallTransaction("0xa2Cba398E8E4378803b071c68556D24bE51D4B0b",
+            "0xE0eCfAcC90e5A8C178629AC25c0de44719E8e19D", encodedFunction),
         DefaultBlockParameterName.LATEST)
         .sendAsync().get();
     List<Type> result = FunctionReturnDecoder.decode(
         response.getValue(), function.getOutputParameters());
     System.out.println(result.toString());
     EthFilter filter = new EthFilter(DefaultBlockParameterName.EARLIEST,
-        DefaultBlockParameterName.LATEST, "0xF5d97270dD56963Fd971b414B0eaE4c0B2974aa2");
+        DefaultBlockParameterName.LATEST, "0xa2Cba398E8E4378803b071c68556D24bE51D4B0b");
     web3j.ethLogFlowable(filter).subscribe(logs -> log.info(String.valueOf(logs)));
   }
 
 
   @Test
   void testWeb() throws IOException, ExecutionException, InterruptedException {
-    Web3j web3j = Web3JUtil.getClient();
 
     List<Type<?>> inputParameters = new ArrayList<>();
 //    Arrays.asList(new Type(value);
     inputParameters.add(new Uint(BigInteger.ONE));
 
     List<TypeReference<?>> outputParameters=  new ArrayList<>();
-    outputParameters.add(new TypeReference<DynamicArray<Node>>() {});
-
-    Function function = new Function("selectAllNodes",
+//    outputParameters.add(new TypeReference<DynamicArray<Node>>() {});
+    outputParameters.add(new TypeReference<Utf8String>() {});
+    Function function = new Function("getWebsites",
         Collections.emptyList(),outputParameters);
 
     String encodedFunction = FunctionEncoder.encode(function);
-    org.web3j.protocol.core.methods.response.EthCall response = web3j.ethCall(
-        Transaction.createEthCallTransaction("0xF5d97270dD56963Fd971b414B0eaE4c0B2974aa2",
-            "0xD0591FD65942502A421CF1B0Ce68BD8eE48dE680", encodedFunction),
+    org.web3j.protocol.core.methods.response.EthCall response = web3.ethCall(
+        Transaction.createEthCallTransaction("0xa2Cba398E8E4378803b071c68556D24bE51D4B0b",
+            "0xE0eCfAcC90e5A8C178629AC25c0de44719E8e19D", encodedFunction),
         DefaultBlockParameterName.LATEST)
         .sendAsync().get();
     List<Type> result = FunctionReturnDecoder.decode(
         response.getValue(),function.getOutputParameters());
-
-    List<Type> list = (List) result.get(0).getValue();
-    for (Type results : list) {
-      System.out.println(results.toString());
-    }
+    System.out.println(result.get(0));
+//
+//    List<Type> list = (List) result.get(0).getValue();
+//    for (Type results : list) {
+//      System.out.println(results.toString());
+//    }
   }
 
   @Test
   void testIn() throws IOException, ExecutionException, InterruptedException {
-    Web3j web3j = Web3JUtil.getClient();
     List<Node> nodes = new ArrayList<>();
     nodes.add(new Node("cluster0", "2, ", true, BigInteger.ONE, BigInteger.ONE));
     List<Cluster> clusters = new ArrayList<>();
@@ -105,23 +139,23 @@ class GanacheServiceImplTest {
     websites.add(new Website("cid1", "location", true));
     websites.add(new Website("cid", "location", true));
 
-    Function function = new Function("updateNodeBatchByCluster",
-        Collections.singletonList(new DynamicArray(DynamicStruct.class, nodes)),
-//        Collections.singletonList(nodes.get(0)),
+    Function function = new Function("setWebsites",
+//        Collections.singletonList(new DynamicArray(DynamicStruct.class, nodes)),
+        Collections.singletonList(new Utf8String("cluster0")),
         Collections.emptyList());
 
     String encodedFunction = FunctionEncoder.encode(function);
 
-    EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
+    EthGetTransactionCount ethGetTransactionCount = web3.ethGetTransactionCount(
         "0xa2Cba398E8E4378803b071c68556D24bE51D4B0b", DefaultBlockParameterName.LATEST).sendAsync().get();
 
     BigInteger nonce = ethGetTransactionCount.getTransactionCount();
-    org.web3j.protocol.core.methods.response.EthSendTransaction response = web3j.ethSendTransaction(
+    org.web3j.protocol.core.methods.response.EthSendTransaction response = web3.ethSendTransaction(
         Transaction.createFunctionCallTransaction("0xa2Cba398E8E4378803b071c68556D24bE51D4B0b",
-            nonce,BigInteger.ZERO, BigInteger.valueOf(3000000),"0x2BE1Fda8d355833b64393E642e59456685772424",
+            nonce,BigInteger.ZERO, BigInteger.valueOf(3000000),"0xE0eCfAcC90e5A8C178629AC25c0de44719E8e19D",
             encodedFunction))
         .sendAsync().get();
-
+    System.out.println(response.getResult());
     System.out.println(response.getError().getMessage());
 //    TransactionReceipt transactionReceipt = web3j.ethGetTransactionReceipt(
 //        response.getTransactionHash()).send().getTransactionReceipt().get();

@@ -21,15 +21,23 @@ $('form').each(function (index) {
 })
 
 buttons[0].onclick = function () {
-  connect('ipfs', inputs[0].value)
+  connect('ipfs', JSON.stringify({address: inputs[0].value}))
 }
 
 buttons[1].onclick = function () {
-  connect('web3', inputs[1].value)
+  connect('web3', JSON.stringify({address: inputs[1].value}))
 }
 
 buttons[2].onclick = function () {
-  connect('docker', inputs[2].value)
+  connect('web3', JSON.stringify({account: inputs[2].value}))
+}
+
+buttons[3].onclick = function () {
+  connect('web3', JSON.stringify({contract: inputs[3].value}))
+}
+
+buttons[4].onclick = function () {
+  connect('docker', JSON.stringify({address: inputs[4].value}))
 };
 
 function connect(url, data) {
@@ -37,9 +45,9 @@ function connect(url, data) {
     url: 'config/' + url,
     type: 'post',
     contentType: "application/json",
-    data: JSON.stringify({address: data}),
+    data: data,
     success: function () {
-      Swal.fire('Connection established', 'Address: ' + data, 'success')
+      Swal.fire('Connection established', data.slice(1, -1), 'success')
       .then(function () {
         location.reload()
       })

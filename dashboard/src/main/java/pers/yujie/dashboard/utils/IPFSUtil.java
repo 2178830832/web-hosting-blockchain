@@ -18,9 +18,6 @@ import pers.yujie.dashboard.common.Constants;
 @Slf4j
 public class IPFSUtil {
 
-//  @Value("${local.ipfs.port}")
-//  private String ipfs_port;
-
   @Getter
   @Setter
   private static IPFS ipfs;
@@ -31,21 +28,21 @@ public class IPFSUtil {
   private static List<Multihash> blockHashList;
 
 
-  private static IPFS getClient() {
-    if (ipfs == null) {
-      synchronized (IPFSUtil.class) {
-        if (ipfs == null) {
-          ipfs = new IPFS(Constants.IPFS_ADDRESS);
-        }
-      }
-    }
-    return ipfs;
-  }
+//  private static IPFS getClient() {
+//    if (ipfs == null) {
+//      synchronized (IPFSUtil.class) {
+//        if (ipfs == null) {
+//          ipfs = new IPFS(Constants.IPFS_ADDRESS);
+//        }
+//      }
+//    }
+//    return ipfs;
+//  }
 
   public List<MerkleNode> uploadIPFS(File file) throws IOException {
 
     NamedStreamable.FileWrapper fileWrapper = new NamedStreamable.FileWrapper(file);
-    return getClient().add(fileWrapper);
+    return ipfs.add(fileWrapper);
 
   }
 
@@ -65,13 +62,13 @@ public class IPFSUtil {
   }
 
   private static List<Multihash> getRefList(String cid) throws IOException {
-    List<Multihash> refList = getClient().refs(Multihash.fromBase58(cid), true);
+    List<Multihash> refList = ipfs.refs(Multihash.fromBase58(cid), true);
     refList.add(Multihash.fromBase58(cid));
     return refList;
   }
 
   private static void getRecursiveBlockList(Multihash cid) throws IOException {
-    List<MerkleNode> lsResponse = getClient().ls(cid);
+    List<MerkleNode> lsResponse = ipfs.ls(cid);
     if (lsResponse.size() < 1) {
       return;
     }

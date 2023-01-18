@@ -1,8 +1,13 @@
 {
   "properties": [
     {
-      "name": "linux.ip",
+      "name": "ipfs.address",
       "type": "java.lang.String",
-      "description": "Description for linux.ip."
-  }
-] }
+      "description": "This is the IPFS address."
+    },
+    {
+      "name": "web3.address",
+      "type": "java.lang.String",
+      "description": "Description for web3.address."
+    }
+  ] }

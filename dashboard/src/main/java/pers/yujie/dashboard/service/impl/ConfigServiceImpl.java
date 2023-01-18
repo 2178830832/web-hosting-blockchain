@@ -1,6 +1,8 @@
 package pers.yujie.dashboard.service.impl;
 
-import com.alibaba.fastjson2.JSONObject;
+import cn.hutool.core.util.ReUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.github.dockerjava.api.command.DockerCmdExecFactory;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
@@ -8,8 +10,11 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
 import io.ipfs.api.IPFS;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ws.rs.ProcessingException;
@@ -29,13 +34,13 @@ import pers.yujie.dashboard.utils.Web3JUtil;
 @Slf4j
 public class ConfigServiceImpl implements ConfigService {
 
-  private static final JSONObject defaultObj = new JSONObject();
+  private static final JSONObject defaultObj = JSONUtil.createObj();
 
   @PostConstruct
   private void initConfig() {
     connectIPFS(Constants.IPFS_ADDRESS);
     connectDocker(Constants.DOCKER_ADDRESS);
-    connectWeb3(Constants.WEB3_ADDRESS);
+    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
   }
 
   @PreDestroy
@@ -64,7 +69,7 @@ public class ConfigServiceImpl implements ConfigService {
   @Override
   public String connectIPFS(String address) {
     try {
-      address = address.trim().toLowerCase();
+      address = address.trim().toLowerCase(Locale.ROOT);
       IPFSUtil.setIpfs(new IPFS(address));
       log.info("Connected to IPFS at: " + address);
       IPFSUtil.setAddress(address);
@@ -78,7 +83,7 @@ public class ConfigServiceImpl implements ConfigService {
   @Override
   @SuppressWarnings("deprecation")
   public String connectDocker(String address) {
-    address = address.trim().toLowerCase();
+    address = address.trim().toLowerCase(Locale.ROOT);
     DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
         .withDockerHost(address)
         .build();
@@ -107,17 +112,29 @@ public class ConfigServiceImpl implements ConfigService {
   }
 
   @Override
-  public String connectWeb3(String address) {
-    address = address.trim().toLowerCase();
+  public String connectWeb3(String address, String account, String contract) {
+    address = address.trim().toLowerCase(Locale.ROOT);
+    account = account.trim().toLowerCase(Locale.ROOT);
+    contract = contract.trim().toLowerCase(Locale.ROOT);
+
+    String regex = "^0x[a-fA-F0-9]{40}$";
+    if (!ReUtil.isMatch(regex, account)) {
+      return "Invalid Ethereum account: " + account;
+    }
+    if (!ReUtil.isMatch(regex, contract)) {
+      return "Invalid Ethereum contract: " + contract;
+    }
+
     Web3JUtil.setWeb3(Web3j.build(new HttpService(address,
         new OkHttpClient.Builder().readTimeout(3, TimeUnit.SECONDS).build())));
 
     try {
       Web3JUtil.getWeb3().web3ClientVersion().send().getWeb3ClientVersion();
+
       log.info("Connected to Web3 at: " + address);
       Web3JUtil.setAddress(address);
-      Web3JUtil.setAccount(Constants.WEB3_ACCOUNT);
-      Web3JUtil.setContract(Constants.WEB3_CONTRACT);
+      Web3JUtil.setAccount(account);
+      Web3JUtil.setContract(contract);
     } catch (IOException | IllegalArgumentException e) {
       log.warn("Unable to connect to the web3J address: " + address);
       return e.getMessage();
@@ -132,8 +149,8 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     try {
-      JSONObject status = JSONObject.parseObject(JSONObject.toJSONString(IPFSUtil.getIpfs().id()));
-      status.put("Address", IPFSUtil.getAddress());
+      JSONObject status = JSONUtil.parseObj(IPFSUtil.getIpfs().id());
+      status.set("Address", IPFSUtil.getAddress());
       return status;
     } catch (IOException e) {
       log.error("Error when requesting ipfs id");
@@ -147,9 +164,8 @@ public class ConfigServiceImpl implements ConfigService {
       return defaultObj;
     }
     try {
-      JSONObject status = JSONObject.parseObject(JSONObject
-          .toJSONString(DockerUtil.getDocker().infoCmd().exec()));
-      status.put("Address", DockerUtil.getAddress());
+      JSONObject status = JSONUtil.parseObj(DockerUtil.getDocker().infoCmd().exec());
+      status.set("Address", DockerUtil.getAddress());
       return status;
     } catch (ProcessingException e) {
       log.error("Error when requesting docker info");
@@ -165,11 +181,11 @@ public class ConfigServiceImpl implements ConfigService {
 
     try {
       JSONObject status = new JSONObject();
-      status.put("Client", Web3JUtil.getWeb3().web3ClientVersion().send().getWeb3ClientVersion());
-      status.put("Address", Web3JUtil.getAddress());
-      status.put("Account", Web3JUtil.getAccount());
-      status.put("Contract", Web3JUtil.getContract());
-      status.put("Balance", Web3JUtil.getAccountBalance());
+      status.set("Client", Web3JUtil.getWeb3().web3ClientVersion().send().getWeb3ClientVersion());
+      status.set("Address", Web3JUtil.getAddress());
+      status.set("Account", Web3JUtil.getAccount());
+      status.set("Contract", Web3JUtil.getContract());
+      status.set("Balance", Web3JUtil.getAccountBalance(Web3JUtil.getAccount()));
       return status;
     } catch (IOException | ExecutionException | InterruptedException | IllegalArgumentException e) {
       log.error("Error when requesting web3j info");

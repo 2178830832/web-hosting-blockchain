@@ -1,13 +1,23 @@
 package pers.yujie.dashboard.utils;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import io.ipfs.api.IPFS;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.web3j.abi.datatypes.Bytes;
+import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.abi.datatypes.primitive.Byte;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.http.HttpService;
+import pers.yujie.dashboard.service.ConfigService;
+import pers.yujie.dashboard.service.impl.ConfigServiceImpl;
 
 class Web3JUtilTest {
 
@@ -32,5 +42,21 @@ class Web3JUtilTest {
     EthGetBalance ethGetBalance = web3.ethGetBalance(account, DefaultBlockParameterName.LATEST)
         .sendAsync().get();
     System.out.println(ethGetBalance.getBalance());
+  }
+
+  @Test
+  void testTrans() throws IOException {
+    ConfigService configService = new ConfigServiceImpl();
+    configService.connectDocker("tcp://192.168.80.128:2375");
+//    IPFS ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
+//    JSONObject status = JSONUtil.parseObj(ipfs.id());
+    JSONObject status = JSONUtil.parseObj(
+        DockerUtil.getDocker().infoCmd().exec());
+    status.set("Address", DockerUtil.getAddress());
+    JSONObject object = JSONUtil.createObj();
+    object.set("docker", status);
+    String jsonStr = "{\"b\":\"value2\",\"c\":\"value3\",\"a\":\"value1\"}";
+    JSONObject jsonObject = JSONUtil.parseObj(jsonStr);
+    System.out.println(object.getJSONObject("docker").getStr("id"));
   }
 }

@@ -38,20 +38,24 @@
               <p>You can set your own custom ports for the IPFS, Ethereum (Ganache), and Docker.</p>
             </div>
             <div class="box">
-              <div class="box-header with-border"><h4 class="box-title">IPFS</h4>
+              <div class="box-header with-border"><h4 class="box-title">
+                IPFS (<span th:if="${status.getJSONObject('ipfs').getStr('Address') != null}"
+                            th:text="'Connected'" th:style="'color:green'"></span><span
+                  th:if="${status.getJSONObject('ipfs').getStr('Address') == null}"
+                  th:text="'Not connected'" th:style="'color:red'"></span>)</h4>
                 <ul class="box-controls pull-right">
                   <li><a class="box-btn-slide" href="#"></a></li>
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
               <div class="box-body">
-                <div class="row">
+                <div class="row" th:if="${status.getJSONObject('ipfs').getStr('Address') != null}">
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Address: ' + ${ipfsAddress}"></div>
+                       th:text="'Address: ' + ${status.getJSONObject('ipfs').getStr('Address')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Version: ' + ${ipfsVersion}"></div>
+                       th:text="'Version: ' + ${status.getJSONObject('ipfs').getStr('AgentVersion')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'ID: ' + ${ipfsID}"></div>
+                       th:text="'ID: ' + ${status.getJSONObject('ipfs').getStr('ID')}"></div>
                 </div>
                 <div class="row">
                   <div class="col-12"><p><br></p>
@@ -68,30 +72,61 @@
               </div><!-- /.box-body -->
             </div><!-- /.box -->
             <div class="box">
-              <div class="box-header with-border"><h4 class="box-title">Ethereum</h4>
+              <div class="box-header with-border"><h4 class="box-title">
+                Ethereum (<span th:if="${status.getJSONObject('web3').getStr('Address') != null}"
+                                th:text="'Connected'" th:style="'color:green'"></span><span
+                  th:if="${status.getJSONObject('web3').getStr('Address') == null}"
+                  th:text="'Not connected'" th:style="'color:red'"></span>)</h4>
                 <ul class="box-controls pull-right">
                   <li><a class="box-btn-slide" href="#"></a></li>
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
               <div class="box-body">
-                <div class="row">
+                <div class="row" th:if="${status.getJSONObject('web3').getStr('Address') != null}">
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Address: ' + ${web3Address}"></div>
+                       th:utext="'Address: ' + ${status.getJSONObject('web3').getStr('Address')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Client: ' + ${web3Client}"></div>
+                       th:text="'Client: ' + ${status.getJSONObject('web3').getStr('Client')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Account: ' + ${web3Account}"></div>
+                       th:text="'Account: ' + ${status.getJSONObject('web3').getStr('Account')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Balance: ' + ${web3Balance}"></div>
+                       th:text="'Balance: ' + ${status.getJSONObject('web3').getStr('Balance')} + ' ETH'"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Contract: ' + ${web3Contract}"></div>
+                       th:text="'Contract: ' + ${status.getJSONObject('web3').getStr('Contract')}"></div>
                 </div>
                 <div class="row">
                   <div class="col-12"><p><br></p>
                     <form>
                       <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Set custom Ethereum">
+                        <input type="text" class="form-control"
+                               placeholder="Set custom Ethereum address">
+                        <div class="input-group-append">
+                          <button class="btn btn-info" type="button">Connect</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12"><p><br></p>
+                    <form>
+                      <div class="input-group">
+                        <input type="text" class="form-control"
+                               placeholder="Set custom Ethereum account">
+                        <div class="input-group-append">
+                          <button class="btn btn-info" type="button">Connect</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12"><p><br></p>
+                    <form>
+                      <div class="input-group">
+                        <input type="text" class="form-control"
+                               placeholder="Set custom Ethereum contract">
                         <div class="input-group-append">
                           <button class="btn btn-info" type="button">Connect</button>
                         </div>
@@ -102,26 +137,31 @@
               </div><!-- /.box-body -->
             </div><!-- /.box -->
             <div class="box">
-              <div class="box-header with-border"><h4 class="box-title">Docker</h4>
+              <div class="box-header with-border"><h4 class="box-title">
+                Docker (<span th:if="${status.getJSONObject('docker').getStr('Address') != null}"
+                              th:text="'Connected'" th:style="'color:green'"></span><span
+                  th:if="${status.getJSONObject('docker').getStr('Address') == null}"
+                  th:text="'Not connected'" th:style="'color:red'"></span>)</h4>
                 <ul class="box-controls pull-right">
                   <li><a class="box-btn-slide" href="#"></a></li>
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
               <div class="box-body">
-                <div class="row">
+                <div class="row"
+                     th:if="${status.getJSONObject('docker').getStr('Address') != null}">
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Address: ' + ${dockerAddress}"></div>
+                       th:text="'Address: ' + ${status.getJSONObject('docker').getStr('Address')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Version: ' + ${dockerVersion}"></div>
+                       th:text="'Version: ' + ${status.getJSONObject('docker').getStr('serverVersion')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'OS: ' + ${dockerSystem}"></div>
+                       th:text="'OS: ' + ${status.getJSONObject('docker').getStr('name')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'OS Name: ' + ${dockerName}"></div>
+                       th:text="'OS Name: ' + ${status.getJSONObject('docker').getStr('operatingSystem')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Containers: ' + ${dockerContainer}"></div>
+                       th:text="'Containers: ' + ${status.getJSONObject('docker').getStr('containers')}"></div>
                   <div class="col-6" style="display:inline-block"
-                       th:text="'Running Containers: ' + ${dockerRunning}"></div>
+                       th:text="'Running Containers: ' + ${status.getJSONObject('docker').getStr('containersRunning')}"></div>
                 </div>
                 <div class="row">
                   <div class="col-12"><p><br></p>
@@ -155,7 +195,8 @@
 <script th:src="@{/Bootstrap/js/jquery-3.3.1.js}"></script>
 <script th:src="@{/Bootstrap/js/screenfull.js}"></script><!-- fullscreen -->
 <script th:src="@{/Bootstrap/js/popper.min.js}"></script><!-- popper -->
-<script th:src="@{/Bootstrap/js/bootstrap.min.js}"></script><<!-- Bootstrap 4.0-->
+<script th:src="@{/Bootstrap/js/bootstrap.min.js}"></script>
+<<!-- Bootstrap 4.0-->
 <script th:src="@{/Bootstrap/js/pace.min.js}"></script><!-- PACE -->
 <script th:src="@{/Bootstrap/js/jquery.slimscroll.min.js}"></script><!-- Slimscroll -->
 <script th:src="@{/Bootstrap/js/jquery.sparkline.min.js}"></script><!-- Sparkline -->

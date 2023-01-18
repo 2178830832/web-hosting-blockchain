@@ -1,6 +1,6 @@
 package pers.yujie.dashboard.service;
 
-import com.alibaba.fastjson2.JSONObject;
+import cn.hutool.json.JSONObject;
 
 public interface ConfigService {
 
@@ -8,7 +8,7 @@ public interface ConfigService {
 
   String connectDocker(String address);
 
-  String connectWeb3(String address);
+  String connectWeb3(String address, String account, String contract);
 
   JSONObject getIPFSStatus();
 

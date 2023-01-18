@@ -24,15 +24,6 @@ import pers.yujie.dashboard.common.Constants;
 //@SuppressWarnings("deprecation")
 public class DockerUtil {
 
-  @Value("${linux.ip}")
-  private String linuxIp;
-
-  @Value("${linux.docker.port}")
-  private String linuxDockerPort;
-
-  @Value("${linux.docker.volumes}")
-  private String volumes;
-
   @Getter
   @Setter
   private static DockerClient docker;
@@ -62,7 +53,7 @@ public class DockerUtil {
     if (containers.size() < 1) {
       CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo:latest")
           .withName(containerName)
-          .withVolumes(Volume.parse(volumes + containerName + ":/data/ipfs"))
+//          .withVolumes(Volume.parse(volumes + containerName + ":/data/ipfs"))
           .exec();
       docker.startContainerCmd(container.getId()).exec();
       return;

@@ -1,6 +1,7 @@
 package pers.yujie.dashboard.controller;
 
-import com.alibaba.fastjson2.JSONObject;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -48,11 +49,11 @@ public class PageController {
     list.add(cluster8);
     list.add(cluster9);
     list.add(cluster10);
-    JSONObject jsonObject = new JSONObject();
-    jsonObject.put("data", list);
-    jsonObject.put("draw", 1);
-    jsonObject.put("recordsTotal", 11);
-    jsonObject.put("recordsFiltered", 11);
-    return new ResponseEntity<>(jsonObject.toJSONString(), HttpStatus.OK);
+    JSONObject jsonObject = JSONUtil.createObj();
+    jsonObject.set("data", list);
+    jsonObject.set("draw", 1);
+    jsonObject.set("recordsTotal", 11);
+    jsonObject.set("recordsFiltered", 11);
+    return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
   }
 }
