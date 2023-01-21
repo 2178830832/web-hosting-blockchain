@@ -1,33 +1,36 @@
 package pers.yujie.dashboard.entity;
 
+import java.math.BigInteger;
+import java.util.Date;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.web3j.abi.datatypes.Bool;
-import org.web3j.abi.datatypes.DynamicStruct;
-import org.web3j.abi.datatypes.Utf8String;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class Website extends DynamicStruct {
-
-  public Website(Utf8String cid, Utf8String location, Bool isOnline) {
-    super(cid, location, isOnline);
-    this.cid = cid.getValue();
-    this.location = location.getValue();
-    this.isOnline = isOnline.getValue();
+public class Website extends BaseEntity {
+  public Website(BigInteger id, String cid, String name,BigInteger size, String status,String location) {
+    super(id);
+    this.cid = cid;
+    this.status = status;
+    this.name = name;
+    this.size = size;
+    this.location = location;
   }
 
-  public Website(String cid, String location, boolean isOnline) {
-    super(new Utf8String(cid), new Utf8String(location), new Bool(isOnline));
-    this.cid = cid;
-    this.location = location;
-    this.isOnline = isOnline;
+  public Website(BigInteger id) {
+    super(id);
+    this.status = "online";
   }
 
   private String cid;
 
-  private String location;
+  private String status;
 
-  private boolean isOnline;
+  private String name;
+
+  private BigInteger size;
+
+  private String location;
 
 }

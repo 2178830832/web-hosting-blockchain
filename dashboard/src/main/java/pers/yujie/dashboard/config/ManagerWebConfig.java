@@ -10,5 +10,6 @@ public class ManagerWebConfig implements WebMvcConfigurer {
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
     registry.addViewController("website").setViewName("website");
+    registry.addViewController("cluster").setViewName("cluster");
   }
 }

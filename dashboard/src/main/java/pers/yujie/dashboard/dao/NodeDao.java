@@ -1,34 +1,34 @@
-package pers.yujie.dashboard.dao;
-
-import java.util.List;
-import pers.yujie.dashboard.entity.Node;
-
-public interface NodeDao {
-
-  List<Node> selectOnlineByCluster(String clusterName);
-
-  void updateNodeBatch(List<Node> nodes);
-
-  void updateNodeBatchByCluster(List<Node> nodes);
-//void insertNode(Node node);
+//package pers.yujie.dashboard.dao;
 //
-//  void deleteByNodeId(BigInteger node_id);
+//import java.util.List;
+//import pers.yujie.dashboard.entity.Node;
 //
-//  void updateNode(Node node);
+//public interface NodeDao {
 //
-
+//  List<Node> selectOnlineByCluster(String clusterName);
 //
-//  Node selectByNodeId(BigInteger node_id);
+//  void updateNodeBatch(List<Node> nodes);
 //
-//  Node selectMasterNodeByCluster(BigInteger cluster_id);
+//  void updateNodeBatchByCluster(List<Node> nodes);
+////void insertNode(Node node);
+////
+////  void deleteByNodeId(BigInteger node_id);
+////
+////  void updateNode(Node node);
+////
 //
-//  List<Node> selectByClusterId(BigInteger clusterId);
+////
+////  Node selectByNodeId(BigInteger node_id);
+////
+////  Node selectMasterNodeByCluster(BigInteger cluster_id);
+////
+////  List<Node> selectByClusterId(BigInteger clusterId);
+////
 //
-
-//
-//  BigInteger selectMaxNodeId();
-//
-//  int selectAllFreeSpace();
-//
-//  List<Node> selectMaxNodeByClusterId(BigInteger clusterId);
-}
+////
+////  BigInteger selectMaxNodeId();
+////
+////  int selectAllFreeSpace();
+////
+////  List<Node> selectMaxNodeByClusterId(BigInteger clusterId);
+//}

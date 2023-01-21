@@ -10,7 +10,9 @@
   <link rel="stylesheet" th:href="@{/Bootstrap/css/bootstrap.min.css}"><!-- theme style -->
   <link rel="stylesheet" th:href="@{/Bootstrap/css/style.css}"><!-- DashboardX Admin skins -->
   <link rel="stylesheet" th:href="@{/Bootstrap/css/skin_color.css}">
+  <link rel="stylesheet" th:href="@{/Bootstrap/css/pace.min.css}"><!-- Pace style -->
   <link rel="stylesheet" th:href="@{/DataTables/DataTables-1.13.1/css/jquery.dataTables.min.css}">
+  <link rel="stylesheet" th:href="@{/plugin/css/sweetalert2.min.css}"><!--Sweetalert2 -->
   <link rel="shortcut icon" type="image/png" th:href="@{/img/favicon-32.png}"/>
 
 </head>
@@ -27,7 +29,14 @@
       <section class="content"><!-- Content Header (Page header) -->
         <div class="content-header">
           <div class="d-flex align-items-center">
-            <div class="mr-auto"><h3 class="page-title">Dashboard</h3>
+            <div class="mr-auto"><h3 class="page-title">Website</h3>
+            </div>
+            <div class="right-title">
+              <div class="d-flex mt-10 justify-content-end">
+                <button type="button" class="btn btn-outline btn-info float-right"
+                        id="add-button">Upload website
+                </button>
+              </div>
             </div>
           </div>
         </div><!-- /.content-header -->
@@ -42,9 +51,11 @@
                       <th>NO.</th>
                       <th>Name</th>
                       <th>CID</th>
+                      <th>Size</th>
                       <th>Status</th>
-                      <th>Create Time</th>
-                      <th>Update Time</th>
+                      <th>Create time</th>
+                      <th>Last updated</th>
+                      <th>Location</th>
                     </tr>
                     </thead>
                   </table>
@@ -56,6 +67,81 @@
       </section><!-- /.content -->
     </div><!-- /.container -->
   </div><!-- /.content-wrapper -->
+
+  <div class="modal center-modal" id="create-modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Create website</h5>
+          <button type="button" class="close" data-dismiss="modal"><span
+              aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form novalidate="" id="create-form">
+            <div class="form-group"><h5>Website name<span class="text-danger">*</span></h5>
+              <div class="controls">
+                <input type="text" name="name" class="form-control" data-rule-required="true"
+                placeholder="Enter the website name">
+              </div>
+            </div>
+
+            <div class="form-group"><h5>Website path<span class="text-danger">*</span></h5>
+              <div class="controls">
+                <input type="text" name="path" class="form-control" data-rule-required="true"
+                placeholder="Enter the website directory">
+              </div>
+            </div>
+
+          </form>
+        </div>
+        <div class="modal-footer modal-footer-uniform">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary float-right"
+                  id="create-button">Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /.modal -->
+
+  <div class="modal center-modal" id="update-modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Update website</h5>
+          <button type="button" class="close" data-dismiss="modal"><span
+              aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="name" id="name-label">Name:</label>
+              <input type="text" class="form-control" id="name"
+                     placeholder="Enter the website name">
+            </div>
+            <div class="form-group">
+              <label for="path" id="path-label">Path:</label>
+              <input type="text" class="form-control" id="path"
+                     placeholder="Enter the directory path">
+            </div>
+            <div class="form-group">
+              <p>Actions</p>
+              <button type="button"
+                      class="waves-effect waves-light btn btn-outline btn-danger"
+                      id="delete-button">Delete website
+              </button>
+              <p><br></p>
+            </div>
+
+          </form>
+        </div>
+        <div class="modal-footer modal-footer-uniform">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary float-right"
+                  id="update-button">Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div><!-- /.modal -->
 
   <!-- Import footer -->
   <div th:replace="footer::footer-fragment"></div>
@@ -69,16 +155,18 @@
 <script th:src="@{/Bootstrap/js/jquery-3.3.1.js}"></script>
 <script th:src="@{/Bootstrap/js/screenfull.js}"></script><!-- fullscreen -->
 <script th:src="@{/Bootstrap/js/popper.min.js}"></script><!-- popper -->
-<script th:src="@{/Bootstrap/js/bootstrap.min.js}"></script><<!-- Bootstrap 4.0-->
+<script th:src="@{/Bootstrap/js/bootstrap.min.js}"></script>
+<<!-- Bootstrap 4.0-->
 <script th:src="@{/Bootstrap/js/pace.min.js}"></script><!-- PACE -->
 <script th:src="@{/Bootstrap/js/jquery.slimscroll.min.js}"></script><!-- Slimscroll -->
 <script th:src="@{/Bootstrap/js/jquery.sparkline.min.js}"></script><!-- Sparkline -->
 <script th:src="@{/Bootstrap/js/template.js}"></script><!-- DashboardX Admin App -->
 <script th:src="@{/Bootstrap/js/demo.js}"></script>
 
-<!-- datatables -->
 <script th:src="@{/js/website.js}"></script>
+<!-- datatables -->
 <script th:src="@{/DataTables/DataTables-1.13.1/js/jquery.dataTables.min.js}"></script>
-
+<script th:src="@{/plugin/js/sweetalert2.min.js}"></script><!-- Sweetalert2  -->
+<script th:src="@{/plugin/js/jquery.validate.min.js}"></script><!-- jquery-validation  -->
 </body>
 </html>

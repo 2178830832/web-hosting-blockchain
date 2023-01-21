@@ -26,7 +26,7 @@ public class ConfigController {
   private ConfigService configService;
 
   @GetMapping({"", "/", "/index", "/index.html"})
-  public String index(Model model) {
+  public String renderIndexPage(Model model) {
     ResponseEntity<String> response = getConfigStatus();
     JSONObject status = JSONUtil.parseObj(response.getBody());
 
@@ -44,7 +44,6 @@ public class ConfigController {
   }
 
   @PostMapping("/config/ipfs")
-  @ResponseBody
   public ResponseEntity<String> setCustomIPFS(@RequestBody JSONObject request) {
     String message = configService.connectIPFS(request.getStr("address"));
 

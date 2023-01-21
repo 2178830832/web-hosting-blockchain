@@ -6,11 +6,15 @@ import pers.yujie.dashboard.entity.Cluster;
 
 public interface ClusterDao {
 
-  List<Cluster> selectAllHealthyCluster();
+  List<Cluster> selectAllCluster();
 
-  BigInteger selectFreeSpaceByCluster(String clusterName);
+  void initClusterDao();
 
-  void updateClusterBatch(List<Cluster> clusters);
+//  List<Cluster1> selectAllHealthyCluster();
+//
+//  BigInteger selectFreeSpaceByCluster(String clusterName);
+//
+//  void updateClusterBatch(List<Cluster1> clusters);
   // void insertCluster(Cluster cluster);
   //
   //  void deleteByClusterId(BigInteger cluster_id);

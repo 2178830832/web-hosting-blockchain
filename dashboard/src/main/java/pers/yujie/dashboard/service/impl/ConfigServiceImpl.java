@@ -1,5 +1,6 @@
 package pers.yujie.dashboard.service.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -10,6 +11,9 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
 import io.ipfs.api.IPFS;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.ws.rs.ProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
@@ -25,6 +30,9 @@ import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import pers.yujie.dashboard.common.Constants;
+import pers.yujie.dashboard.dao.ClusterDao;
+import pers.yujie.dashboard.dao.WebsiteDao;
+import pers.yujie.dashboard.entity.Website;
 import pers.yujie.dashboard.service.ConfigService;
 import pers.yujie.dashboard.utils.DockerUtil;
 import pers.yujie.dashboard.utils.IPFSUtil;
@@ -36,11 +44,21 @@ public class ConfigServiceImpl implements ConfigService {
 
   private static final JSONObject defaultObj = JSONUtil.createObj();
 
+  @Resource
+  private WebsiteDao websiteDao;
+
+  @Resource
+  private ClusterDao clusterDao;
+
   @PostConstruct
   private void initConfig() {
     connectIPFS(Constants.IPFS_ADDRESS);
     connectDocker(Constants.DOCKER_ADDRESS);
     connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
+
+    websiteDao.initWebsiteDao();
+//    websiteDao.insertWebsite(new Website(BigInteger.ZERO, "name", "name",BigInteger.ZERO,"good","online"));
+    clusterDao.initClusterDao();
   }
 
   @PreDestroy
@@ -152,7 +170,7 @@ public class ConfigServiceImpl implements ConfigService {
       JSONObject status = JSONUtil.parseObj(IPFSUtil.getIpfs().id());
       status.set("Address", IPFSUtil.getAddress());
       return status;
-    } catch (IOException e) {
+    } catch (IOException | RuntimeException e) {
       log.error("Error when requesting ipfs id");
     }
     return defaultObj;

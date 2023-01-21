@@ -1,13 +1,3 @@
-// $(document).ajaxStart(function() {
-//   Pace.restart();
-// });
-window.paceOptions = {
-  ajax: {
-    trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE']
-  },
-  restartOnRequestAfter: true
-};
-
 const buttons = $('.btn')
 const inputs = $('input')
 
@@ -42,8 +32,8 @@ buttons[4].onclick = function () {
 
 function connect(url, data) {
   $.ajax({
-    url: 'config/' + url,
-    type: 'post',
+    url: '/config/' + url,
+    type: 'POST',
     contentType: "application/json",
     data: data,
     success: function () {
