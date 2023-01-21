@@ -2,11 +2,8 @@ package pers.yujie.dashboard.controller;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import java.io.File;
-import java.math.BigInteger;
 import java.util.List;
 import javax.annotation.Resource;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,38 +11,36 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import pers.yujie.dashboard.dao.WebsiteDao;
-import pers.yujie.dashboard.entity.Website;
-import pers.yujie.dashboard.service.WebsiteService;
+import pers.yujie.dashboard.entity.Node;
+import pers.yujie.dashboard.service.NodeService;
 
 @Controller
-@RequestMapping("/website")
-public class WebsiteController {
+@RequestMapping("/node")
+public class NodeController {
 
   @Resource
-  private WebsiteService websiteService;
+  private NodeService nodeService;
 
   @GetMapping("/list")
-  public ResponseEntity<String> listWebsite() {
-    List<Website> websites = websiteService.selectAllWebsite();
+  public ResponseEntity<String> listNode() {
+    List<Node> nodes = nodeService.selectAllNode();
 
-    return new ResponseEntity<>(JSONUtil.toJsonStr(websites), HttpStatus.OK);
+    return new ResponseEntity<>(JSONUtil.toJsonStr(nodes), HttpStatus.OK);
   }
 
   @PostMapping("/update")
-  public ResponseEntity<String> updateWebsite(@RequestBody JSONObject website) {
-    String message = websiteService.updateWebsite(website);
+  public ResponseEntity<String> updateNode(@RequestBody JSONObject node) {
+    String message = nodeService.updateNode(node);
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
-      return new ResponseEntity<>( message, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
   }
 
   @PostMapping("/insert")
-  public ResponseEntity<String> uploadWebsite(@RequestBody JSONObject website) {
-    String message = websiteService.uploadWebsite(website);
+  public ResponseEntity<String> insertNode(@RequestBody JSONObject node) {
+    String message = nodeService.insertNode(node);
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
@@ -54,13 +49,12 @@ public class WebsiteController {
   }
 
   @PostMapping("/delete")
-  public ResponseEntity<String> deleteWebsite(@RequestBody JSONObject website) {
-    String message = websiteService.deleteWebsite(website.getBigInteger("id"));
+  public ResponseEntity<String> deleteNode(@RequestBody JSONObject node) {
+    String message = nodeService.deleteNode(node.getBigInteger("id"));
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
       return new ResponseEntity<>( "error", HttpStatus.BAD_REQUEST);
     }
   }
-
 }

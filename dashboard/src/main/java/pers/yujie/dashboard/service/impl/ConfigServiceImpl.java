@@ -31,7 +31,9 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.dao.ClusterDao;
+import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.dao.WebsiteDao;
+import pers.yujie.dashboard.entity.Node;
 import pers.yujie.dashboard.entity.Website;
 import pers.yujie.dashboard.service.ConfigService;
 import pers.yujie.dashboard.utils.DockerUtil;
@@ -50,6 +52,9 @@ public class ConfigServiceImpl implements ConfigService {
   @Resource
   private ClusterDao clusterDao;
 
+  @Resource
+  private NodeDao nodeDao;
+
   @PostConstruct
   private void initConfig() {
     connectIPFS(Constants.IPFS_ADDRESS);
@@ -58,6 +63,13 @@ public class ConfigServiceImpl implements ConfigService {
 
     websiteDao.initWebsiteDao();
 //    websiteDao.insertWebsite(new Website(BigInteger.ZERO, "name", "name",BigInteger.ZERO,"good","online"));
+    JSONObject node = JSONUtil
+        .parseObj(new Node(BigInteger.ONE, "name", "online", BigInteger.ZERO, BigInteger.ZERO));
+    JSONObject website = JSONUtil
+        .parseObj(new Website(BigInteger.ONE, "name", "online", BigInteger.ZERO, "location", "status"));
+    nodeDao.initNodeDao();
+    nodeDao.insertNode(node);
+    websiteDao.insertWebsite(website);
     clusterDao.initClusterDao();
   }
 

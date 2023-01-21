@@ -11,5 +11,6 @@ public class ManagerWebConfig implements WebMvcConfigurer {
   public void addViewControllers(ViewControllerRegistry registry) {
     registry.addViewController("website").setViewName("website");
     registry.addViewController("cluster").setViewName("cluster");
+    registry.addViewController("node").setViewName("node");
   }
 }

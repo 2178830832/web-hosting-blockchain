@@ -44,10 +44,9 @@ public class WebsiteDaoImpl implements WebsiteDao {
           Collections.emptyList(),
           Collections.singletonList(new TypeReference<Utf8String>() {
           })).get(0).getValue();
-      if (websiteEncodedStr == null || websiteEncodedStr.equals("")) {
-        return;
+      if (!StrUtil.isEmptyOrUndefined(websiteEncodedStr)) {
+        websites = JSONUtil.toList(JSONUtil.parseArray(websiteEncodedStr), Website.class);
       }
-      websites = JSONUtil.toList(JSONUtil.parseArray(websiteEncodedStr), Website.class);
     } catch (ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve website list from the database");
     }
@@ -58,13 +57,16 @@ public class WebsiteDaoImpl implements WebsiteDao {
   public boolean insertWebsite(JSONObject website) {
     List<Website> updatedWebsites = SerializeUtil.clone(websites);
     updatedWebsites = ListUtil.sortByProperty(updatedWebsites, "id");
-    BigInteger id = updatedWebsites.get(updatedWebsites.size() - 1).getId().add(BigInteger.ONE);
+
+    BigInteger id;
+    if (updatedWebsites.size() < 1) {
+      id = BigInteger.ZERO;
+    } else {
+      id = updatedWebsites.get(updatedWebsites.size() - 1).getId().add(BigInteger.ONE);
+    }
     Website addWebsite = new Website(id);
 
     setUpHelper(addWebsite, website);
-    if (!StrUtil.isEmptyOrUndefined(website.getStr("cid"))) {
-      addWebsite.setSize(website.getBigInteger("cid"));
-    }
     updatedWebsites.add(addWebsite);
 
     return commitChange(updatedWebsites);
@@ -95,42 +97,41 @@ public class WebsiteDaoImpl implements WebsiteDao {
     if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("name"))) {
       website.setName(websiteObj.getStr("name"));
     }
-    if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("path"))) {
-      website.setLocation(websiteObj.getStr("path"));
+    if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("location"))) {
+      website.setLocation(websiteObj.getStr("location"));
     }
 
     if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("size"))) {
       website.setSize(websiteObj.getBigInteger("size"));
     }
+
+    if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("cid"))) {
+      website.setCid(websiteObj.getStr("cid"));
+    }
   }
 
   @Override
   public boolean updateWebsite(JSONObject website) {
-    Website upWebsite = websites.get(website.getInt("id"));
-    if (!StrUtil.isEmptyOrUndefined(website.getStr("name"))) {
-      upWebsite.setName(website.getStr("name"));
-    }
-    setUpHelper(upWebsite, website);
-    upWebsite.setUpdateTime(DateTime.now().toString());
     List<Website> updatedWebsites = SerializeUtil.clone(websites);
-    updatedWebsites.set(upWebsite.getId().intValue(), upWebsite);
-    return commitChange(updatedWebsites);
+    for (Website upWebsite : websites) {
+      if (upWebsite.getId().equals(website.getBigInteger("id"))) {
+        setUpHelper(upWebsite, website);
+        upWebsite.setUpdateTime(DateTime.now().toString());
+        updatedWebsites.set(updatedWebsites.indexOf(upWebsite), upWebsite);
+        return commitChange(updatedWebsites);
+      }
+    }
+    return false;
   }
 
   @Override
   public boolean deleteWebsite(BigInteger id) {
     List<Website> updatedWebsites = SerializeUtil.clone(websites);
 
-    for (int i = 0; i < updatedWebsites.size(); i++) {
-      if (updatedWebsites.get(i).getId().equals(id)) {
-        updatedWebsites.remove(i);
-        // do something
-        break;
-      }
-    }
-    for (Website updatedWebsite : updatedWebsites) {
-      if (updatedWebsite.getId().compareTo(id) > 0) {
-        updatedWebsite.setId(updatedWebsite.getId().subtract(BigInteger.ONE));
+    updatedWebsites.removeIf(website -> website.getId().equals(id));
+    for (Website website : updatedWebsites) {
+      if (website.getId().compareTo(id) > 0) {
+        website.setId(website.getId().subtract(BigInteger.ONE));
       }
     }
 

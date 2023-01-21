@@ -8,14 +8,17 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.SerializeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import io.ipfs.api.IPFS;
 import java.io.File;
+import java.math.BigInteger;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pers.yujie.dashboard.entity.Node;
 
 class Website1ServiceImplTest {
   IPFS ipfs;
@@ -44,7 +47,10 @@ class Website1ServiceImplTest {
 
   @Test
   void testAr() {
-    File file = new File("C:\\Users\\Guillered\\Desktop\\Y4\\web-hosting-blockchain\\dashboard\\src\\main\\resources\\META-INF");
-    System.out.println(FileUtil.size(file, true));
+    JSONObject node = JSONUtil
+        .parseObj(new Node(BigInteger.ONE, "name", "online", BigInteger.ZERO, BigInteger.ZERO));
+    List<JSONObject> nodes = new ArrayList<>();
+    nodes.add(node);
+    System.out.println(ListUtil.lastIndexOf(nodes, "2" :: equals));
   }
 }

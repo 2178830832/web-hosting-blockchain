@@ -43,7 +43,7 @@ table.on('click', 'tr', function () {
   });
   $(".modal #update-button").click(function () {
     dataToUpdate['name'] = $("#name").val()
-    dataToUpdate['path'] = $("#path").val()
+    dataToUpdate['location'] = $("#path").val()
     const data = JSON.stringify(dataToUpdate)
     Swal.fire({
       title: 'Update website?',
@@ -78,14 +78,7 @@ table.on('click', 'tr', function () {
   updateModal.modal('show');
 })
 
-updateModal.on("hide.bs.modal", function (e) {
-  if (Swal.isVisible()) {
-    Swal.close();
-    e.preventDefault();
-  }
-});
-
-createModal.on("hide.bs.modal", function (e) {
+$('.modal').on("hide.bs.modal", function (e) {
   if (Swal.isVisible()) {
     Swal.close();
     e.preventDefault();
@@ -100,49 +93,38 @@ createForm.submit(function (e) {
         return obj;
       }, {})
   );
-  $.ajax({
-    type: 'POST',
-    url: '/website/insert',
-    contentType: 'application/json',
-    data: formData,
-    success: function () {
-      Swal.fire('Success!', 'Your website has been uploaded.', 'success')
-      .then(function () {
-        location.reload()
-      })
-    },
-    error: function (response) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Unable to upload website',
-        text: response.responseText,
-      })
+  Swal.fire({
+    title: 'Update website?',
+    icon: 'info',
+    text: formData.slice(1, -1),
+    showCancelButton: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        type: 'POST',
+        url: '/website/insert',
+        contentType: 'application/json',
+        data: formData,
+        success: function () {
+          Swal.fire('Success!', 'Your website has been uploaded.', 'success')
+          .then(function () {
+            location.reload()
+          })
+        },
+        error: function (response) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Unable to upload website',
+            text: response.responseText,
+          })
+        }
+      });
     }
-  });
+  })
 })
 
 $("#add-button")[0].onclick = function () {
   $(".modal #create-button").click(function () {
-    // let formData = {}
-    // $.ajax({
-    //   type: 'POST',
-    //   url: '/website/delete',
-    //   contentType: "application/json",
-    //   data: JSON.stringify(formData),
-    //   success: function () {
-    //     Swal.fire('Success!', 'Your website has been created.', 'success')
-    //     .then(function () {
-    //       location.reload()
-    //     })
-    //   },
-    //   error: function (response) {
-    //     Swal.fire({
-    //       icon: 'error',
-    //       title: 'Unable to create website',
-    //       text: response.responseText,
-    //     })
-    //   }
-    // });
     createForm.validate();
     if (!createForm.valid()) {
       return;

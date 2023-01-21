@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class Node extends BaseEntity {
 
-  public Node(BigInteger id, String name, String status, String usedSpace, String totalSpace) {
+  public Node(BigInteger id, String name, String status, BigInteger usedSpace, BigInteger totalSpace) {
     super(id);
     this.name = name;
     this.status = status;
@@ -16,13 +16,16 @@ public class Node extends BaseEntity {
     this.totalSpace = totalSpace;
   }
 
-  private BigInteger id;
+  public Node(BigInteger id) {
+    super(id);
+    this.status = "online";
+  }
 
   private String name;
 
   private String status;
 
-  private String usedSpace;
+  private BigInteger usedSpace;
 
-  private String totalSpace;
+  private BigInteger totalSpace;
 }

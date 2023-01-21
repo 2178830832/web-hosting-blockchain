@@ -1,14 +1,15 @@
-const table = $('#website')
-const updateModal = $(".modal")
-let dataToUpdate = {}
+const table = $('#node')
+const updateModal = $("#update-modal")
+const updateForm = $('#update-form')
+const createModal = $("#create-modal")
+const createForm = $('#create-form')
 
 table.on('click', 'tr', function () {
-  const data = table.DataTable().row(this).data();
-  dataToUpdate['id'] = data.id
-  $(".modal #name-label").text('Name: ' + data.name);
-  $(".modal #path-label").text('Path: ' + data.location);
-  $(".modal #status-button").text(
-      data.status === "online" ? "Set offline" : "Set online");
+  const row = table.DataTable().row(this).data();
+  const dataToUpdate = {}
+  dataToUpdate['id'] = row.id
+  $(".modal #name-label").text('Node name: ' + row['name'])
+  $(".modal #capacity-label").text('Node capacity: ' + row['totalSpace'])
   $(".modal #delete-button").click(function () {
     Swal.fire({
       title: 'Are you sure?',
@@ -19,93 +20,142 @@ table.on('click', 'tr', function () {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire(
-            'Deleted!',
-            'Your website has been deleted.',
-            'success'
-        )
-      }
-    })
-  });
-  $(".modal #update-button").click(function () {
-    Swal.fire({
-      title: 'Are you sure?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dataToUpdate['name'] = $("#name").val()
-        dataToUpdate['path'] = $("#path").val()
         $.ajax({
           type: 'POST',
-          url: '/website/update',
+          url: '/node/delete',
           contentType: "application/json",
           data: JSON.stringify(dataToUpdate),
           success: function () {
-            Swal.fire('Success', 'Your website has been deleted.', 'success')
+            Swal.fire('Deleted!', 'Your node has been deleted.', 'success')
             .then(function () {
               location.reload()
             })
-            location.reload()
           },
           error: function (response) {
             Swal.fire({
               icon: 'error',
-              title: 'Unable to update website',
+              title: 'Unable to delete node',
               text: response.responseText,
-              allowEnterKey: true,
+            })
+          }
+        });
+      }
+    })
+  });
+  $(".modal #update-button").click(function () {
+    let formData =
+        updateForm.serializeArray().reduce(function (obj, item) {
+          obj[item.name] = item.value;
+          return obj;
+        }, {});
+    formData['id'] = row['id'];
+    formData['totalSpace'] = formData['capacity']
+    delete formData['capacity']
+    formData = JSON.stringify(formData)
+    Swal.fire({
+      title: 'Update node?',
+      icon: 'info',
+      text: formData.slice(1, -1),
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+          type: 'POST',
+          url: '/node/update',
+          contentType: "application/json",
+          data: formData,
+          success: function () {
+            Swal.fire('Success!', 'Your node has been updated.', 'success')
+            .then(function () {
+              location.reload()
+            })
+          },
+          error: function (response) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Unable to update node',
+              text: response.responseText,
             })
           }
         });
       }
     })
   })
+
   updateModal.modal('show');
 })
 
-$(document).on("keydown", function (event) {
-  if (event.key === "Enter") {
-    if (Swal.isVisible()) {
-      Swal.close();
-    }
+$('.modal').on("hide.bs.modal", function (e) {
+  if (Swal.isVisible()) {
+    Swal.close();
+    e.preventDefault();
   }
 });
 
-$("#add-button")[0].onclick = function () {
+createForm.submit(function (e) {
+  e.preventDefault();
+  const formData = JSON.stringify(
+      createForm.serializeArray().reduce(function (obj, item) {
+        obj[item.name] = item.value;
+        return obj;
+      }, {})
+  );
   Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
+    title: 'Create node?',
+    icon: 'info',
+    text: formData.slice(1, -1),
     showCancelButton: true,
-    confirmButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!'
   }).then((result) => {
     if (result.isConfirmed) {
-      Swal.fire(
-          'Deleted!',
-          'Your website has been deleted.',
-          'success'
-      )
+      $.ajax({
+        type: 'POST',
+        url: '/node/insert',
+        contentType: 'application/json',
+        data: formData,
+        success: function () {
+          Swal.fire('Success!', 'Your node has been created.', 'success')
+          .then(function () {
+            location.reload()
+          })
+        },
+        error: function (response) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Unable to create node',
+            text: response.responseText,
+          })
+        }
+      });
     }
   })
+})
+//
+$("#add-button")[0].onclick = function () {
+  $(".modal #create-button").click(function () {
+    createForm.validate();
+    if (!createForm.valid()) {
+      return;
+    }
+    createForm.submit();
+  })
+
+  createModal.modal('show')
 }
 
 $(function () {
   $.ajax({
-    url: '/website/list',
+    url: '/node/list',
     success: function (data) {
       table.DataTable({
         data: JSON.parse(data),
         columns: [
           {data: 'id'},
           {data: 'name'},
-          {data: 'cid'},
-          {data: 'size'},
           {data: 'status'},
+          {data: 'usedSpace'},
+          {data: 'totalSpace'},
           {data: 'createTime'},
           {data: 'updateTime'},
-          {data: 'location', visible: false}
         ],
         order: [[0, 'asc']],
         serverSide: false,

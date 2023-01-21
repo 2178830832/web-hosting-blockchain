@@ -1,6 +1,7 @@
 package pers.yujie.dashboard.dao.impl;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.SerializeUtil;
 import cn.hutool.json.JSONUtil;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -52,10 +53,10 @@ public class ClusterDaoImpl implements ClusterDao {
 
   private void createInitialClusters() {
     if (clusters.size() < 4) {
-      List<Cluster> updatedClusters = new ArrayList<>(clusters);
+      List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
       for (int i = 0; i < 3; i++) {
-        Cluster cluster = new Cluster(BigInteger.valueOf(i), "cluster" + i, "healthy",
-            BigInteger.ZERO, BigInteger.ZERO);
+        Cluster cluster = new Cluster(BigInteger.valueOf(i), "cluster" + i,
+            "healthy", BigInteger.ZERO, BigInteger.ZERO);
         updatedClusters.add(cluster);
       }
       commitChange(updatedClusters);

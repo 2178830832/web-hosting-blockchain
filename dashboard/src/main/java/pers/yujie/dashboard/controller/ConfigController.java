@@ -19,7 +19,6 @@ import pers.yujie.dashboard.service.ConfigService;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
 @Controller
-@Slf4j
 public class ConfigController {
 
   @Resource
