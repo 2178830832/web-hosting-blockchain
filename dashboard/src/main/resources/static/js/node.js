@@ -32,11 +32,7 @@ table.on('click', 'tr', function () {
             })
           },
           error: function (response) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Unable to delete node',
-              text: response.responseText,
-            })
+            Swal.fire('Unable to delete node', response.responseText, 'error')
           }
         });
       }
@@ -71,11 +67,7 @@ table.on('click', 'tr', function () {
             })
           },
           error: function (response) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Unable to update node',
-              text: response.responseText,
-            })
+            Swal.fire('Unable to update node', response.responseText, 'error')
           }
         });
       }
@@ -119,11 +111,7 @@ createForm.submit(function (e) {
           })
         },
         error: function (response) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Unable to create node',
-            text: response.responseText,
-          })
+          Swal.fire('Unable to create node', response.responseText, 'error')
         }
       });
     }

@@ -57,20 +57,20 @@ public class ConfigServiceImpl implements ConfigService {
 
   @PostConstruct
   private void initConfig() {
-    connectIPFS(Constants.IPFS_ADDRESS);
-    connectDocker(Constants.DOCKER_ADDRESS);
-    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
-
-    websiteDao.initWebsiteDao();
-//    websiteDao.insertWebsite(new Website(BigInteger.ZERO, "name", "name",BigInteger.ZERO,"good","online"));
-    JSONObject node = JSONUtil
-        .parseObj(new Node(BigInteger.ONE, "name", "online", BigInteger.ZERO, BigInteger.ZERO));
-    JSONObject website = JSONUtil
-        .parseObj(new Website(BigInteger.ONE, "name", "online", BigInteger.ZERO, "location", "status"));
-    nodeDao.initNodeDao();
-    nodeDao.insertNode(node);
-    websiteDao.insertWebsite(website);
-    clusterDao.initClusterDao();
+//    connectIPFS(Constants.IPFS_ADDRESS);
+//    connectDocker(Constants.DOCKER_ADDRESS);
+//    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
+//
+//    websiteDao.initWebsiteDao();
+////    websiteDao.insertWebsite(new Website(BigInteger.ZERO, "name", "name",BigInteger.ZERO,"good","online"));
+//    JSONObject node = JSONUtil
+//        .parseObj(new Node(BigInteger.ONE, "name", "online", BigInteger.ZERO, BigInteger.ZERO));
+//    JSONObject website = JSONUtil
+//        .parseObj(new Website(BigInteger.ONE, "name", "online", BigInteger.ZERO, "location", "status"));
+//    nodeDao.initNodeDao();
+//    nodeDao.insertNode(node);
+//    websiteDao.insertWebsite(website);
+//    clusterDao.initClusterDao();
   }
 
   @PreDestroy

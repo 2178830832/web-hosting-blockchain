@@ -42,7 +42,7 @@ public class NodeDaoImpl implements NodeDao {
         nodes = JSONUtil.toList(JSONUtil.parseArray(nodeEncodedStr), Node.class);
       }
     } catch (ExecutionException | InterruptedException e) {
-      log.error("Unable to retrieve website list from the database");
+      log.error("Unable to retrieve node list from the database");
     }
   }
 

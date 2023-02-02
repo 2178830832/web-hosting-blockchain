@@ -27,9 +27,6 @@ public class Constants {
   @Value("${docker.volume}")
   private String dockerVolume;
 
-  @Value("${tester.address}")
-  private String testerAddress;
-
   @PostConstruct
   private void initConstants() {
     IPFS_ADDRESS = ipfsAddress;
@@ -38,7 +35,6 @@ public class Constants {
     DOCKER_VOLUME = dockerVolume;
     WEB3_CONTRACT = web3Contract;
     WEB3_ACCOUNT = web3Account;
-    TESTER_ADDRESS = testerAddress;
   }
 
   public static String IPFS_ADDRESS;
@@ -52,6 +48,4 @@ public class Constants {
   public static String WEB3_CONTRACT;
 
   public static String WEB3_ACCOUNT;
-
-  public static String TESTER_ADDRESS;
 }

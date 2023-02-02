@@ -60,6 +60,23 @@ class DockerUtilTest {
   }
 
   @Test
+  void start() {
+    for (int i = 0; i<100;i++) {
+      CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo")
+          .withName("test" + i)
+          .withBinds(new Bind("/home/yujie/Desktop/FYP/compose/test" + i, new Volume("/data/ipfs")))
+          .exec();
+
+      // Start the container
+      docker.startContainerCmd(container.getId()).exec();
+    }
+  }
+
+  void execCmd() {
+    //
+  }
+
+  @Test
   void testExec() throws InterruptedException {
     List<PortBinding> portBindings = new ArrayList<>();
 

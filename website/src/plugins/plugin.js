@@ -4,7 +4,7 @@ function sendReport(axios) {
 
   function sendToAnalytics(metric) {
     console.log(metric)
-    axios.post('/test/metric', JSON.stringify(metric)).then(
+    axios.post('/test/receive', JSON.stringify(metric)).then(
         r => console.log(r))
   }
 

@@ -43,11 +43,7 @@ function connect(url, data) {
       })
     },
     error: function (response) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Unable to establish connection',
-        text: response.responseText,
-      })
+      Swal.fire('Unable to establish connection', response.responseText, 'error')
     }
   })
 }

@@ -31,11 +31,7 @@ table.on('click', 'tr', function () {
             })
           },
           error: function (response) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Unable to delete website',
-              text: response.responseText,
-            })
+            Swal.fire('Unable to delete website', response.responseText, 'error')
           }
         });
       }
@@ -64,11 +60,7 @@ table.on('click', 'tr', function () {
             })
           },
           error: function (response) {
-            Swal.fire({
-              icon: 'error',
-              title: 'Unable to update website',
-              text: response.responseText,
-            })
+            Swal.fire('Unable to update website', response.responseText, 'error')
           }
         });
       }
@@ -112,11 +104,7 @@ createForm.submit(function (e) {
           })
         },
         error: function (response) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Unable to upload website',
-            text: response.responseText,
-          })
+          Swal.fire('Unable to upload website', response.responseText, 'error')
         }
       });
     }
