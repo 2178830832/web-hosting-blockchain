@@ -1,22 +1,16 @@
 package pers.yujie.dashboard.service.impl;
 
 import cn.hutool.json.JSONObject;
-import io.ipfs.multihash.Multihash;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.entity.Node;
+import pers.yujie.dashboard.service.BlockService;
+import pers.yujie.dashboard.service.ClusterService;
 import pers.yujie.dashboard.service.NodeService;
-import pers.yujie.dashboard.utils.DockerUtil;
-import pers.yujie.dashboard.utils.IPFSUtil;
 
 @Service
 @Slf4j
@@ -24,6 +18,12 @@ public class NodeServiceImpl implements NodeService {
 
   @Resource
   private NodeDao nodeDao;
+
+  @Resource
+  private ClusterService clusterService;
+
+  @Resource
+  private BlockService blockService;
 
 //  private String cid;
 //  private List<Node> nodes;
@@ -39,12 +39,18 @@ public class NodeServiceImpl implements NodeService {
   public String updateNode(JSONObject node) {
     BigInteger id = node.getBigInteger("id");
     String name = node.getStr("name");
-    String totalSpace = node.getStr("totalSpace");
+    BigInteger totalSpace = node.getBigInteger("totalSpace");
 
     if (id == null || name == null || totalSpace == null) {
       return "Unexpected Json format";
     }
-    // do something
+    if (totalSpace.compareTo(BigInteger.ONE) < 0) {
+      return "Node space must be a positive number";
+    }
+    Node upNode = nodeDao.selectNodeById(id);
+    if (totalSpace.compareTo(upNode.getUsedSpace()) < 0) {
+      blockService.redistributeNodeSize(id, upNode.getUsedSpace().subtract(totalSpace));
+    }
     if (nodeDao.updateNode(node)) {
       return "";
     } else {
@@ -60,8 +66,11 @@ public class NodeServiceImpl implements NodeService {
     if (name == null || totalSpace == null) {
       return "Unexpected Json format";
     }
-    // set size, cid and other clusters
-
+    if ((new Integer(totalSpace)) < 1) {
+      return "Node space must be a positive number";
+    }
+    node.set("clusterId", clusterService.assignToMinCluster(new BigInteger(totalSpace)));
+    // docker conn
     if (nodeDao.insertNode(node)) {
       return "";
     } else {
@@ -71,7 +80,11 @@ public class NodeServiceImpl implements NodeService {
 
   @Override
   public String deleteNode(BigInteger id) {
-    // change size and cluster info
+    Node node = nodeDao.selectNodeById(id);
+    node.setStatus("deleted");
+//    clusterService.deleteNodeSpace(node);
+    // redistribute block
+    // remove docker
     if (nodeDao.deleteNode(id)) {
       return "";
     } else {

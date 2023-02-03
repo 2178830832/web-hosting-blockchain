@@ -11,6 +11,8 @@ public interface NodeDao {
 
   List<Node> selectAllNode();
 
+  Node selectNodeById(BigInteger id);
+
   boolean insertNode(JSONObject node);
 
   boolean updateNode(JSONObject node);

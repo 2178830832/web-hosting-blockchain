@@ -2,30 +2,27 @@ package pers.yujie.dashboard.dao.impl;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.SerializeUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.DynamicArray;
-import org.web3j.abi.datatypes.DynamicStruct;
 import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import pers.yujie.dashboard.dao.ClusterDao;
 import pers.yujie.dashboard.entity.Cluster;
-import pers.yujie.dashboard.entity.Website;
+import pers.yujie.dashboard.utils.EncryptUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
 @Repository
 @Slf4j
-public class ClusterDaoImpl implements ClusterDao {
+public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
 
   private List<Cluster> clusters = new ArrayList<>();
 
@@ -45,6 +42,7 @@ public class ClusterDaoImpl implements ClusterDao {
         createInitialClusters();
         return;
       }
+      clusterEncodedStr = EncryptUtil.aesDecrypt(clusterEncodedStr);
       clusters = JSONUtil.toList(JSONUtil.parseArray(clusterEncodedStr), Cluster.class);
     } catch (ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve cluster list from the database");
@@ -63,7 +61,26 @@ public class ClusterDaoImpl implements ClusterDao {
     }
   }
 
-//  @Override
+
+  @Override
+  public boolean updateCluster(JSONObject cluster) {
+    List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
+    for (Cluster upCluster : updatedClusters) {
+      if (upCluster.getId().equals(cluster.getBigInteger("id"))) {
+        setUpHelper(upCluster, cluster);
+        updatedClusters.set(updatedClusters.indexOf(upCluster), upCluster);
+        return commitChange(updatedClusters);
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public Cluster selectClusterById(BigInteger id) {
+    return clusters.get(id.intValue());
+  }
+
+  //  @Override
 //  public List<Cluster1> selectAllHealthyCluster() {
 //    List<Cluster1> healthyClusters = new ArrayList<>();
 //    for (Cluster1 cluster : clusters) {
@@ -103,6 +120,7 @@ public class ClusterDaoImpl implements ClusterDao {
 
   private boolean commitChange(List<Cluster> updatedClusters) {
     String clusterDecodedStr = JSONUtil.parseArray(updatedClusters).toString();
+    clusterDecodedStr = EncryptUtil.aesEncrypt(clusterDecodedStr);
 
     try {
       EthSendTransaction response = Web3JUtil.sendTransaction("setClusters",

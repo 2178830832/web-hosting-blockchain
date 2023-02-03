@@ -1,5 +1,6 @@
 package pers.yujie.dashboard.dao;
 
+import cn.hutool.json.JSONObject;
 import java.math.BigInteger;
 import java.util.List;
 import pers.yujie.dashboard.entity.Cluster;
@@ -9,6 +10,10 @@ public interface ClusterDao {
   List<Cluster> selectAllCluster();
 
   void initClusterDao();
+
+  boolean updateCluster(JSONObject cluster);
+
+  Cluster selectClusterById(BigInteger id);
 
 //  List<Cluster1> selectAllHealthyCluster();
 //

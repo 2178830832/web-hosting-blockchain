@@ -1,19 +1,27 @@
 package pers.yujie.dashboard.utils;
 
-import cn.hutool.json.JSONArray;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.io.file.FileReader;
+import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
-import java.util.IntSummaryStatistics;
 import java.util.List;
-import java.util.LongSummaryStatistics;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import pers.yujie.dashboard.entity.Cluster;
+import pers.yujie.dashboard.entity.Node;
 
 class AppUtilTest {
 
@@ -55,12 +63,48 @@ class AppUtilTest {
     res.add(1.1);
     System.out.println(JSONUtil.parse(res));
 //    System.out.println(res.stream().mapToDouble(n-> n).sum());
-    DoubleSummaryStatistics lss = res.stream().collect(Collectors.summarizingDouble(n-> n));
+    DoubleSummaryStatistics lss = res.stream().collect(Collectors.summarizingDouble(n -> n));
     System.out.println(lss.getAverage());
     System.out.println(lss.getMax());
     System.out.println(lss.getMin());
   }
 
+  @Test
+  void testSec() {
+    String context = "this";
+    byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue()).getEncoded();
+    System.out.println(Arrays.toString(key));
+    SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, key);
+    String encryptHex = aes.encryptHex(context);
+    System.out.println(context.equals(aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8)));
+
+    IoUtil.write(FileUtil.getOutputStream(System.getProperty("user.dir") + File.separator + "test"),
+        true, key);
+//    FileWriter writer = new FileWriter(System.getProperty("user.dir") + File.separator + "test");
+//    writer.write(Arrays.toString(key));
+    FileReader fileReader = new FileReader(
+        System.getProperty("user.dir") + File.separator + "test");
+    byte[] result = IoUtil.readBytes(
+        FileUtil.getInputStream(System.getProperty("user.dir") + File.separator + "test"), true);
+    System.out.println(Arrays.toString(result));
+    System.out.println(Arrays.equals(result, key));
+  }
+
+  @Test
+  void testSp() {
+    String str = ResourceUtil.getResource("encryption/key.text").getPath();
+    byte[] result = IoUtil.readBytes(
+        FileUtil.getInputStream(str), true);
+    System.out.println(Arrays.toString(result));
+  }
+
+  @Test
+  void tests() {
+    Node cluster = new Node(BigInteger.ONE);
+    JSONObject obj = JSONUtil.parseObj(cluster);
+    obj.set("totalSpace", 1);
+    System.out.println(obj);
+  }
 
 
 }

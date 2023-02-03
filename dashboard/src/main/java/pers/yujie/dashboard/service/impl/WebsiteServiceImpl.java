@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pers.yujie.dashboard.dao.WebsiteDao;
 import pers.yujie.dashboard.entity.Website;
+import pers.yujie.dashboard.service.ClusterService;
 import pers.yujie.dashboard.service.WebsiteService;
 import pers.yujie.dashboard.utils.IPFSUtil;
 
@@ -19,8 +20,8 @@ import pers.yujie.dashboard.utils.IPFSUtil;
 @Slf4j
 public class WebsiteServiceImpl implements WebsiteService {
 
-//  @Resource
-//  private ClusterService clusterService;
+  @Resource
+  private ClusterService clusterService;
 
   @Resource
   private WebsiteDao websiteDao;
@@ -39,17 +40,16 @@ public class WebsiteServiceImpl implements WebsiteService {
     if (id == null || name == null || path == null) {
       return "Unexpected Json format";
     }
-    File file = new File(path);
-    if (file.isDirectory()) {
-      //cluster update, also update the size
+    clusterService.removeWebsite(websiteDao.selectWebsiteById(id));
+    String message = uploadHelper(website);
+    if (message.equals("")) {
+      if (websiteDao.updateWebsite(website)) {
+        return "";
+      } else {
+        return "Unable to commit changes to the database";
+      }
     } else {
-      return "The path is not a directory";
-    }
-
-    if (websiteDao.updateWebsite(website)) {
-      return "";
-    } else {
-      return "Unable to commit changes to the database";
+      return message;
     }
   }
 
@@ -61,38 +61,40 @@ public class WebsiteServiceImpl implements WebsiteService {
     if (name == null || path == null) {
       return "Unexpected Json format";
     }
-    // set size, cid and other clusters
-    File file = new File(path);
-    if (file.isDirectory()) {
-      //cluster update, also update the size
-    } else {
-      return "The path is not a directory";
-    }
 
-    if (websiteDao.insertWebsite(website)) {
-      return "";
-    } else {
-      return "Unable to commit changes to the database";
-    }
+    String message = uploadHelper(website);
 
-//    Website addWebsite;
-//    try {
-//      List<MerkleNode> addResponse = ipfsUtil.uploadIPFS(websiteFile);
-//      String cid = addResponse.get(addResponse.size() - 1).hash.toString();
-//      log.info("Uploaded website CID: " + cid);
-//
-//      String location = clusterService.distributeWebsite(cid);
-//      addWebsite = new Website(cid, location, true);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//      return false;
-//    }
-//    return websiteDao.insertWebsite(addWebsite);
+    if (message.equals("")) {
+      if (websiteDao.insertWebsite(website)) {
+        return "";
+      } else {
+        return "Unable to commit changes to the database";
+      }
+    } else {
+      return message;
+    }
+  }
+
+  private String uploadHelper(JSONObject website) {
+    File file = new File(website.getStr("path"));
+    if (file.exists()) {
+      try {
+        List<MerkleNode> resultList = IPFSUtil.uploadIPFS(file);
+        website.set("cid", resultList.get(resultList.size() - 1).hash.toString());
+        log.info("Uploaded website CID: " + website.get("cid"));
+        clusterService.distributeWebsite(website);
+      } catch (IOException e) {
+        return "Unable to upload website to IPFS";
+      }
+    } else {
+      return "The file or directory does not exist";
+    }
+    return "";
   }
 
   @Override
   public String deleteWebsite(BigInteger id) {
-    // change size and cluster info
+    clusterService.removeWebsite(websiteDao.selectWebsiteById(id));
     if (websiteDao.deleteWebsite(id)) {
       return "";
     } else {

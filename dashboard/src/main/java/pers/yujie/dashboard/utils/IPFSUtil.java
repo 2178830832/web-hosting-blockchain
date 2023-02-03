@@ -39,11 +39,9 @@ public class IPFSUtil {
 //    return ipfs;
 //  }
 
-  public List<MerkleNode> uploadIPFS(File file) throws IOException {
-
+  public static List<MerkleNode> uploadIPFS(File file) throws IOException {
     NamedStreamable.FileWrapper fileWrapper = new NamedStreamable.FileWrapper(file);
     return ipfs.add(fileWrapper);
-
   }
 
   public List<Multihash> getPointerHashList(List<Multihash> blockHashList, String cid)

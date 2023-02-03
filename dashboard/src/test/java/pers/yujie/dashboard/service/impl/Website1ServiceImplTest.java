@@ -47,10 +47,10 @@ class Website1ServiceImplTest {
 
   @Test
   void testAr() {
-    JSONObject node = JSONUtil
-        .parseObj(new Node(BigInteger.ONE, "name", "online", BigInteger.ZERO, BigInteger.ZERO));
-    List<JSONObject> nodes = new ArrayList<>();
-    nodes.add(node);
-    System.out.println(ListUtil.lastIndexOf(nodes, "2" :: equals));
+//    JSONObject node = JSONUtil
+//        .parseObj(new Node(BigInteger.ONE, "name", "online", BigInteger.ZERO, BigInteger.ZERO));
+//    List<JSONObject> nodes = new ArrayList<>();
+//    nodes.add(node);
+//    System.out.println(ListUtil.lastIndexOf(nodes, "2" :: equals));
   }
 }

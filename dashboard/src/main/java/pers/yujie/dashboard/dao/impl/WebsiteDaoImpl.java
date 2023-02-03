@@ -24,17 +24,23 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import pers.yujie.dashboard.dao.WebsiteDao;
 import pers.yujie.dashboard.entity.Website;
+import pers.yujie.dashboard.utils.EncryptUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
 @Repository
 @Slf4j
-public class WebsiteDaoImpl implements WebsiteDao {
+public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
 
   private List<Website> websites = new ArrayList<>();
 
   @Override
   public List<Website> selectAllWebsite() {
     return websites;
+  }
+
+  @Override
+  public Website selectWebsiteById(BigInteger id) {
+    return websites.get(id.intValue());
   }
 
   @Override
@@ -45,13 +51,13 @@ public class WebsiteDaoImpl implements WebsiteDao {
           Collections.singletonList(new TypeReference<Utf8String>() {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(websiteEncodedStr)) {
+        websiteEncodedStr = EncryptUtil.aesDecrypt(websiteEncodedStr);
         websites = JSONUtil.toList(JSONUtil.parseArray(websiteEncodedStr), Website.class);
       }
     } catch (ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve website list from the database");
     }
   }
-
 
   @Override
   public boolean insertWebsite(JSONObject website) {
@@ -74,6 +80,7 @@ public class WebsiteDaoImpl implements WebsiteDao {
 
   private boolean commitChange(List<Website> updatedWebsites) {
     String websiteDecodedStr = JSONUtil.parseArray(updatedWebsites).toString();
+    websiteDecodedStr = EncryptUtil.aesEncrypt(websiteDecodedStr);
 
     try {
       EthSendTransaction response = Web3JUtil.sendTransaction("setWebsites",
@@ -91,23 +98,6 @@ public class WebsiteDaoImpl implements WebsiteDao {
       return false;
     }
 
-  }
-
-  private void setUpHelper(Website website, JSONObject websiteObj) {
-    if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("name"))) {
-      website.setName(websiteObj.getStr("name"));
-    }
-    if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("location"))) {
-      website.setLocation(websiteObj.getStr("location"));
-    }
-
-    if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("size"))) {
-      website.setSize(websiteObj.getBigInteger("size"));
-    }
-
-    if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("cid"))) {
-      website.setCid(websiteObj.getStr("cid"));
-    }
   }
 
   @Override

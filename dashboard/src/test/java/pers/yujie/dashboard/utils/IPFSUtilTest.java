@@ -21,7 +21,7 @@ class IPFSUtilTest {
 
   @BeforeAll
   static void setUp() {
-    ipfs = new IPFS("/ip4/192.168.80.128/tcp/5001");
+    ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
   }
 
   @Test
@@ -31,12 +31,12 @@ class IPFSUtilTest {
 
   @Test
   void uploadIPFS() throws IOException {
-    File file = new File("C:\\Users\\Guillered\\Desktop\\Y4\\FYP\\ipfs");
-    NamedStreamable.FileWrapper fileWrapper = new NamedStreamable.FileWrapper(file);
-    List<MerkleNode> addResult = ipfs.add(fileWrapper);
-    System.out.println(addResult);
-    addResult = ipfs.ls(addResult.get(0).hash);
-    System.out.println(addResult);
+//    File file = new File("D:\\Y4\\FYP\\info.txt");
+//    NamedStreamable.FileWrapper fileWrapper = new NamedStreamable.FileWrapper(file);
+//    List<MerkleNode> addResult = ipfs.add(fileWrapper);
+//    System.out.println(addResult);
+//    System.out.println(addResult.get(addResult.size() - 1).hash.toString());
+    System.out.println(ipfs.block.stat(Multihash.fromBase58("Qmee9j9mf4LPepownEpDYdo8gwRMbx5LmSoXLKDBqTd64j")).get("Size"));
 
   }
 

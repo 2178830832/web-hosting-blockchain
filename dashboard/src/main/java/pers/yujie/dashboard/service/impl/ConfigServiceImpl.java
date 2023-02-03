@@ -1,6 +1,5 @@
 package pers.yujie.dashboard.service.impl;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -11,30 +10,24 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
 import io.ipfs.api.IPFS;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ws.rs.ProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.ObjectUtils.Null;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import pers.yujie.dashboard.common.Constants;
+import pers.yujie.dashboard.dao.BlockDao;
 import pers.yujie.dashboard.dao.ClusterDao;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.dao.WebsiteDao;
-import pers.yujie.dashboard.entity.Node;
-import pers.yujie.dashboard.entity.Website;
 import pers.yujie.dashboard.service.ConfigService;
 import pers.yujie.dashboard.utils.DockerUtil;
 import pers.yujie.dashboard.utils.IPFSUtil;
@@ -55,22 +48,30 @@ public class ConfigServiceImpl implements ConfigService {
   @Resource
   private NodeDao nodeDao;
 
+  @Resource
+  private BlockDao blockDao;
+
   @PostConstruct
   private void initConfig() {
-//    connectIPFS(Constants.IPFS_ADDRESS);
-//    connectDocker(Constants.DOCKER_ADDRESS);
-//    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
-//
-//    websiteDao.initWebsiteDao();
-////    websiteDao.insertWebsite(new Website(BigInteger.ZERO, "name", "name",BigInteger.ZERO,"good","online"));
+    connectConfigs();
+
+    websiteDao.initWebsiteDao();
+    nodeDao.initNodeDao();
 //    JSONObject node = JSONUtil
 //        .parseObj(new Node(BigInteger.ONE, "name", "online", BigInteger.ZERO, BigInteger.ZERO));
 //    JSONObject website = JSONUtil
 //        .parseObj(new Website(BigInteger.ONE, "name", "online", BigInteger.ZERO, "location", "status"));
-//    nodeDao.initNodeDao();
 //    nodeDao.insertNode(node);
 //    websiteDao.insertWebsite(website);
-//    clusterDao.initClusterDao();
+    clusterDao.initClusterDao();
+    blockDao.initBlockDao();
+  }
+
+  @Scheduled(fixedRate = 600000)
+  private void connectConfigs() {
+    connectIPFS(Constants.IPFS_ADDRESS);
+    connectDocker(Constants.DOCKER_ADDRESS);
+    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
   }
 
   @PreDestroy

@@ -23,11 +23,12 @@ import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.entity.Node;
+import pers.yujie.dashboard.utils.EncryptUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
 @Repository
 @Slf4j
-public class NodeDaoImpl implements NodeDao {
+public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
 
   private List<Node> nodes = new ArrayList<>();
 
@@ -39,6 +40,7 @@ public class NodeDaoImpl implements NodeDao {
           Collections.singletonList(new TypeReference<Utf8String>() {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(nodeEncodedStr)) {
+        nodeEncodedStr = EncryptUtil.aesEncrypt(nodeEncodedStr);
         nodes = JSONUtil.toList(JSONUtil.parseArray(nodeEncodedStr), Node.class);
       }
     } catch (ExecutionException | InterruptedException e) {
@@ -49,6 +51,11 @@ public class NodeDaoImpl implements NodeDao {
   @Override
   public List<Node> selectAllNode() {
     return nodes;
+  }
+
+  @Override
+  public Node selectNodeById(BigInteger id) {
+    return nodes.get(new Integer(String.valueOf(id)));
   }
 
   @Override
@@ -71,6 +78,7 @@ public class NodeDaoImpl implements NodeDao {
 
   private boolean commitChange(List<Node> updatedNodes) {
     String nodeDecodedStr = JSONUtil.parseArray(updatedNodes).toString();
+    nodeDecodedStr = EncryptUtil.aesEncrypt(nodeDecodedStr);
 
     try {
       EthSendTransaction response = Web3JUtil.sendTransaction("setNodes",
@@ -90,26 +98,12 @@ public class NodeDaoImpl implements NodeDao {
 
   }
 
-  private void setUpHelper(Node node, JSONObject nodeObj) {
-    if (!StrUtil.isEmptyOrUndefined(nodeObj.getStr("name"))) {
-      node.setName(nodeObj.getStr("name"));
-    }
-    if (!StrUtil.isEmptyOrUndefined(nodeObj.getStr("totalSpace"))) {
-      node.setTotalSpace(nodeObj.getBigInteger("totalSpace"));
-    }
-
-    if (!StrUtil.isEmptyOrUndefined(nodeObj.getStr("usedSpace"))) {
-      node.setUsedSpace(nodeObj.getBigInteger("usedSpace"));
-    }
-  }
-
   @Override
   public boolean updateNode(JSONObject node) {
     List<Node> updatedNodes = SerializeUtil.clone(nodes);
     for (Node upNode : updatedNodes) {
       if (upNode.getId().equals(node.getBigInteger("id"))) {
         setUpHelper(upNode, node);
-        upNode.setUpdateTime(DateTime.now().toString());
         updatedNodes.set(updatedNodes.indexOf(upNode), upNode);
         return commitChange(updatedNodes);
       }

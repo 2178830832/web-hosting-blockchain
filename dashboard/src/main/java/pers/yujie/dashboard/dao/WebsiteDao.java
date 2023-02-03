@@ -14,6 +14,8 @@ public interface WebsiteDao {
   boolean updateWebsite(JSONObject website);
 
   boolean deleteWebsite(BigInteger id);
+
+  Website selectWebsiteById(BigInteger id);
 //  int deleteByWebsiteId(BigInteger website_id);
 //
 //  int updateWebsite(Website website);

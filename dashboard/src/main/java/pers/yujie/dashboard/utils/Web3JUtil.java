@@ -50,18 +50,6 @@ public class Web3JUtil {
   private static final BigInteger gasLimit = BigInteger.valueOf(3000000);
   private static final DefaultBlockParameterName latestBlock = DefaultBlockParameterName.LATEST;
 
-
-//  public static Web3j getClient() {
-//    if (web3 == null) {
-//      synchronized (Web3JUtil.class) {
-//        if (web3 == null) {
-//          web3 = Web3j.build(new HttpService(ip));
-//        }
-//      }
-//    }
-//    return web3;
-//  }
-
   public static BigDecimal getAccountBalance(String account)
       throws ExecutionException, InterruptedException {
     EthGetBalance ethGetBalance = web3.ethGetBalance(account, latestBlock)
