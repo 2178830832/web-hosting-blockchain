@@ -23,7 +23,7 @@ public class NodeController {
 
   @GetMapping("/list")
   public ResponseEntity<String> listNode() {
-    List<Node> nodes = nodeService.selectAllNode();
+    List<JSONObject> nodes = nodeService.selectAllNode();
 
     return new ResponseEntity<>(JSONUtil.toJsonStr(nodes), HttpStatus.OK);
   }
@@ -44,7 +44,7 @@ public class NodeController {
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
-      return new ResponseEntity<>( message, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -54,7 +54,18 @@ public class NodeController {
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
-      return new ResponseEntity<>( "error", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @PostMapping("/status")
+  public ResponseEntity<String> changeNodeStatus(@RequestBody JSONObject node) {
+    System.out.println(node);
+    String message = nodeService.changeNodeStatus(node.getBigInteger("id"));
+    if (message.equals("")) {
+      return new ResponseEntity<>("success", HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
     }
   }
 }

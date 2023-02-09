@@ -2,24 +2,18 @@ package pers.yujie.dashboard.service.impl;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import io.ipfs.multihash.Multihash;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pers.yujie.dashboard.dao.ClusterDao;
-import pers.yujie.dashboard.dao.NodeDao;
+import pers.yujie.dashboard.entity.Block;
 import pers.yujie.dashboard.entity.Cluster;
 import pers.yujie.dashboard.entity.Node;
-import pers.yujie.dashboard.entity.Website;
 import pers.yujie.dashboard.service.ClusterService;
 import pers.yujie.dashboard.service.NodeService;
-import pers.yujie.dashboard.utils.DockerUtil;
-import pers.yujie.dashboard.utils.IPFSUtil;
 
 @Service
 @Slf4j
@@ -27,20 +21,21 @@ public class ClusterServiceImpl implements ClusterService {
 
   @Resource
   private ClusterDao clusterDao;
-  @Resource
-  private NodeDao nodeDao;
+
   @Resource
   private NodeService nodeService;
-  @Resource
-  private DockerUtil dockerUtil;
-  @Resource
-  private IPFSUtil ipfsUtil;
+
+  @Override
+  public List<JSONObject> selectAllCluster() {
+    return clusterDao.selectAllCluster();
+  }
 
   @Override
   public BigInteger assignToMinCluster(BigInteger nodeSpace) {
     BigInteger minSize = BigInteger.valueOf(Integer.MAX_VALUE);
     Cluster minCluster = null;
-    List<Cluster> clusters = clusterDao.selectAllCluster();
+//    List<Cluster> clusters = clusterDao.selectAllCluster();
+    List<Cluster> clusters = new ArrayList<>();
     for (Cluster cluster : clusters) {
       BigInteger freeSpace = cluster.getTotalSpace().subtract(cluster.getUsedSpace());
       if (freeSpace.compareTo(minSize) < 0) {
@@ -57,22 +52,56 @@ public class ClusterServiceImpl implements ClusterService {
 
   @Override
   public void deleteNodeSpace(Node node) {
-    Cluster cluster = clusterDao.selectClusterById(node.getClusterId());
-    JSONObject clusterObj = JSONUtil.parseObj(cluster);
+    JSONObject cluster = clusterDao.selectClusterById(node.getClusterId());
 
-    clusterObj.set("totalSpace", cluster.getTotalSpace().subtract(node.getTotalSpace()));
-    clusterObj.set("usedSpace", cluster.getUsedSpace().subtract(node.getUsedSpace()));
-    clusterDao.updateCluster(clusterObj);
+    cluster.set("totalSpace", cluster.getBigInteger("totalSpace").subtract(node.getTotalSpace()));
+    cluster.set("usedSpace", cluster.getBigInteger("usedSpace").subtract(node.getUsedSpace()));
+    clusterDao.updateCluster(cluster);
   }
 
   @Override
-  public void distributeWebsite(JSONObject website) {
-    // do something
+  public String distributeWebsite(JSONObject website, List<Block> blockList) {
+
+    JSONObject minCluster = clusterDao.selectMinHealthyCluster();
+    BigInteger clusterSize = minCluster.getBigInteger("totalSpace")
+        .subtract(minCluster.getBigInteger("usedSpace"));
+    if (clusterSize.compareTo(website.getBigInteger("size")) < 0) {
+      return "Not enough storage space available";
+    }
+    List<JSONObject> clusters = clusterDao.selectAllCluster();
+    List<BigInteger> locations = new ArrayList<>();
+    for (JSONObject cluster : clusters) {
+      if (cluster.getStr("status").equals("healthy")) {
+        nodeService.distribute(cluster, website, blockList);
+        locations.add(cluster.getBigInteger("id"));
+        cluster.set("usedSpace", cluster.getBigInteger("usedSpace")
+            .add(website.getBigInteger("size")));
+      }
+    }
+    website.set("location", locations);
+    if (clusterDao.updateClusterBatch(clusters)) {
+      return "";
+    } else {
+      return "Unable to commit changes of the clusters";
+    }
   }
 
   @Override
-  public void removeWebsite(Website website) {
-    // do something
+  public void removeWebsite(JSONObject website) {
+    List<JSONObject> clusters = clusterDao.selectAllCluster();
+
+    List<BigInteger> locations = website.getJSONArray("location").toList(BigInteger.class);
+    for (JSONObject cluster : clusters) {
+      if (cluster.getStr("status").equals("healthy")) {
+        nodeService.releaseWebsiteSpace(cluster, website);
+        cluster.set("usedSpace", cluster.getBigInteger("usedSpace")
+            .subtract(website.getBigInteger("size")));
+        locations.remove(cluster.getBigInteger("id"));
+      }
+    }
+    website.set("location", locations);
+    clusterDao.updateClusterBatch(clusters);
+
   }
 
   //

@@ -8,7 +8,7 @@ import pers.yujie.dashboard.entity.Website;
 
 public interface WebsiteService {
 
-  List<Website> selectAllWebsite();
+  List<JSONObject> selectAllWebsite();
 
   String updateWebsite(JSONObject website);
 

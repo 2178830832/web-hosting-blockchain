@@ -4,10 +4,13 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import org.springframework.stereotype.Repository;
 import pers.yujie.dashboard.dao.BlockDao;
 import pers.yujie.dashboard.entity.Block;
 import pers.yujie.dashboard.service.BlockService;
 
+@Repository
+@Deprecated
 public class BlockServiceImpl implements BlockService {
 
   @Resource

@@ -4,7 +4,9 @@ import java.math.BigInteger;
 import java.util.List;
 import pers.yujie.dashboard.entity.Block;
 
+@Deprecated
 public interface BlockDao {
+
   void initBlockDao();
 
   List<Block> selectAllBlock();

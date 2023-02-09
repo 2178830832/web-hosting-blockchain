@@ -10,15 +10,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public abstract class BaseEntity implements Serializable {
-    public BaseEntity(BigInteger id) {
-        this.id = id;
-        this.createTime = DateTime.now().toString();
-        this.updateTime = DateTime.now().toString();
-    }
 
-    private BigInteger id;
+  public BaseEntity(BigInteger id) {
+    this.id = id;
+    this.createTime = DateTime.now().toString();
+    this.updateTime = DateTime.now().toString();
+  }
 
-    private String createTime;
+  private BigInteger id;
 
-    private String updateTime;
+  private String createTime;
+
+  private String updateTime;
 }

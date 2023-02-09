@@ -1,5 +1,7 @@
 package pers.yujie.dashboard.entity;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
 import java.math.BigInteger;
 import java.util.Date;
 import lombok.AllArgsConstructor;
@@ -9,7 +11,9 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Website extends BaseEntity {
-  public Website(BigInteger id, String cid, String name,BigInteger size, String status,String location) {
+
+  public Website(BigInteger id, String cid, String name, BigInteger size, String status,
+      JSONArray location) {
     super(id);
     this.cid = cid;
     this.status = status;
@@ -21,6 +25,7 @@ public class Website extends BaseEntity {
   public Website(BigInteger id) {
     super(id);
     this.status = "online";
+    this.location = JSONUtil.createArray();
   }
 
   private String cid;
@@ -31,6 +36,6 @@ public class Website extends BaseEntity {
 
   private BigInteger size;
 
-  private String location;
+  private JSONArray location;
 
 }

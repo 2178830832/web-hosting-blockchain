@@ -1,5 +1,7 @@
 package pers.yujie.dashboard.entity;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONUtil;
 import java.math.BigInteger;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,6 +23,7 @@ public class Node extends BaseEntity {
   public Node(BigInteger id) {
     super(id);
     this.status = "online";
+    this.blockList = JSONUtil.createArray();
   }
 
   private BigInteger clusterId;
@@ -32,4 +35,6 @@ public class Node extends BaseEntity {
   private BigInteger usedSpace;
 
   private BigInteger totalSpace;
+
+  private JSONArray blockList;
 }

@@ -2,10 +2,8 @@ package pers.yujie.dashboard.dao.impl;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.SerializeUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import java.math.BigInteger;
@@ -13,14 +11,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Utf8String;
-import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import pers.yujie.dashboard.dao.WebsiteDao;
 import pers.yujie.dashboard.entity.Website;
@@ -32,15 +26,29 @@ import pers.yujie.dashboard.utils.Web3JUtil;
 public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
 
   private List<Website> websites = new ArrayList<>();
+  private List<Website> delWebsites = new ArrayList<>();
 
   @Override
-  public List<Website> selectAllWebsite() {
-    return websites;
+  public List<JSONObject> selectAllWebsite() {
+    List<JSONObject> websiteList = new ArrayList<>();
+    for (Website website : websites) {
+      websiteList.add(JSONUtil.parseObj(website));
+    }
+    return websiteList;
   }
 
   @Override
-  public Website selectWebsiteById(BigInteger id) {
-    return websites.get(id.intValue());
+  public List<JSONObject> selectDelWebsite() {
+    List<JSONObject> websiteList = new ArrayList<>();
+    for (Website website : delWebsites) {
+      websiteList.add(JSONUtil.parseObj(website));
+    }
+    return websiteList;
+  }
+
+  @Override
+  public JSONObject selectWebsiteById(BigInteger id) {
+    return JSONUtil.parseObj(websites.get(id.intValue()));
   }
 
   @Override
@@ -52,7 +60,16 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(websiteEncodedStr)) {
         websiteEncodedStr = EncryptUtil.aesDecrypt(websiteEncodedStr);
-        websites = JSONUtil.toList(JSONUtil.parseArray(websiteEncodedStr), Website.class);
+        List<Website> websiteList = JSONUtil.toList(
+            JSONUtil.parseArray(websiteEncodedStr), Website.class);
+        websiteList = ListUtil.sortByProperty(websiteList, "id");
+        for (Website website : websiteList) {
+          if (!website.getId().equals(new BigInteger("-1"))) {
+            delWebsites = websiteList.subList(0, websiteList.indexOf(website));
+            websites = websiteList.subList(websiteList.indexOf(website), websiteList.size());
+            break;
+          }
+        }
       }
     } catch (ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve website list from the database");
@@ -71,9 +88,9 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
       id = updatedWebsites.get(updatedWebsites.size() - 1).getId().add(BigInteger.ONE);
     }
     Website addWebsite = new Website(id);
-
     setUpHelper(addWebsite, website);
     updatedWebsites.add(addWebsite);
+    updatedWebsites.addAll(delWebsites);
 
     return commitChange(updatedWebsites);
   }
@@ -108,6 +125,7 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
         setUpHelper(upWebsite, website);
         upWebsite.setUpdateTime(DateTime.now().toString());
         updatedWebsites.set(updatedWebsites.indexOf(upWebsite), upWebsite);
+        updatedWebsites.addAll(delWebsites);
         return commitChange(updatedWebsites);
       }
     }
@@ -117,14 +135,23 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
   @Override
   public boolean deleteWebsite(BigInteger id) {
     List<Website> updatedWebsites = SerializeUtil.clone(websites);
+    List<Website> updatedDelWebsites = SerializeUtil.clone(delWebsites);
 
-    updatedWebsites.removeIf(website -> website.getId().equals(id));
     for (Website website : updatedWebsites) {
-      if (website.getId().compareTo(id) > 0) {
-        website.setId(website.getId().subtract(BigInteger.ONE));
+      if (website.getId().equals(id)) {
+        website.setStatus("deleted");
+        updatedDelWebsites.add(website);
+        updatedWebsites.remove(website);
+        for (Website websiteIter : updatedWebsites) {
+          if (websiteIter.getId().compareTo(id) > 0) {
+            websiteIter.setId(websiteIter.getId().subtract(BigInteger.ONE));
+          }
+        }
+        updatedWebsites.addAll(updatedDelWebsites);
+
+        return commitChange(updatedWebsites);
       }
     }
-
-    return commitChange(updatedWebsites);
+    return false;
   }
 }

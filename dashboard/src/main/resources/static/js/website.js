@@ -128,7 +128,7 @@ $(function () {
     url: '/website/list',
     success: function (data) {
       table.DataTable({
-        data: JSON.parse(data),
+        data: data,
         columns: [
           {data: 'id'},
           {data: 'name'},

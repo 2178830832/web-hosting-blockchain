@@ -3,6 +3,9 @@ package pers.yujie.dashboard.dao.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
+import java.math.BigInteger;
+import java.util.List;
+import pers.yujie.dashboard.entity.BaseEntity;
 import pers.yujie.dashboard.entity.Cluster;
 import pers.yujie.dashboard.entity.Node;
 import pers.yujie.dashboard.entity.Website;
@@ -57,7 +60,7 @@ public class BaseDaoImpl {
       website.setName(websiteObj.getStr("name"));
     }
     if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("location"))) {
-      website.setLocation(websiteObj.getStr("location"));
+      website.setLocation(websiteObj.getJSONArray("location"));
     }
 
     if (!StrUtil.isEmptyOrUndefined(websiteObj.getStr("size"))) {
@@ -72,4 +75,5 @@ public class BaseDaoImpl {
       website.setStatus(websiteObj.getStr("status"));
     }
   }
+
 }

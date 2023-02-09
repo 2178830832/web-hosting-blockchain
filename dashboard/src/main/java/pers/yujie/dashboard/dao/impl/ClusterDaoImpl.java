@@ -2,7 +2,6 @@ package pers.yujie.dashboard.dao.impl;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.SerializeUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import java.math.BigInteger;
@@ -27,8 +26,42 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
   private List<Cluster> clusters = new ArrayList<>();
 
   @Override
-  public List<Cluster> selectAllCluster() {
-    return clusters;
+  public List<JSONObject> selectAllCluster() {
+    List<JSONObject> clusterList = new ArrayList<>();
+    for (Cluster cluster : clusters) {
+      clusterList.add(JSONUtil.parseObj(cluster));
+    }
+    return clusterList;
+  }
+
+  @Override
+  public JSONObject selectMinCluster() {
+    JSONObject minCluster = JSONUtil.createObj();
+    BigInteger size = BigInteger.ZERO;
+    for (Cluster cluster : clusters) {
+      BigInteger clusterSize = cluster.getTotalSpace().subtract(cluster.getUsedSpace());
+      if (clusterSize.compareTo(size) <= 0) {
+        size = clusterSize;
+        minCluster = JSONUtil.parseObj(cluster);
+      }
+    }
+    return minCluster;
+  }
+
+  @Override
+  public JSONObject selectMinHealthyCluster() {
+    JSONObject minCluster = JSONUtil.createObj();
+    BigInteger size = BigInteger.ZERO;
+    for (Cluster cluster : clusters) {
+      if (cluster.getStatus().equals("healthy")) {
+        BigInteger clusterSize = cluster.getTotalSpace().subtract(cluster.getUsedSpace());
+        if (clusterSize.compareTo(size) <= 0) {
+          size = clusterSize;
+          minCluster = JSONUtil.parseObj(cluster);
+        }
+      }
+    }
+    return minCluster;
   }
 
   @Override
@@ -76,8 +109,20 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
   }
 
   @Override
-  public Cluster selectClusterById(BigInteger id) {
-    return clusters.get(id.intValue());
+  public boolean updateClusterBatch(List<JSONObject> clusterList) {
+    List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
+    for (JSONObject cluster : clusterList) {
+      if (updatedClusters.contains(cluster.toBean(Cluster.class))) {
+        cluster.set("updateTime", DateTime.now().toString());
+        updatedClusters.set(cluster.getInt("id"), cluster.toBean(Cluster.class));
+      }
+    }
+    return commitChange(updatedClusters);
+  }
+
+  @Override
+  public JSONObject selectClusterById(BigInteger id) {
+    return JSONUtil.parseObj(clusters.get(id.intValue()));
   }
 
   //  @Override

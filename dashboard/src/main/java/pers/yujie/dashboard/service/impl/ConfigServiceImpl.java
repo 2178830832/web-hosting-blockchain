@@ -10,6 +10,9 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
 import io.ipfs.api.IPFS;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +31,7 @@ import pers.yujie.dashboard.dao.BlockDao;
 import pers.yujie.dashboard.dao.ClusterDao;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.dao.WebsiteDao;
+import pers.yujie.dashboard.entity.Node;
 import pers.yujie.dashboard.service.ConfigService;
 import pers.yujie.dashboard.utils.DockerUtil;
 import pers.yujie.dashboard.utils.IPFSUtil;
@@ -48,30 +52,26 @@ public class ConfigServiceImpl implements ConfigService {
   @Resource
   private NodeDao nodeDao;
 
-  @Resource
-  private BlockDao blockDao;
-
   @PostConstruct
   private void initConfig() {
-    connectConfigs();
+    connectIPFS(Constants.IPFS_ADDRESS);
+    connectDocker(Constants.DOCKER_ADDRESS);
+    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
 
-    websiteDao.initWebsiteDao();
-    nodeDao.initNodeDao();
-//    JSONObject node = JSONUtil
-//        .parseObj(new Node(BigInteger.ONE, "name", "online", BigInteger.ZERO, BigInteger.ZERO));
 //    JSONObject website = JSONUtil
 //        .parseObj(new Website(BigInteger.ONE, "name", "online", BigInteger.ZERO, "location", "status"));
 //    nodeDao.insertNode(node);
 //    websiteDao.insertWebsite(website);
-    clusterDao.initClusterDao();
-    blockDao.initBlockDao();
-  }
 
-  @Scheduled(fixedRate = 600000)
-  private void connectConfigs() {
-    connectIPFS(Constants.IPFS_ADDRESS);
-    connectDocker(Constants.DOCKER_ADDRESS);
-    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
+    if (Web3JUtil.getAddress() != null) {
+      websiteDao.initWebsiteDao();
+      nodeDao.initNodeDao();
+      clusterDao.initClusterDao();
+//
+//          JSONObject node = JSONUtil
+//        .parseObj(new Node(BigInteger.ZERO));
+//          nodeDao.insertNode(node);
+    }
   }
 
   @PreDestroy
@@ -185,6 +185,7 @@ public class ConfigServiceImpl implements ConfigService {
       return status;
     } catch (IOException | RuntimeException e) {
       log.error("Error when requesting ipfs id");
+      IPFSUtil.setAddress(null);
     }
     return defaultObj;
   }
@@ -200,6 +201,7 @@ public class ConfigServiceImpl implements ConfigService {
       return status;
     } catch (ProcessingException e) {
       log.error("Error when requesting docker info");
+      DockerUtil.setAddress(null);
     }
     return defaultObj;
   }
@@ -220,6 +222,7 @@ public class ConfigServiceImpl implements ConfigService {
       return status;
     } catch (IOException | ExecutionException | InterruptedException | IllegalArgumentException e) {
       log.error("Error when requesting web3j info");
+      Web3JUtil.setAddress(null);
     }
 
     return defaultObj;

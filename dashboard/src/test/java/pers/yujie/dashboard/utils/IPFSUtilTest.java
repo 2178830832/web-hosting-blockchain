@@ -1,5 +1,8 @@
 package pers.yujie.dashboard.utils;
 
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import io.ipfs.api.IPFS;
 import io.ipfs.api.MerkleNode;
 import io.ipfs.api.NamedStreamable;
@@ -80,5 +83,30 @@ class IPFSUtilTest {
       getBlockList(node.hash);
     }
 
+  }
+
+  void set(List<String> strs, JSONObject object) {
+    strs.add("fhaofodfj00");
+    object.set("2", "2");
+  }
+
+  @Test
+  void testSize() throws IOException {
+//    IPFSUtil.setIpfs(ipfs);
+//    List<String> blocks = IPFSUtil.getBlockList("QmevHYpfvatpQ7rYAGb5mCxHZDsCELk1seBUr3Hfu97H14");
+//    JSONArray arr = JSONUtil.parseArray(blocks);
+//
+    JSONObject object = new JSONObject();
+    List<String> strs = new ArrayList<>();
+    strs.add("1232sfesrf");
+    System.out.println(object);
+    set(strs,object);
+    System.out.println(object);
+
+//    List<Multihash> test = new ArrayList<>();
+//    test.add(Multihash.fromBase58("QmagzniU88tnUk6VApGN218VywcnVW4VmLCfAWra3e3bNJ"));
+//    JSONArray arr1 = JSONUtil.parseArray(test);
+//    System.out.println(test.removeAll(test));
+//    System.out.println(test);
   }
 }

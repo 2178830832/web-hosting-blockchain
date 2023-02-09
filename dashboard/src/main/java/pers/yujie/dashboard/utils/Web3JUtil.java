@@ -29,8 +29,6 @@ import org.web3j.utils.Convert.Unit;
 @Slf4j
 public class Web3JUtil {
 
-  private static final String ip = "http://127.0.0.1:8545";
-
   @Getter
   @Setter
   private static Web3j web3;

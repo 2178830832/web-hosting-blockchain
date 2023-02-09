@@ -10,6 +10,45 @@ table.on('click', 'tr', function () {
   dataToUpdate['id'] = row.id
   $(".modal #name-label").text('Node name: ' + row['name'])
   $(".modal #capacity-label").text('Node capacity: ' + row['totalSpace'])
+
+  const onlineButton = $(".modal #online-button")
+  if (row['status'] === 'online') {
+    onlineButton.text('Shut down node')
+  } else {
+    onlineButton.text('Open node')
+  }
+
+  onlineButton.click(function() {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You are changing the status of this node",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#245be8',
+      confirmButtonText: 'Confirm'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const text = $(this).text();
+
+        $.ajax({
+          type: "POST",
+          url: '/node/status',
+          contentType: "application/json",
+          data: JSON.stringify(dataToUpdate),
+          success: function() {
+            Swal.fire('Success!', 'Your node has been updated.', 'success')
+            .then(function () {
+              location.reload()
+            })
+          },
+          error: function(error) {
+            Swal.fire('Unable to change node status', error.responseText, 'error')
+          }
+        });
+      }})
+
+  });
+
   $(".modal #delete-button").click(function () {
     Swal.fire({
       title: 'Are you sure?',
@@ -117,7 +156,7 @@ createForm.submit(function (e) {
     }
   })
 })
-//
+
 $("#add-button")[0].onclick = function () {
   $(".modal #create-button").click(function () {
     createForm.validate();

@@ -3,10 +3,13 @@ package pers.yujie.dashboard.utils;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
+import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.command.ExecStartResultCallback;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,7 +24,7 @@ import pers.yujie.dashboard.common.Constants;
 
 @Component
 @Slf4j
-//@SuppressWarnings("deprecation")
+@SuppressWarnings("deprecation")
 public class DockerUtil {
 
   @Getter
@@ -44,29 +47,44 @@ public class DockerUtil {
     return containerNameList;
   }
 
-  public void startContainer(String containerName) {
+  public static void removeContainer(String containerName) {
     List<Container> containers = docker.listContainersCmd()
         .withNameFilter(Collections.singleton(containerName))
         .withShowAll(true)
         .exec();
 
-    if (containers.size() < 1) {
-      CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo:latest")
-          .withName(containerName)
-//          .withVolumes(Volume.parse(volumes + containerName + ":/data/ipfs"))
-          .exec();
-      docker.startContainerCmd(container.getId()).exec();
-      return;
-    }
-    String status = containers.get(0).getStatus().toLowerCase(Locale.ROOT);
-    if (status.contains("created")) {
-      docker.startContainerCmd(containers.get(0).getId()).exec();
-    } else if (status.contains("exited")) {
-      docker.restartContainerCmd(containers.get(0).getId()).exec();
+    if (containers.size() > 0) {
+      docker.stopContainerCmd(containers.get(0).getId()).exec();
+      docker.removeContainerCmd(containers.get(0).getId()).exec();
     }
   }
 
-  public void execDockerCmd(String containerName, String... cmd) {
+  public static void startContainer(String containerName) {
+    removeContainer(containerName);
+    CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo:latest")
+        .withName(containerName)
+        .withBinds(new Bind(Constants.DOCKER_VOLUME + File.separator + containerName,
+            new Volume("/data/ipfs")))
+        .exec();
+    docker.startContainerCmd(container.getId()).exec();
+
+//    if (containers.size() < 1) {
+//      CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo:latest")
+//          .withName(containerName)
+////          .withVolumes(Volume.parse(volumes + containerName + ":/data/ipfs"))
+//          .exec();
+//      docker.startContainerCmd(container.getId()).exec();
+//      return;
+//    }
+//    String status = containers.get(0).getStatus().toLowerCase(Locale.ROOT);
+//    if (status.contains("created")) {
+//      docker.startContainerCmd(containers.get(0).getId()).exec();
+//    } else if (status.contains("exited")) {
+//      docker.restartContainerCmd(containers.get(0).getId()).exec();
+//    }
+  }
+
+  public static void execDockerCmd(String containerName, String... cmd) {
     ExecCreateCmdResponse execCreateCmdResponse = docker.execCreateCmd(containerName)
         .withAttachStdout(true)
         .withAttachStderr(true)

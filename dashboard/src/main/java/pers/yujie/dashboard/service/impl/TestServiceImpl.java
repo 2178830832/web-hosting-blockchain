@@ -27,15 +27,17 @@ import pers.yujie.dashboard.service.TestService;
 @Slf4j
 @Service
 public class TestServiceImpl implements TestService {
+
   List<Double> results = new ArrayList<>();
   private final JSONObject resultObj = JSONUtil.createObj();
   int i = 0;
+
   @Override
   public JSONObject getTestResult() {
     if (results.size() < 1) {
       return resultObj;
     }
-    DoubleSummaryStatistics dss = results.stream().collect(Collectors.summarizingDouble(n-> n));
+    DoubleSummaryStatistics dss = results.stream().collect(Collectors.summarizingDouble(n -> n));
     resultObj.set("avg", dss.getAverage());
     resultObj.set("max", dss.getMax());
     resultObj.set("min", dss.getMin());

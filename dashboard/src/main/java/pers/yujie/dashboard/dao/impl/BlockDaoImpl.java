@@ -19,6 +19,7 @@ import pers.yujie.dashboard.utils.Web3JUtil;
 
 @Repository
 @Slf4j
+@Deprecated
 public class BlockDaoImpl implements BlockDao {
 
   private List<Block> blocks = new ArrayList<>();
@@ -48,9 +49,9 @@ public class BlockDaoImpl implements BlockDao {
   public List<Block> selectBlockByNode(BigInteger nodeId) {
     List<Block> blockList = new ArrayList<>();
     for (Block block : blocks) {
-      if (block.getNodeId().equals(nodeId)) {
-        blockList.add(block);
-      }
+//      if (block.getNodeId().equals(nodeId)) {
+//        blockList.add(block);
+//      }
     }
     return blockList;
   }

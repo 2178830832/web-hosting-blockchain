@@ -32,6 +32,8 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
 
   private List<Node> nodes = new ArrayList<>();
 
+  private List<Node> delNodes = new ArrayList<>();
+
   @Override
   public void initNodeDao() {
     try {
@@ -40,8 +42,17 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
           Collections.singletonList(new TypeReference<Utf8String>() {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(nodeEncodedStr)) {
-        nodeEncodedStr = EncryptUtil.aesEncrypt(nodeEncodedStr);
-        nodes = JSONUtil.toList(JSONUtil.parseArray(nodeEncodedStr), Node.class);
+        nodeEncodedStr = EncryptUtil.aesDecrypt(nodeEncodedStr);
+        List<Node> nodeList = JSONUtil.toList(JSONUtil.parseArray(nodeEncodedStr), Node.class);
+        nodeList = ListUtil.sortByProperty(nodeList, "id");
+
+        for (Node node : nodeList) {
+          if (!node.getId().equals(new BigInteger("-1"))) {
+            delNodes = nodeList.subList(0, nodeList.indexOf(node));
+            nodes = nodeList.subList(nodeList.indexOf(node), nodeList.size());
+            break;
+          }
+        }
       }
     } catch (ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve node list from the database");
@@ -49,13 +60,38 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
   }
 
   @Override
-  public List<Node> selectAllNode() {
-    return nodes;
+  public List<JSONObject> selectAllNode() {
+    List<JSONObject> nodeList = new ArrayList<>();
+    for (Node node : nodes) {
+      nodeList.add(JSONUtil.parseObj(node));
+    }
+    return nodeList;
   }
 
   @Override
-  public Node selectNodeById(BigInteger id) {
-    return nodes.get(new Integer(String.valueOf(id)));
+  public List<JSONObject> selectNodeByCluster(BigInteger clusterId) {
+    List<JSONObject> nodeList = new ArrayList<>();
+    for (Node node : nodes) {
+      if (node.getClusterId().equals(clusterId)) {
+        nodeList.add(JSONUtil.parseObj(node));
+      }
+    }
+    return nodeList;
+  }
+
+  @Override
+  public JSONObject selectNodeById(BigInteger id) {
+    return JSONUtil.parseObj(nodes.get(id.intValue()));
+  }
+
+  @Override
+  public JSONObject selectNodeByName(String name) {
+    for (Node node : nodes) {
+      if (node.getName().equals(name)) {
+        return JSONUtil.parseObj(node);
+      }
+    }
+    return null;
   }
 
   @Override
@@ -72,7 +108,7 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
     setUpHelper(addNode, node);
     addNode.setUsedSpace(BigInteger.ZERO);
     updatedNodes.add(addNode);
-
+    updatedNodes.addAll(delNodes);
     return commitChange(updatedNodes);
   }
 
@@ -105,6 +141,7 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
       if (upNode.getId().equals(node.getBigInteger("id"))) {
         setUpHelper(upNode, node);
         updatedNodes.set(updatedNodes.indexOf(upNode), upNode);
+        updatedNodes.addAll(delNodes);
         return commitChange(updatedNodes);
       }
     }
@@ -112,25 +149,38 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
   }
 
   @Override
+  public boolean updateNodeBatch(List<JSONObject> nodeList) {
+    List<Node> updatedNodes = SerializeUtil.clone(nodes);
+    for (JSONObject node : nodeList) {
+      if (updatedNodes.contains(node.toBean(Node.class))) {
+        node.set("updateTime", DateTime.now().toString());
+        updatedNodes.set(node.getInt("id"), node.toBean(Node.class));
+      }
+    }
+    return commitChange(updatedNodes);
+  }
+
+  @Override
   public boolean deleteNode(BigInteger id) {
     List<Node> updatedNodes = SerializeUtil.clone(nodes);
+    List<Node> updatedDelNodes = SerializeUtil.clone(delNodes);
 
-    updatedNodes.removeIf(node -> node.getId().equals(id));
-
-//    for (int i = 0; i < updatedNodes.size(); i++) {
-//      if (updatedNodes.get(i).getId().equals(id)) {
-//        updatedNodes.remove(i);
-//        // do something
-//        break;
-//      }
-//    }
     for (Node node : updatedNodes) {
-      if (node.getId().compareTo(id) > 0) {
-        node.setId(node.getId().subtract(BigInteger.ONE));
+      if (node.getId().equals(id)) {
+        node.setStatus("deleted");
+        updatedDelNodes.add(node);
+        updatedNodes.remove(node);
+        for (Node nodeIter : updatedNodes) {
+          if (nodeIter.getId().compareTo(id) > 0) {
+            nodeIter.setId(nodeIter.getId().subtract(BigInteger.ONE));
+          }
+        }
+        updatedNodes.addAll(updatedDelNodes);
+        return commitChange(updatedNodes);
       }
     }
 
-    return commitChange(updatedNodes);
+    return false;
   }
 
 //

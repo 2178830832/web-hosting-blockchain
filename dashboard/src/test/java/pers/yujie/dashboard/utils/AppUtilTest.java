@@ -1,5 +1,6 @@
 package pers.yujie.dashboard.utils;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileReader;
@@ -8,6 +9,7 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import java.io.File;
@@ -20,8 +22,10 @@ import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
+import pers.yujie.dashboard.entity.Block;
 import pers.yujie.dashboard.entity.Cluster;
 import pers.yujie.dashboard.entity.Node;
+import pers.yujie.dashboard.entity.Website;
 
 class AppUtilTest {
 
@@ -100,11 +104,33 @@ class AppUtilTest {
 
   @Test
   void tests() {
-    Node cluster = new Node(BigInteger.ONE);
-    JSONObject obj = JSONUtil.parseObj(cluster);
-    obj.set("totalSpace", 1);
-    System.out.println(obj);
+    Node node = new Node(BigInteger.ZERO);
+    node.getBlockList().add(new Block("", BigInteger.ZERO));
+    System.out.println(node.getBlockList().get(0));
+
+    JSONObject nodeo = JSONUtil.parseObj(node);
+    List<Block> nodeBlockList = nodeo.getJSONArray("blockList").toList(Block.class);
+    System.out.println(nodeo.getJSONArray("blockList").contains(new Block("", BigInteger.ZERO)));
   }
 
+  @Test
+  void testcase() {
+    JSONArray location = new JSONArray();
+    location.add(new BigInteger("0"));
+    location.add(new BigInteger("1"));
+    location.add(new BigInteger("2"));
+    System.out.println(location);
+    Website website = new Website(BigInteger.ZERO);
+    website.setLocation(location);
+    JSONObject webObj = JSONUtil.parseObj(website);
+    System.out.println(webObj.getJSONArray("location").containsAll(location));
+    location = new JSONArray();
+    location.add(new BigInteger("0"));
+    location.add(new BigInteger("1"));
+    System.out.println(webObj);
+    System.out.println(location);
+    webObj.getJSONArray("location").removeAll(location);
+    System.out.println(webObj);
+  }
 
 }

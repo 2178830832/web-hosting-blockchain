@@ -28,7 +28,7 @@ public class WebsiteController {
 
   @GetMapping("/list")
   public ResponseEntity<String> listWebsite() {
-    List<Website> websites = websiteService.selectAllWebsite();
+    List<JSONObject> websites = websiteService.selectAllWebsite();
 
     return new ResponseEntity<>(JSONUtil.toJsonStr(websites), HttpStatus.OK);
   }
@@ -39,7 +39,7 @@ public class WebsiteController {
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
-      return new ResponseEntity<>( message, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -49,7 +49,7 @@ public class WebsiteController {
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
-      return new ResponseEntity<>( message, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -59,7 +59,7 @@ public class WebsiteController {
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
-      return new ResponseEntity<>( "error", HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
     }
   }
 

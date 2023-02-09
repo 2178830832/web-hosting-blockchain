@@ -6,9 +6,10 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class Cluster extends BaseEntity{
+public class Cluster extends BaseEntity {
 
-  public Cluster(BigInteger id, String name, String status,BigInteger usedSpace, BigInteger totalSpace) {
+  public Cluster(BigInteger id, String name, String status, BigInteger usedSpace,
+      BigInteger totalSpace) {
     super(id);
     this.name = name;
     this.status = status;

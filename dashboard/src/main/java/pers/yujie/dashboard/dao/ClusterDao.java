@@ -7,16 +7,20 @@ import pers.yujie.dashboard.entity.Cluster;
 
 public interface ClusterDao {
 
-  List<Cluster> selectAllCluster();
+  List<JSONObject> selectAllCluster();
 
   void initClusterDao();
 
   boolean updateCluster(JSONObject cluster);
 
-  Cluster selectClusterById(BigInteger id);
+  boolean updateClusterBatch(List<JSONObject> clusterList);
 
-//  List<Cluster1> selectAllHealthyCluster();
-//
+  JSONObject selectClusterById(BigInteger id);
+
+  JSONObject selectMinCluster();
+
+  JSONObject selectMinHealthyCluster();
+
 //  BigInteger selectFreeSpaceByCluster(String clusterName);
 //
 //  void updateClusterBatch(List<Cluster1> clusters);

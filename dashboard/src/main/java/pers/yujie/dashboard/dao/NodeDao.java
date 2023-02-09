@@ -9,13 +9,19 @@ public interface NodeDao {
 
   void initNodeDao();
 
-  List<Node> selectAllNode();
+  List<JSONObject> selectAllNode();
 
-  Node selectNodeById(BigInteger id);
+  List<JSONObject> selectNodeByCluster(BigInteger clusterId);
+
+  JSONObject selectNodeById(BigInteger id);
+
+  JSONObject selectNodeByName(String name);
 
   boolean insertNode(JSONObject node);
 
   boolean updateNode(JSONObject node);
+
+  boolean updateNodeBatch(List<JSONObject> nodeList);
 
   boolean deleteNode(BigInteger id);
 

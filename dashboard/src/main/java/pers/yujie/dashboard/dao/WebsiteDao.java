@@ -9,18 +9,22 @@ import pers.yujie.dashboard.entity.Website;
 public interface WebsiteDao {
 
   void initWebsiteDao();
+
   boolean insertWebsite(JSONObject website);
 
   boolean updateWebsite(JSONObject website);
 
   boolean deleteWebsite(BigInteger id);
 
-  Website selectWebsiteById(BigInteger id);
-//  int deleteByWebsiteId(BigInteger website_id);
+  JSONObject selectWebsiteById(BigInteger id);
+
+  //  int deleteByWebsiteId(BigInteger website_id);
 //
 //  int updateWebsite(Website website);
 //
 //  Website selectByWebsiteId(BigInteger website_id);
 //
-  List<Website> selectAllWebsite();
+  List<JSONObject> selectAllWebsite();
+
+  List<JSONObject> selectDelWebsite();
 }
