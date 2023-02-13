@@ -32,7 +32,7 @@ public class BlockDaoImpl implements BlockDao {
           Collections.singletonList(new TypeReference<Utf8String>() {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(blockEncodedStr)) {
-        blockEncodedStr = EncryptUtil.aesDecrypt(blockEncodedStr);
+        blockEncodedStr = EncryptUtil.decryptAES(blockEncodedStr);
         blocks = JSONUtil.toList(JSONUtil.parseArray(blockEncodedStr), Block.class);
       }
     } catch (ExecutionException | InterruptedException e) {
@@ -58,7 +58,7 @@ public class BlockDaoImpl implements BlockDao {
 
   private boolean commitChange(List<Block> updatedBlocks) {
     String blockDecodedStr = JSONUtil.parseArray(updatedBlocks).toString();
-    blockDecodedStr = EncryptUtil.aesEncrypt(blockDecodedStr);
+    blockDecodedStr = EncryptUtil.encryptAES(blockDecodedStr);
 
     try {
       EthSendTransaction response = Web3JUtil.sendTransaction("setBlocks",

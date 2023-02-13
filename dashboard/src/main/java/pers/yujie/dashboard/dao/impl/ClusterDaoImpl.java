@@ -75,7 +75,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
         createInitialClusters();
         return;
       }
-      clusterEncodedStr = EncryptUtil.aesDecrypt(clusterEncodedStr);
+      clusterEncodedStr = EncryptUtil.decryptAES(clusterEncodedStr);
       clusters = JSONUtil.toList(JSONUtil.parseArray(clusterEncodedStr), Cluster.class);
     } catch (ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve cluster list from the database");
@@ -165,7 +165,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
 
   private boolean commitChange(List<Cluster> updatedClusters) {
     String clusterDecodedStr = JSONUtil.parseArray(updatedClusters).toString();
-    clusterDecodedStr = EncryptUtil.aesEncrypt(clusterDecodedStr);
+    clusterDecodedStr = EncryptUtil.encryptAES(clusterDecodedStr);
 
     try {
       EthSendTransaction response = Web3JUtil.sendTransaction("setClusters",

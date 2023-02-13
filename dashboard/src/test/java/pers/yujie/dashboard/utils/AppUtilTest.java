@@ -1,20 +1,28 @@
 package pers.yujie.dashboard.utils;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.URLUtil;
+import cn.hutool.crypto.PemUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.RSA;
+import cn.hutool.crypto.asymmetric.Sign;
+import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.sun.jndi.toolkit.url.UrlUtil;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,6 +139,21 @@ class AppUtilTest {
     System.out.println(location);
     webObj.getJSONArray("location").removeAll(location);
     System.out.println(webObj);
+  }
+
+  @Test
+  void testss() {
+    byte[] key = IoUtil.readBytes(FileUtil.getInputStream(
+        ResourceUtil.getResource("encryption/key").getPath()), true);
+
+    RSA rsa = new RSA(PemUtil.readPemPrivateKey(FileUtil.getInputStream(
+        ResourceUtil.getResource("encryption/private").getPath())),
+        PemUtil.readPemPublicKey(FileUtil.getInputStream(
+            ResourceUtil.getResource("encryption/public").getPath())));
+    Sign sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, rsa.getPrivateKeyBase64(),
+        rsa.getPublicKeyBase64());
+    String str= Base64.encode(sign.sign("content"));
+    System.out.println(sign.verify("content".getBytes(StandardCharsets.UTF_8), Base64.decode(str)));
   }
 
 }

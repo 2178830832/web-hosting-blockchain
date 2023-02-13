@@ -31,7 +31,8 @@ table.on('click', 'tr', function () {
             })
           },
           error: function (response) {
-            Swal.fire('Unable to delete website', response.responseText, 'error')
+            Swal.fire('Unable to delete website', response.responseText,
+                'error')
           }
         });
       }
@@ -60,7 +61,8 @@ table.on('click', 'tr', function () {
             })
           },
           error: function (response) {
-            Swal.fire('Unable to update website', response.responseText, 'error')
+            Swal.fire('Unable to update website', response.responseText,
+                'error')
           }
         });
       }
@@ -124,11 +126,34 @@ $("#add-button")[0].onclick = function () {
 }
 
 $(function () {
+  // addHeader()
+  // Read the RSA private key from the local file using the FileReader API
+  const fileReader = new FileReader();
+  let encryptedUrl
+  fileReader.onload = function (e) {
+    const privateKey = e.target.result;
+    // Set the default header for all future AJAX requests
+    $.ajaxSetup({
+      beforeSend: function (xhr) {
+        // Encrypt the URL using the RSA private key
+        const encrypt = new JSEncrypt();
+        encrypt.setKey(privateKey);
+        encryptedUrl = encrypt.encrypt('/website/list');
+        // Add the encrypted URL to the header of the AJAX request
+        xhr.setRequestHeader("Encrypted-Url", encryptedUrl);
+      }
+    });
+  };
+  const file = new Blob(['/encryption/public'], {type: 'text/plain'});
+  fileReader.readAsText(file);
   $.ajax({
     url: '/website/list',
+    // headers: {
+    //   "Encrypted-Url": encryptedUrl
+    // },
     success: function (data) {
       table.DataTable({
-        data: data,
+        data: JSON.parse(data),
         columns: [
           {data: 'id'},
           {data: 'name'},

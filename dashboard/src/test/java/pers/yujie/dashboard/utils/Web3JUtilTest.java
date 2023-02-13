@@ -1,16 +1,8 @@
 package pers.yujie.dashboard.utils;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.github.dockerjava.api.command.DockerCmdExecFactory;
-import com.github.dockerjava.core.DefaultDockerClientConfig;
-import com.github.dockerjava.core.DockerClientBuilder;
-import com.github.dockerjava.core.DockerClientConfig;
-import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
-import io.ipfs.api.IPFS;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -19,11 +11,8 @@ import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.Bytes;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.abi.datatypes.Utf8String;
-import org.web3j.abi.datatypes.generated.Bytes32;
-import org.web3j.abi.datatypes.primitive.Byte;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
@@ -70,7 +59,7 @@ class Web3JUtilTest {
       if (clusterEncodedStr == null || clusterEncodedStr.equals("")) {
         return;
       }
-      clusterEncodedStr = EncryptUtil.aesDecrypt(clusterEncodedStr);
+      clusterEncodedStr = EncryptUtil.decryptAES(clusterEncodedStr);
       System.out.println(JSONUtil.toList(JSONUtil.parseArray(clusterEncodedStr), Cluster.class));
     } catch (ExecutionException | InterruptedException | IOException ignored) {
 

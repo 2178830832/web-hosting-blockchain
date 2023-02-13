@@ -59,7 +59,7 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
           Collections.singletonList(new TypeReference<Utf8String>() {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(websiteEncodedStr)) {
-        websiteEncodedStr = EncryptUtil.aesDecrypt(websiteEncodedStr);
+        websiteEncodedStr = EncryptUtil.decryptAES(websiteEncodedStr);
         List<Website> websiteList = JSONUtil.toList(
             JSONUtil.parseArray(websiteEncodedStr), Website.class);
         websiteList = ListUtil.sortByProperty(websiteList, "id");
@@ -97,7 +97,7 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
 
   private boolean commitChange(List<Website> updatedWebsites) {
     String websiteDecodedStr = JSONUtil.parseArray(updatedWebsites).toString();
-    websiteDecodedStr = EncryptUtil.aesEncrypt(websiteDecodedStr);
+    websiteDecodedStr = EncryptUtil.encryptAES(websiteDecodedStr);
 
     try {
       EthSendTransaction response = Web3JUtil.sendTransaction("setWebsites",

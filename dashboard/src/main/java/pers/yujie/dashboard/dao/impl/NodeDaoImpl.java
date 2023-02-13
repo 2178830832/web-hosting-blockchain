@@ -11,14 +11,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.DynamicArray;
-import org.web3j.abi.datatypes.DynamicStruct;
 import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import pers.yujie.dashboard.dao.NodeDao;
@@ -42,7 +37,7 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
           Collections.singletonList(new TypeReference<Utf8String>() {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(nodeEncodedStr)) {
-        nodeEncodedStr = EncryptUtil.aesDecrypt(nodeEncodedStr);
+        nodeEncodedStr = EncryptUtil.decryptAES(nodeEncodedStr);
         List<Node> nodeList = JSONUtil.toList(JSONUtil.parseArray(nodeEncodedStr), Node.class);
         nodeList = ListUtil.sortByProperty(nodeList, "id");
 
@@ -114,7 +109,7 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
 
   private boolean commitChange(List<Node> updatedNodes) {
     String nodeDecodedStr = JSONUtil.parseArray(updatedNodes).toString();
-    nodeDecodedStr = EncryptUtil.aesEncrypt(nodeDecodedStr);
+    nodeDecodedStr = EncryptUtil.encryptAES(nodeDecodedStr);
 
     try {
       EthSendTransaction response = Web3JUtil.sendTransaction("setNodes",
