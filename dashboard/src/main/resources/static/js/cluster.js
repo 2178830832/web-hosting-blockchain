@@ -1,13 +1,12 @@
 const table = $('#cluster')
 
-// table.on('click', 'tr', function () {
-//   const data = table.DataTable().row(this).data();
-//   alert('You clicked on ' + data[0] + "'s row");
-// })
-
 $(function () {
-  $.ajax({
+  const jqXHR = $.ajax({
     url: '/cluster/list',
+    headers: setHeaders('/cluster/list'),
+    complete: function () {
+      checkAuth(jqXHR)
+    },
     success: function (data) {
       table.DataTable({
         data: JSON.parse(data),

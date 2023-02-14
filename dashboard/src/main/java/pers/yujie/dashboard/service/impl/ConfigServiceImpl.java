@@ -144,18 +144,27 @@ public class ConfigServiceImpl implements ConfigService {
 
   @Override
   public String connectWeb3(String address, String account, String contract) {
-    address = address.trim().toLowerCase(Locale.ROOT);
-    account = account.trim().toLowerCase(Locale.ROOT);
-    contract = contract.trim().toLowerCase(Locale.ROOT);
-
+    if (address == null) {
+      return "Ethereum address not configured.";
+    }
     String regex = "^0x[a-fA-F0-9]{40}$";
-    if (!ReUtil.isMatch(regex, account)) {
-      return "Invalid Ethereum account: " + account;
-    }
-    if (!ReUtil.isMatch(regex, contract)) {
-      return "Invalid Ethereum contract: " + contract;
+    if (account != null) {
+      account = account.trim().toLowerCase(Locale.ROOT);
+      if (!ReUtil.isMatch(regex, account)) {
+        return "Invalid Ethereum account: " + account;
+      }
+      Web3JUtil.setAccount(account);
     }
 
+    if (contract != null) {
+      contract = contract.trim().toLowerCase(Locale.ROOT);
+      if (!ReUtil.isMatch(regex, contract)) {
+        return "Invalid Ethereum contract: " + contract;
+      }
+      Web3JUtil.setContract(contract);
+    }
+
+    address = address.trim().toLowerCase(Locale.ROOT);
     Web3JUtil.setWeb3(Web3j.build(new HttpService(address,
         new OkHttpClient.Builder().readTimeout(3, TimeUnit.SECONDS).build())));
 
@@ -164,8 +173,6 @@ public class ConfigServiceImpl implements ConfigService {
 
       log.info("Connected to Web3 at: " + address);
       Web3JUtil.setAddress(address);
-      Web3JUtil.setAccount(account);
-      Web3JUtil.setContract(contract);
     } catch (IOException | IllegalArgumentException e) {
       log.warn("Unable to connect to the web3J address: " + address);
       return e.getMessage();

@@ -19,11 +19,15 @@ table.on('click', 'tr', function () {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        $.ajax({
+        const jqXHR = $.ajax({
           type: 'POST',
           url: '/website/delete',
           contentType: "application/json",
           data: JSON.stringify(dataToUpdate),
+          headers: setHeaders('/website/delete'),
+          complete: function () {
+            checkAuth(jqXHR)
+          },
           success: function () {
             Swal.fire('Deleted!', 'Your website has been deleted.', 'success')
             .then(function () {
@@ -49,11 +53,15 @@ table.on('click', 'tr', function () {
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        $.ajax({
+        const jqXHR = $.ajax({
           type: 'POST',
           url: '/website/update',
           contentType: "application/json",
           data: data,
+          headers: setHeaders('/website/update'),
+          complete: function () {
+            checkAuth(jqXHR)
+          },
           success: function () {
             Swal.fire('Success!', 'Your website has been updated.', 'success')
             .then(function () {
@@ -94,11 +102,15 @@ createForm.submit(function (e) {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      $.ajax({
+      const jqXHR = $.ajax({
         type: 'POST',
         url: '/website/insert',
         contentType: 'application/json',
         data: formData,
+        headers: setHeaders('/website/insert'),
+        complete: function () {
+          checkAuth(jqXHR)
+        },
         success: function () {
           Swal.fire('Success!', 'Your website has been uploaded.', 'success')
           .then(function () {
@@ -126,31 +138,12 @@ $("#add-button")[0].onclick = function () {
 }
 
 $(function () {
-  // addHeader()
-  // Read the RSA private key from the local file using the FileReader API
-  const fileReader = new FileReader();
-  let encryptedUrl
-  fileReader.onload = function (e) {
-    const privateKey = e.target.result;
-    // Set the default header for all future AJAX requests
-    $.ajaxSetup({
-      beforeSend: function (xhr) {
-        // Encrypt the URL using the RSA private key
-        const encrypt = new JSEncrypt();
-        encrypt.setKey(privateKey);
-        encryptedUrl = encrypt.encrypt('/website/list');
-        // Add the encrypted URL to the header of the AJAX request
-        xhr.setRequestHeader("Encrypted-Url", encryptedUrl);
-      }
-    });
-  };
-  const file = new Blob(['/encryption/public'], {type: 'text/plain'});
-  fileReader.readAsText(file);
-  $.ajax({
+  const jqXHR = $.ajax({
     url: '/website/list',
-    // headers: {
-    //   "Encrypted-Url": encryptedUrl
-    // },
+    headers: setHeaders('/website/list'),
+    complete: function () {
+      checkAuth(jqXHR)
+    },
     success: function (data) {
       table.DataTable({
         data: JSON.parse(data),

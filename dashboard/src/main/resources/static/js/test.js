@@ -8,14 +8,22 @@ const stopButton = $('#stop')[0]
 
 function startInterval() {
   intervalId = setInterval(function () {
-    $.get("/test/result", function (data) {
-      if (error || timeoutCount < 1) {
-        stopTest()
+    const jqXHR =$.ajax({
+      type: 'GET',
+      url: '/test/result',
+      headers: setHeaders('/test/result'),
+      complete: function () {
+        checkAuth(jqXHR)
+      },
+      success: function (data) {
+        if (error || timeoutCount < 1) {
+          stopTest()
+        }
+        const jsonData = JSON.parse(data);
+        console.log(jsonData)
+        lineChart.data.datasets[0].data[0] = jsonData['avg'];
+        lineChart.update();
       }
-      const jsonData = JSON.parse(data);
-      console.log(jsonData)
-      lineChart.data.datasets[0].data[0] = jsonData['avg'];
-      lineChart.update();
     });
   }, 1000);
 }
@@ -95,9 +103,13 @@ function stopTest() {
   startButton.innerHTML = "Start tests";
   stopButton.setAttribute("disabled", "true");
 
-  $.ajax({
+  const jqXHR =$.ajax({
     type: 'GET',
     url: '/test/stop',
+    headers: setHeaders('/test/stop'),
+    complete: function () {
+      checkAuth(jqXHR)
+    },
   });
 }
 
@@ -105,11 +117,15 @@ function sendRequest() {
   startInterval()
   for (let i = 0; i < number; i++) {
     timeouts.push(setTimeout(function () {
-      $.ajax({
+      const jqXHR =$.ajax({
         type: 'POST',
         url: '/test/param',
         contentType: 'application/json',
         data: formData,
+        headers: setHeaders('/test/param'),
+        complete: function () {
+          checkAuth(jqXHR)
+        },
         error: function (response) {
           stopTest()
           Swal.fire('Unable to execute test', response.responseText, 'error')

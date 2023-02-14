@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import pers.yujie.dashboard.common.Encrypted;
 import pers.yujie.dashboard.dao.WebsiteDao;
 import pers.yujie.dashboard.entity.Website;
 import pers.yujie.dashboard.service.WebsiteService;
@@ -26,6 +27,7 @@ public class WebsiteController {
   @Resource
   private WebsiteService websiteService;
 
+  @Encrypted
   @GetMapping("/list")
   public ResponseEntity<String> listWebsite() {
     List<JSONObject> websites = websiteService.selectAllWebsite();
@@ -33,6 +35,7 @@ public class WebsiteController {
     return new ResponseEntity<>(JSONUtil.toJsonStr(websites), HttpStatus.OK);
   }
 
+  @Encrypted
   @PostMapping("/update")
   public ResponseEntity<String> updateWebsite(@RequestBody JSONObject website) {
     String message = websiteService.updateWebsite(website);
@@ -43,6 +46,7 @@ public class WebsiteController {
     }
   }
 
+  @Encrypted
   @PostMapping("/insert")
   public ResponseEntity<String> uploadWebsite(@RequestBody JSONObject website) {
     String message = websiteService.uploadWebsite(website);
@@ -53,6 +57,7 @@ public class WebsiteController {
     }
   }
 
+  @Encrypted
   @PostMapping("/delete")
   public ResponseEntity<String> deleteWebsite(@RequestBody JSONObject website) {
     String message = websiteService.deleteWebsite(website.getBigInteger("id"));

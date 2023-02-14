@@ -29,7 +29,7 @@ import pers.yujie.dashboard.utils.EncryptUtil;
 @SuppressWarnings("UnstableApiUsage")
 public class RequestManagerConfig implements Filter {
 
-  private static final String HEADER_KEY = "algorithm";
+  private static final String SIGNATURE = "WEB_CHAIN";
 
   private final RateLimiter rateLimiter = RateLimiter.create(10.0); // allows 10 requests per second
 
@@ -93,13 +93,8 @@ public class RequestManagerConfig implements Filter {
     HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
     String url = URLUtil.getPath(httpRequest.getRequestURL().toString());
 
-    JSONObject authObj = new JSONObject();
-    authObj.set("time", DateUtil.now());
-    authObj.set("url", url);
-
-    String encryptedStr = EncryptUtil.signSHA256withRSA("test");
-    httpResponse.addHeader("Authorization", encryptedStr);
-    httpResponse.addHeader("Via", url);
+    String encryptedSign = EncryptUtil.signSHA256withRSA(SIGNATURE);
+    httpResponse.addHeader("Authorization", encryptedSign);
     filterChain.doFilter(servletRequest, servletResponse);
   }
 }

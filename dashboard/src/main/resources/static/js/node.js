@@ -28,13 +28,16 @@ table.on('click', 'tr', function () {
       confirmButtonText: 'Confirm'
     }).then((result) => {
       if (result.isConfirmed) {
-        const text = $(this).text();
 
-        $.ajax({
+        const jqXHR = $.ajax({
           type: "POST",
           url: '/node/status',
           contentType: "application/json",
           data: JSON.stringify(dataToUpdate),
+          headers: setHeaders('/node/status'),
+          complete: function () {
+            checkAuth(jqXHR)
+          },
           success: function() {
             Swal.fire('Success!', 'Your node has been updated.', 'success')
             .then(function () {
@@ -59,11 +62,15 @@ table.on('click', 'tr', function () {
       confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
       if (result.isConfirmed) {
-        $.ajax({
+        const jqXHR = $.ajax({
           type: 'POST',
           url: '/node/delete',
           contentType: "application/json",
           data: JSON.stringify(dataToUpdate),
+          headers: setHeaders('/node/delete'),
+          complete: function () {
+            checkAuth(jqXHR)
+          },
           success: function () {
             Swal.fire('Deleted!', 'Your node has been deleted.', 'success')
             .then(function () {
@@ -94,11 +101,15 @@ table.on('click', 'tr', function () {
       showCancelButton: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        $.ajax({
+        const jqXHR = $.ajax({
           type: 'POST',
           url: '/node/update',
           contentType: "application/json",
           data: formData,
+          headers: setHeaders('/node/update'),
+          complete: function () {
+            checkAuth(jqXHR)
+          },
           success: function () {
             Swal.fire('Success!', 'Your node has been updated.', 'success')
             .then(function () {
@@ -138,11 +149,15 @@ createForm.submit(function (e) {
     showCancelButton: true,
   }).then((result) => {
     if (result.isConfirmed) {
-      $.ajax({
+      const jqXHR = $.ajax({
         type: 'POST',
         url: '/node/insert',
         contentType: 'application/json',
         data: formData,
+        headers: setHeaders('/node/insert'),
+        complete: function () {
+          checkAuth(jqXHR)
+        },
         success: function () {
           Swal.fire('Success!', 'Your node has been created.', 'success')
           .then(function () {
@@ -170,8 +185,12 @@ $("#add-button")[0].onclick = function () {
 }
 
 $(function () {
-  $.ajax({
+  const jqXHR = $.ajax({
     url: '/node/list',
+    headers: setHeaders('/node/list'),
+    complete: function () {
+      checkAuth(jqXHR)
+    },
     success: function (data) {
       table.DataTable({
         data: JSON.parse(data),

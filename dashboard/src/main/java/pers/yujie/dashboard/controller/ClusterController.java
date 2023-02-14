@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import pers.yujie.dashboard.common.Encrypted;
 import pers.yujie.dashboard.service.ClusterService;
 
 @Controller
@@ -18,6 +19,7 @@ public class ClusterController {
   @Resource
   private ClusterService clusterService;
 
+  @Encrypted
   @GetMapping("/list")
   public ResponseEntity<String> listWebsites() {
     List<JSONObject> clusters = clusterService.selectAllCluster();

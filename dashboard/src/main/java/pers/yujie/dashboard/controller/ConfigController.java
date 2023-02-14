@@ -42,32 +42,12 @@ public class ConfigController {
 
   @GetMapping({"", "/", "/index", "/index.html"})
   public String renderIndexPage(Model model) {
-    ResponseEntity<String> response = getConfigStatus();
-    JSONObject status = JSONUtil.parseObj(response.getBody());
-
-    model.addAttribute("status", status);
+    model.addAttribute("status", getStatus());
     return "index";
   }
 
   @Encrypted
-  @PostMapping("/index/test")
-  public ResponseEntity<String> red(@RequestBody JSONObject request) {
-//    RequestAttributes ra = RequestContextHolder.getRequestAttributes();
-//    if(Objects.isNull(ra)){
-//    }
-//    ServletRequestAttributes sra = (ServletRequestAttributes) ra;
-//    HttpServletRequest requests = sra.getRequest();
-//    Enumeration<String> enumeration = requests.getHeaderNames();
-//
-//    System.out.println(enumeration);
-////    String str = Base64.decodeStr(request.getBytes("data"));
-////    str = EncryptUtil.rsaDecryptPrivate(str);
-//    String str = EncryptUtil.rsaDecryptPrivate(request.getStr("data"));
-//    System.out.println(str);
-    return new ResponseEntity<>("str", HttpStatus.OK);
-  }
-
-  @PostMapping("/config")
+  @GetMapping("/config")
   public ResponseEntity<String> getConfigStatus() {
     JSONObject status = new JSONObject();
     status.set("ipfs", configService.getIPFSStatus());
@@ -76,6 +56,15 @@ public class ConfigController {
     return new ResponseEntity<>(status.toString(), HttpStatus.OK);
   }
 
+  private JSONObject getStatus() {
+    JSONObject status = new JSONObject();
+    status.set("ipfs", configService.getIPFSStatus());
+    status.set("docker", configService.getDockerStatus());
+    status.set("web3", configService.getWeb3Status());
+    return status;
+  }
+
+  @Encrypted
   @PostMapping("/config/ipfs")
   public ResponseEntity<String> setCustomIPFS(@RequestBody JSONObject request) {
     String message = configService.connectIPFS(request.getStr("address"));
@@ -88,6 +77,7 @@ public class ConfigController {
 
   }
 
+  @Encrypted
   @PostMapping("/config/web3")
   public ResponseEntity<String> setCustomWeb3(@RequestBody JSONObject request) {
     String address = (request.getStr("address") == null) ?
@@ -105,16 +95,15 @@ public class ConfigController {
     }
   }
 
+  @Encrypted
   @PostMapping("/config/docker")
   public ResponseEntity<String> setCustomDocker(@RequestBody JSONObject request) {
     String message = configService.connectDocker(request.getStr("address"));
-
     if (message.equals("")) {
       return new ResponseEntity<>("success", HttpStatus.OK);
     } else {
       return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
-
   }
 
 }

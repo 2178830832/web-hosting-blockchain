@@ -31,12 +31,15 @@ buttons[4].onclick = function () {
 };
 
 function connect(url, data) {
-  // addHeader()
-  $.ajax({
+  const jqXHR = $.ajax({
     url: '/config/' + url,
     type: 'POST',
     contentType: "application/json",
     data: data,
+    headers: setHeaders('/config/' + url),
+    complete: function () {
+      checkAuth(jqXHR)
+    },
     success: function () {
       Swal.fire('Connection established', data.slice(1, -1), 'success')
       .then(function () {
@@ -49,44 +52,4 @@ function connect(url, data) {
     }
   })
 }
-
-$(function () {
-  var data = {
-    data: 'Base64.encode)'
-  };
-  // console.log(setHeaders('test'))
-  const jqXHR = $.ajax({
-    url: '/index/test',
-    type: 'POST',
-    data: JSON.stringify(data),
-    headers: setHeaders('/index/test'),
-    contentType: 'application/json',
-    // success: function (response, jqXHR) {
-    //   var contentType = jqXHR.getAllResponseHeaders();
-    //   console.log(contentType);
-    // }
-  }).done(function (xhr) {
-    checkAuth(jqXHR)
-  });
-  // $.ajax({
-  //   url: '/index',
-  //   type: 'GET',
-  //   complete: function (xhr) {
-  //     publicKey = 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDnh9kpLwa9jjYGqulNeZhxbAUp'
-  //         + 'LrcebQkVbuDUxg9IEGnOXBh+Mn36iMw17AAhY//zUQVQ1eQMoi10sXgNR76OggZr'
-  //         + 'zedSY5LoCA2Oy82zFaYet85IOxv4ZcuEVw8iL0F0owbZeBnnTttkxmAVn2XrQaf4'
-  //         + 'GpA1sXHh7abCUo0IewIDAQAB'
-  //
-  //     const via = xhr.getResponseHeader('via')
-  //     console.log(via)
-  //
-  //     var encrypt=new JSEncrypt();
-  //     encrypt.setPublicKey(publicKey);
-  //     console.log(encrypt.decrypt(via))
-  //     // var decryptedData = Encryption.AES.decrypt(data.toString(), key).toString(Encryption.enc.Utf8);
-  //
-  //   },
-  // })
-})
-
 

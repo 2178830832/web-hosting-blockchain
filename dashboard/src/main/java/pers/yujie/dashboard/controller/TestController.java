@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import pers.yujie.dashboard.common.Encrypted;
 import pers.yujie.dashboard.service.TestService;
 
 @Controller
@@ -25,6 +26,7 @@ public class TestController {
   @Resource
   private TestService testService;
 
+  @Encrypted
   @ResponseBody
   @PostMapping("/receive")
   public ResponseEntity<String> getRequest(@RequestBody JSONObject matrix) {
@@ -38,11 +40,13 @@ public class TestController {
     return new ResponseEntity<>("success", HttpStatus.OK);
   }
 
+  @Encrypted
   @GetMapping("/result")
   public ResponseEntity<String> getTestResult() {
     return new ResponseEntity<>(testService.getTestResult().toString(), HttpStatus.OK);
   }
 
+  @Encrypted
   @PostMapping("/param")
   public ResponseEntity<String> setTestParams(@RequestBody JSONObject params) {
     String message = testService.startTest(params);
@@ -53,6 +57,7 @@ public class TestController {
     }
   }
 
+  @Encrypted
   @GetMapping("/stop")
   public ResponseEntity<String> stopTest() {
     testService.stopTest();
