@@ -21,8 +21,6 @@ import pers.yujie.dashboard.dao.ClusterDao;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.entity.Block;
 import pers.yujie.dashboard.entity.Node;
-import pers.yujie.dashboard.service.BlockService;
-import pers.yujie.dashboard.service.ClusterService;
 import pers.yujie.dashboard.service.NodeService;
 import pers.yujie.dashboard.utils.DockerUtil;
 import pers.yujie.dashboard.utils.IPFSUtil;
@@ -36,12 +34,6 @@ public class NodeServiceImpl implements NodeService {
 
   @Resource
   private ClusterDao clusterDao;
-
-//  @Resource
-//  private ClusterService clusterService;
-
-  @Resource
-  private BlockService blockService;
 
 //  private String cid;
 //  private List<Node> nodes;
@@ -116,7 +108,7 @@ public class NodeServiceImpl implements NodeService {
       return "Unexpected Json format";
     }
     if (nodeDao.selectNodeByName(name) != null) {
-      return "Node name must unique";
+      return "Node name must be unique";
     }
 
     if (totalSpace.intValue() < 1) {
@@ -281,9 +273,15 @@ public class NodeServiceImpl implements NodeService {
 
     for (JSONObject node : nodeList) {
       String nodeName = node.getStr("name");
-      DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX,
-          "pin", "rm", "-r=false", blockSpaceList);
-      DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX, "repo", "gc");
+
+      try {
+        DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX,
+            "pin", "rm", "-r=false", blockSpaceList);
+        DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX, "repo", "gc");
+      } catch (InterruptedException e) {
+        log.error(e.getMessage());
+      }
+
       List<Block> nodeBlockList = node.getJSONArray("blockList").toList(Block.class);
 
       BigInteger listSize = BigInteger.ZERO;
@@ -307,9 +305,14 @@ public class NodeServiceImpl implements NodeService {
       String nodeName = node.getStr("name");
       BigInteger listSize = BigInteger.ZERO;
       for (Block block : blockList) {
-        DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX,
-            "pin", "add", "-r=false", block.getCid());
-        DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX, "repo", "gc");
+        try {
+          DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX,
+              "pin", "add", "-r=false", block.getCid());
+          DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX, "repo", "gc");
+        } catch (InterruptedException e) {
+          log.error(e.getMessage());
+        }
+
         listSize = listSize.add(block.getSize());
       }
       node.set("usedSpace", node.getBigInteger("usedSpace").add(listSize));

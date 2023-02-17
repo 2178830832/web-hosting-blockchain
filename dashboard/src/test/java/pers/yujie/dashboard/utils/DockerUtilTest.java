@@ -40,8 +40,8 @@ class DockerUtilTest {
   @BeforeAll
   static void setUp() {
     DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-//        .withDockerHost("tcp://8.222.141.28:2375")
-        .withDockerHost("tcp://192.168.80.128:2375")
+        .withDockerHost("tcp://124.223.10.94:2375")
+//        .withDockerHost("tcp://192.168.80.128:2375")
         .build();
 
     // Create a Docker client
@@ -89,7 +89,7 @@ class DockerUtilTest {
     CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo")
         .withName("test1")
 //        .withPortBindings(portBindings)
-        .withBinds(new Bind("/home/yujie/Desktop/FYP/compose/test1", new Volume("/data/ipfs")))
+        .withBinds(new Bind("/home/lighthouse/fyp/compose/test1", new Volume("/data/ipfs")))
         .exec();
 
     // Start the container

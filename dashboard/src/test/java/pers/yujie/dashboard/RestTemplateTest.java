@@ -1,20 +1,13 @@
 package pers.yujie.dashboard;
 
 import cn.hutool.core.util.URLUtil;
-import com.sun.jndi.toolkit.url.Uri;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 //@SpringBootTest
@@ -29,13 +22,15 @@ public class RestTemplateTest {
     String url = "http://localhost:6001/webdriver?url={url}&mode={mode}";
 
     Map<String, String> map = new HashMap<>();
-    map.put("url", "http://template-8gf1js6t49b08525-1316531086.tcloudbaseapp.com/text.html");
+    map.put("url", "https://template-8gf1js6t49b08525-1316531086.tcloudbaseapp.com/text.html");
     map.put("mode", "firefox");
 
     RestTemplate client = new RestTemplate();
-    String body = client.getForEntity(url, String.class, map).getBody();
+    ResponseEntity<String> response = client.getForEntity(url, String.class, map);
+    String body = response.getBody();
     assert body != null;
-    System.out.println(body);
+    HttpStatus status = response.getStatusCode();
+    System.out.println(response.getStatusCodeValue());
 
   }
 

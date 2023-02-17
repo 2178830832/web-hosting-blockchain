@@ -60,10 +60,17 @@ public class DockerUtil {
   }
 
   public static void startContainer(String containerName) {
-    removeContainer(containerName);
+    List<Container> containers = docker.listContainersCmd()
+        .withNameFilter(Collections.singleton(containerName))
+        .withShowAll(true)
+        .exec();
+
+    if (containers.size() > 0) {
+      return;
+    }
     CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo:latest")
         .withName(containerName)
-        .withBinds(new Bind(Constants.DOCKER_VOLUME + File.separator + containerName,
+        .withBinds(new Bind(Constants.DOCKER_VOLUME + containerName,
             new Volume("/data/ipfs")))
         .exec();
     docker.startContainerCmd(container.getId()).exec();
@@ -84,7 +91,8 @@ public class DockerUtil {
 //    }
   }
 
-  public static void execDockerCmd(String containerName, String... cmd) {
+  public static void execDockerCmd(String containerName, String... cmd)
+      throws InterruptedException {
     ExecCreateCmdResponse execCreateCmdResponse = docker.execCreateCmd(containerName)
         .withAttachStdout(true)
         .withAttachStderr(true)
@@ -95,7 +103,7 @@ public class DockerUtil {
     log.info("Executing cmd: " + Arrays.toString(cmd));
     docker.execStartCmd(execCreateCmdResponse.getId())
         .exec(new ExecStartResultCallback(output, errors));
-    //awaitCompletion
+//        .awaitCompletion();
     log.info(output.toString());
   }
 }

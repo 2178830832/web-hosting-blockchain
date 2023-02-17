@@ -26,7 +26,6 @@ public class TestController {
   @Resource
   private TestService testService;
 
-  @Encrypted
   @ResponseBody
   @PostMapping("/receive")
   public ResponseEntity<String> getRequest(@RequestBody JSONObject matrix) {

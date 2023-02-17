@@ -9,6 +9,8 @@ public class Constants {
 
   public final static String IPFS_PREFIX = "ipfs";
 
+  public final static String TESTER_SERVER = "http://localhost:6001/webdriver?url={url}&mode={mode}";
+
   @Value("${ipfs.address}")
   private String ipfsAddress;
 

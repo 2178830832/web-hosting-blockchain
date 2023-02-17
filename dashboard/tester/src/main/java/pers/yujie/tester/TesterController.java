@@ -7,6 +7,7 @@ import java.time.Duration;
 import javax.annotation.Resource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
@@ -58,6 +59,8 @@ public class TesterController {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
         driver.findElement(By.id("test"));
       } catch (NoSuchElementException ignored) {
+      } catch (TimeoutException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
       }
       driver.quit();
     }
