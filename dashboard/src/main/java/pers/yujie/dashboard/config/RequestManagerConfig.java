@@ -93,8 +93,10 @@ public class RequestManagerConfig implements Filter {
 
     String encryptedSign = EncryptUtil.signSHA256withRSA(SIGNATURE);
     httpResponse.setHeader("Authorization", encryptedSign);
-    httpResponse.setHeader("Content-Security-Policy",
-        "default-src 'self' 'unsafe-inline';frame-ancestors 'none'; form-action 'self'");
+    httpResponse.setHeader("Content-Security-Policy", "default-src 'self';"
+        + "frame-ancestors 'none'; form-action 'self';"
+        + "style-src 'self' 'unsafe-inline';"
+        + "img-src 'self' data:");
     httpResponse.setHeader("X-Frame-Options", "deny");
     httpResponse.setHeader("X-Content-Type-Options", "nosniff");
     filterChain.doFilter(servletRequest, servletResponse);

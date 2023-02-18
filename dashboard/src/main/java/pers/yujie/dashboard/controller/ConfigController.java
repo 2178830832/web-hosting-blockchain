@@ -40,12 +40,6 @@ public class ConfigController {
   @Resource
   private ConfigService configService;
 
-  @GetMapping({"", "/", "/index", "/index.html"})
-  public String renderIndexPage(Model model) {
-    model.addAttribute("status", getStatus());
-    return "index";
-  }
-
   @Encrypted
   @GetMapping("/config")
   public ResponseEntity<String> getConfigStatus() {
@@ -54,14 +48,6 @@ public class ConfigController {
     status.set("docker", configService.getDockerStatus());
     status.set("web3", configService.getWeb3Status());
     return new ResponseEntity<>(status.toString(), HttpStatus.OK);
-  }
-
-  private JSONObject getStatus() {
-    JSONObject status = new JSONObject();
-    status.set("ipfs", configService.getIPFSStatus());
-    status.set("docker", configService.getDockerStatus());
-    status.set("web3", configService.getWeb3Status());
-    return status;
   }
 
   @Encrypted

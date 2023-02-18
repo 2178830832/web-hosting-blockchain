@@ -26,23 +26,17 @@
             </div>
             <div class="box">
               <div class="box-header with-border"><h4 class="box-title">
-                IPFS (<span th:if="${status.getJSONObject('ipfs').getStr('Address') != null}"
-                            th:text="'Connected'" th:style="'color:green'"></span><span
-                  th:if="${status.getJSONObject('ipfs').getStr('Address') == null}"
-                  th:text="'Not connected'" th:style="'color:red'"></span>)</h4>
+                IPFS (<span id="span1"></span><span id="span2"></span>)</h4>
                 <ul class="box-controls pull-right">
                   <li><a class="box-btn-slide" href="#"></a></li>
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
               <div class="box-body">
-                <div class="row" th:if="${status.getJSONObject('ipfs').getStr('Address') != null}">
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Address: ' + ${status.getJSONObject('ipfs').getStr('Address')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Version: ' + ${status.getJSONObject('ipfs').getStr('AgentVersion')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'ID: ' + ${status.getJSONObject('ipfs').getStr('ID')}"></div>
+                <div class="row" id="div1">
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
                 </div>
                 <div class="row">
                   <div class="col-12"><p><br></p>
@@ -61,27 +55,19 @@
             </div><!-- /.box -->
             <div class="box">
               <div class="box-header with-border"><h4 class="box-title">
-                Ethereum (<span th:if="${status.getJSONObject('web3').getStr('Address') != null}"
-                                th:text="'Connected'" th:style="'color:green'"></span><span
-                  th:if="${status.getJSONObject('web3').getStr('Address') == null}"
-                  th:text="'Not connected'" th:style="'color:red'"></span>)</h4>
+                Ethereum (<span id="span3"></span><span id="span4"></span>)</h4>
                 <ul class="box-controls pull-right">
                   <li><a class="box-btn-slide" href="#"></a></li>
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
               <div class="box-body">
-                <div class="row" th:if="${status.getJSONObject('web3').getStr('Address') != null}">
-                  <div class="col-6" style="display:inline-block"
-                       th:utext="'Address: ' + ${status.getJSONObject('web3').getStr('Address')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Client: ' + ${status.getJSONObject('web3').getStr('Client')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Account: ' + ${status.getJSONObject('web3').getStr('Account')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Balance: ' + ${status.getJSONObject('web3').getStr('Balance')} + ' ETH'"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Contract: ' + ${status.getJSONObject('web3').getStr('Contract')}"></div>
+                <div class="row" id="div2">
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
                 </div>
                 <div class="row">
                   <div class="col-12"><p><br></p>
@@ -129,30 +115,20 @@
             </div><!-- /.box -->
             <div class="box">
               <div class="box-header with-border"><h4 class="box-title">
-                Docker (<span th:if="${status.getJSONObject('docker').getStr('Address') != null}"
-                              th:text="'Connected'" th:style="'color:green'"></span><span
-                  th:if="${status.getJSONObject('docker').getStr('Address') == null}"
-                  th:text="'Not connected'" th:style="'color:red'"></span>)</h4>
+                Docker (<span id="span5"></span><span id="span6"></span>)</h4>
                 <ul class="box-controls pull-right">
                   <li><a class="box-btn-slide" href="#"></a></li>
                   <li><a class="box-btn-fullscreen" href="#"></a></li>
                 </ul>
               </div>
               <div class="box-body">
-                <div class="row"
-                     th:if="${status.getJSONObject('docker').getStr('Address') != null}">
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Address: ' + ${status.getJSONObject('docker').getStr('Address')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Version: ' + ${status.getJSONObject('docker').getStr('serverVersion')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'OS: ' + ${status.getJSONObject('docker').getStr('name')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'OS Name: ' + ${status.getJSONObject('docker').getStr('operatingSystem')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Containers: ' + ${status.getJSONObject('docker').getStr('containers')}"></div>
-                  <div class="col-6" style="display:inline-block"
-                       th:text="'Running Containers: ' + ${status.getJSONObject('docker').getStr('containersRunning')}"></div>
+                <div class="row" id="div3">
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
+                  <div class="col-6" style="display:inline-block"></div>
                 </div>
                 <div class="row">
                   <div class="col-12"><p><br></p>
