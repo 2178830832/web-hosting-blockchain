@@ -90,11 +90,13 @@ public class RequestManagerConfig implements Filter {
   public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
       FilterChain filterChain) throws ServletException, IOException {
     HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-    HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-    String url = URLUtil.getPath(httpRequest.getRequestURL().toString());
 
     String encryptedSign = EncryptUtil.signSHA256withRSA(SIGNATURE);
-    httpResponse.addHeader("Authorization", encryptedSign);
+    httpResponse.setHeader("Authorization", encryptedSign);
+    httpResponse.setHeader("Content-Security-Policy",
+        "default-src 'self' 'unsafe-inline';frame-ancestors 'none'; form-action 'self'");
+    httpResponse.setHeader("X-Frame-Options", "deny");
+    httpResponse.setHeader("X-Content-Type-Options", "nosniff");
     filterChain.doFilter(servletRequest, servletResponse);
   }
 }

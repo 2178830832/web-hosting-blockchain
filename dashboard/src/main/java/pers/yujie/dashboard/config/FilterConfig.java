@@ -4,6 +4,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
 @Configuration
 public class FilterConfig {
   @Bean
@@ -13,4 +14,13 @@ public class FilterConfig {
     registrationBean.addUrlPatterns("/*");
     return registrationBean;
   }
+
+//  @Bean
+//  public FilterRegistrationBean<ContentSecurityPolicyFilter> contentSecurityPolicyFilter() {
+//    FilterRegistrationBean<ContentSecurityPolicyFilter> registrationBean = new FilterRegistrationBean<>();
+//    ContentSecurityPolicyFilter filter = new ContentSecurityPolicyFilter("frame-ancestors 'none'; form-action 'self'");
+//    registrationBean.setFilter(filter);
+//    registrationBean.setOrder(1);
+//    return registrationBean;
+//  }
 }

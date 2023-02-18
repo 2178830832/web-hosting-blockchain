@@ -11,7 +11,7 @@ $('form').each(function (index) {
 })
 
 buttons[0].onclick = function () {
-  connect('ipfs', JSON.stringify({address: inputs[0].value}))
+  connect('ipfs', JSON.stringify({address: inputs[1].value}))
 }
 
 buttons[1].onclick = function () {

@@ -62,6 +62,7 @@
           </div>
           <div class="modal-body">
             <form novalidate="" id="create-form">
+              <input type="hidden" name="_csrf" value="csrf"/>
               <div class="form-group"><h5>Node name<span class="text-danger">*</span></h5>
                 <div class="controls">
                   <input type="text" name="name" class="form-control" data-rule-required="true"
@@ -97,6 +98,7 @@
         </div>
         <div class="modal-body">
           <form id="update-form">
+            <input type="hidden" name="_csrf" value="csrf"/>
             <div class="form-group"><label for="capacity" id="capacity-label">Capacity:</label>
               <input type="number" class="form-control" name="capacity" id="capacity"
                      placeholder="Enter the node capacity">

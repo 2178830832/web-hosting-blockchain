@@ -19,7 +19,7 @@
             </div>
             <div class="right-title">
               <div class="d-flex mt-10 justify-content-end">
-                <button type="button" class="btn btn-outline btn-info float-right"
+                <button type="button" class="btn btn-outline btn-info float-end"
                         id="add-button">Upload website
                 </button>
               </div>
@@ -63,6 +63,7 @@
         </div>
         <div class="modal-body">
           <form novalidate="" id="create-form">
+            <input type="hidden" name="_csrf" value="csrf"/>
             <div class="form-group"><h5>Website name<span class="text-danger">*</span></h5>
               <div class="controls">
                 <input type="text" name="name" class="form-control" data-rule-required="true"
@@ -98,6 +99,7 @@
         </div>
         <div class="modal-body">
           <form>
+            <input type="hidden" name="_csrf" value="csrf"/>
             <div class="form-group"><label for="name" id="name-label">Name:</label>
               <input type="text" class="form-control" id="name"
                      placeholder="Enter the website name">
