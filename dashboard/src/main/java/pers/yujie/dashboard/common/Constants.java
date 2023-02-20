@@ -4,11 +4,23 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+/**
+ * This class contains the shared constants. It uses {@link Value} to import the pre-defined strings
+ * in the application.properties, so users only need to change that file to set custom ports for
+ * IPFS, Docker and Ganache.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @since 20/01/2023
+ */
 @Component
 public class Constants {
 
   public final static String IPFS_PREFIX = "ipfs";
 
+  /**
+   * The location where the tester app is running.
+   */
   public final static String TESTER_SERVER = "http://localhost:6001/webdriver?url={url}&mode={mode}";
 
   @Value("${ipfs.address}")
@@ -29,6 +41,11 @@ public class Constants {
   @Value("${docker.volume}")
   private String dockerVolume;
 
+  /**
+   * Inject the constants when the app starts.
+   *
+   * @see PostConstruct
+   */
   @PostConstruct
   private void initConstants() {
     IPFS_ADDRESS = ipfsAddress;

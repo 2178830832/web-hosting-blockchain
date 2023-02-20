@@ -1,0 +1,11 @@
+pers.yujie.dashboard
+pers.yujie.dashboard.common
+pers.yujie.dashboard.config
+pers.yujie.dashboard.controller
+pers.yujie.dashboard.dao
+pers.yujie.dashboard.dao.impl
+pers.yujie.dashboard.entity
+pers.yujie.dashboard.service
+pers.yujie.dashboard.service.impl
+pers.yujie.dashboard.utils
+pers.yujie.tester

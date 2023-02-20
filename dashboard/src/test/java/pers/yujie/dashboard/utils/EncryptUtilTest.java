@@ -44,19 +44,19 @@ class EncryptUtilTest {
         PemUtil.readPemPublicKey(FileUtil.getInputStream(
             ResourceUtil.getResource("encryption/public").getPath())));
 
-//公钥加密，私钥解密
+
     byte[] encrypt = rsa.encrypt("test", KeyType.PublicKey);
     System.out.println(Base64.encode(encrypt));
     byte[] decrypt = rsa.decrypt(Base64.decode(Base64.encode(encrypt)), KeyType.PrivateKey);
 
-//Junit单元测试
+
     assertEquals("test", StrUtil.str(decrypt, CharsetUtil.CHARSET_UTF_8));
 
-//私钥加密，公钥解密
+
     String encrypt2 = rsa.encryptHex("test", CharsetUtil.CHARSET_UTF_8, KeyType.PrivateKey);
     String decrypt2 = rsa.decryptStr(encrypt2, KeyType.PublicKey);
 
-//Junit单元测试
+
     System.out.println(decrypt2);
     assertEquals("test", decrypt2);
   }

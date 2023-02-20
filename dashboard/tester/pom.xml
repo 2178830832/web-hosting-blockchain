@@ -11,7 +11,7 @@
   </parent>
   <groupId>pers.yujie</groupId>
   <artifactId>tester</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <name>Testing Subsystem</name>
   <description>Testing application for decentralised web hosting</description>
   <properties>
