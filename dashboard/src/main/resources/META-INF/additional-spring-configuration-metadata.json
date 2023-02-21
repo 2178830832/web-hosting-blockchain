@@ -3,11 +3,31 @@
     {
       "name": "ipfs.address",
       "type": "java.lang.String",
-      "description": "This is the IPFS address."
+      "description": "IPFS custom address."
     },
     {
       "name": "web3.address",
       "type": "java.lang.String",
-      "description": "Description for web3.address."
+      "description": "Ganache custom address."
+    },
+    {
+      "name": "web3.contract",
+      "type": "java.lang.String",
+      "description": "Ethereum contract hash."
+    },
+    {
+      "name": "web3.account",
+      "type": "java.lang.String",
+      "description": "Ethereum account hash."
+    },
+    {
+      "name": "docker.address",
+      "type": "java.lang.String",
+      "description": "Docker custom address."
+    },
+    {
+      "name": "docker.volume",
+      "type": "java.lang.String",
+      "description": "Docker volume place."
     }
   ] }

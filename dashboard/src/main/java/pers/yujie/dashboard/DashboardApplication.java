@@ -7,9 +7,14 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * Entrance of the Dashboard Application.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @since 19/11/2022
+ */
 @EnableAspectJAutoProxy
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,
     SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class,

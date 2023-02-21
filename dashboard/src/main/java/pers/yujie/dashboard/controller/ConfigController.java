@@ -30,16 +30,30 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.common.Encrypted;
+import pers.yujie.dashboard.config.RequestManagerConfig;
 import pers.yujie.dashboard.service.ConfigService;
 import pers.yujie.dashboard.utils.EncryptUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
+/**
+ * Contains the {@link Controller} related to the config (index) page. The business logic is in
+ * {@link ConfigService}.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @since 02/02/2023
+ */
 @Controller
 public class ConfigController {
 
   @Resource
   private ConfigService configService;
 
+  /**
+   * Get the IPFS, Docker and Ethereum status.
+   *
+   * @return {@link ResponseEntity} of {@link HttpStatus#OK}.
+   */
   @Encrypted
   @GetMapping("/config")
   public ResponseEntity<String> getConfigStatus() {
@@ -50,6 +64,12 @@ public class ConfigController {
     return new ResponseEntity<>(status.toString(), HttpStatus.OK);
   }
 
+  /**
+   * Set custom configuration for IPFS.
+   *
+   * @param request a {@link JSONObject} containing address.
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise.
+   */
   @Encrypted
   @PostMapping("/config/ipfs")
   public ResponseEntity<String> setCustomIPFS(@RequestBody JSONObject request) {
@@ -63,6 +83,12 @@ public class ConfigController {
 
   }
 
+  /**
+   * Set custom configuration for Ethereum.
+   *
+   * @param request a {@link JSONObject} containing address, account and contract.
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise.
+   */
   @Encrypted
   @PostMapping("/config/web3")
   public ResponseEntity<String> setCustomWeb3(@RequestBody JSONObject request) {
@@ -81,6 +107,12 @@ public class ConfigController {
     }
   }
 
+  /**
+   * Set custom configuration for Docker.
+   *
+   * @param request a {@link JSONObject} containing address.
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise.
+   */
   @Encrypted
   @PostMapping("/config/docker")
   public ResponseEntity<String> setCustomDocker(@RequestBody JSONObject request) {

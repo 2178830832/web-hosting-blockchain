@@ -4,6 +4,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Register Thymeleaf view with corresponding html files. This way removes all trivial controllers
+ * that set model views.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see WebMvcConfigurer
+ * @since 07/12/2022
+ */
 @Configuration
 public class WebManagerConfig implements WebMvcConfigurer {
 
