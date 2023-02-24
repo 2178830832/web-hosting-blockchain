@@ -17,7 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pers.yujie.dashboard.common.Encrypted;
 import pers.yujie.dashboard.service.TestService;
+import pers.yujie.dashboard.service.WebsiteService;
 
+/**
+ * Contains the {@link Controller} related to the controller page. The business logic is in
+ * {@link WebsiteService}.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @since 25/01/2023
+ */
 @Controller
 @RequestMapping("/test")
 @Slf4j
@@ -26,6 +35,11 @@ public class TestController {
   @Resource
   private TestService testService;
 
+  /**
+   *
+   * @param matrix
+   * @return
+   */
   @ResponseBody
   @PostMapping("/receive")
   public ResponseEntity<String> getRequest(@RequestBody JSONObject matrix) {

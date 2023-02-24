@@ -9,10 +9,14 @@ import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServic
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
- * Entrance of the Dashboard Application.
+ * Entrance of the Dashboard Application. Since this app does not use traditional databases, the
+ * {@link DataSourceAutoConfiguration} has been removed. The other three excluded classes are Spring
+ * Security's auto configuration. To allow Spring AOP, the {@link EnableAspectJAutoProxy} annotation
+ * is included.
  *
  * @author Yujie Chen
  * @version 1.0.2
+ * @see SpringBootApplication
  * @since 19/11/2022
  */
 @EnableAspectJAutoProxy

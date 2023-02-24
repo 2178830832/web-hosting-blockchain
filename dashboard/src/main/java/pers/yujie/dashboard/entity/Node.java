@@ -6,6 +6,14 @@ import java.math.BigInteger;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * This class represents nodes contained by {@link Cluster}.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see Data
+ * @since 07/01/2022
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class Node extends BaseEntity {
@@ -20,6 +28,11 @@ public class Node extends BaseEntity {
     this.totalSpace = totalSpace;
   }
 
+  /**
+   * When creating a new instance, initialise the {@link #status} to online.
+   *
+   * @param id {@link BigInteger} representing the new node ID.
+   */
   public Node(BigInteger id) {
     super(id);
     this.status = "online";

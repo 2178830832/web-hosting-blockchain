@@ -18,8 +18,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import pers.yujie.dashboard.common.Encrypted;
 import pers.yujie.dashboard.dao.WebsiteDao;
 import pers.yujie.dashboard.entity.Website;
+import pers.yujie.dashboard.service.ClusterService;
 import pers.yujie.dashboard.service.WebsiteService;
 
+/**
+ * Contains the {@link Controller} related to the controller page. The business logic is in
+ * {@link WebsiteService}.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @since 13/12/2022
+ */
 @Controller
 @RequestMapping("/website")
 public class WebsiteController {
@@ -27,6 +36,10 @@ public class WebsiteController {
   @Resource
   private WebsiteService websiteService;
 
+  /**
+   * List available websites.
+   * @return {@link ResponseEntity} containing website information
+   */
   @Encrypted
   @GetMapping("/list")
   public ResponseEntity<String> listWebsite() {
@@ -35,6 +48,11 @@ public class WebsiteController {
     return new ResponseEntity<>(JSONUtil.toJsonStr(websites), HttpStatus.OK);
   }
 
+  /**
+   * Update a specific website.
+   * @param website {@link JSONObject} of the website to be updated
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise.
+   */
   @Encrypted
   @PostMapping("/update")
   public ResponseEntity<String> updateWebsite(@RequestBody JSONObject website) {
@@ -46,6 +64,11 @@ public class WebsiteController {
     }
   }
 
+  /**
+   * Upload a new website.
+   * @param website {@link JSONObject} of the website to be uploaded
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise.
+   */
   @Encrypted
   @PostMapping("/insert")
   public ResponseEntity<String> uploadWebsite(@RequestBody JSONObject website) {
@@ -57,6 +80,11 @@ public class WebsiteController {
     }
   }
 
+  /**
+   * Delete an existing website.
+   * @param website {@link JSONObject} of the website to be deleted
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise.
+   */
   @Encrypted
   @PostMapping("/delete")
   public ResponseEntity<String> deleteWebsite(@RequestBody JSONObject website) {
