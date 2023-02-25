@@ -19,12 +19,25 @@ import pers.yujie.dashboard.entity.Cluster;
 import pers.yujie.dashboard.utils.EncryptUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
+/**
+ * This is the Data Access Object (Dao) class for {@link Cluster}.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see BaseDaoImpl
+ * @since 29/12/2022
+ */
 @Repository
 @Slf4j
 public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
 
   private List<Cluster> clusters = new ArrayList<>();
 
+  /**
+   * Select all clusters as a list.
+   *
+   * @return a {@link List} of {@link JSONObject} representing the clusters
+   */
   @Override
   public List<JSONObject> selectAllCluster() {
     List<JSONObject> clusterList = new ArrayList<>();
@@ -34,6 +47,11 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
     return clusterList;
   }
 
+  /**
+   * Select the cluster with the smallest available space.
+   *
+   * @return a {@link JSONObject} of the selected cluster
+   */
   @Override
   public JSONObject selectMinCluster() {
     JSONObject minCluster = JSONUtil.createObj();
@@ -48,6 +66,11 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
     return minCluster;
   }
 
+  /**
+   * Select the cluster which is healthy and has the smallest available space.
+   *
+   * @return a {@link JSONObject} of the selected cluster.
+   */
   @Override
   public JSONObject selectMinHealthyCluster() {
     JSONObject minCluster = JSONUtil.createObj();
@@ -64,6 +87,9 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
     return minCluster;
   }
 
+  /**
+   * Initialise this class by reading from the Ganache and decrypting with {@link EncryptUtil}.
+   */
   @Override
   public void initClusterDao() {
     try {
@@ -78,10 +104,13 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
       clusterEncodedStr = EncryptUtil.decryptAES(clusterEncodedStr);
       clusters = JSONUtil.toList(JSONUtil.parseArray(clusterEncodedStr), Cluster.class);
     } catch (ExecutionException | InterruptedException e) {
-      log.error("Unable to retrieve cluster list from the database");
+      log.error("Unable to retrieve cluster list from the data source");
     }
   }
 
+  /**
+   * A helper method to create initial three clusters if the data source is empty.
+   */
   private void createInitialClusters() {
     if (clusters.size() < 4) {
       List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
@@ -94,7 +123,12 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
     }
   }
 
-
+  /**
+   * Update a specific cluster.
+   *
+   * @param cluster {@link JSONObject} representing the cluster to be updated
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean updateCluster(JSONObject cluster) {
     List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
@@ -108,6 +142,12 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
     return false;
   }
 
+  /**
+   * Batch-update the clusters.
+   *
+   * @param clusterList a {@link List} of {@link JSONObject} representing the clusters
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean updateClusterBatch(List<JSONObject> clusterList) {
     List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
@@ -120,49 +160,23 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
     return commitChange(updatedClusters);
   }
 
+  /**
+   * Select a cluster given its ID.
+   *
+   * @param id {@link BigInteger} of the specified cluster ID.
+   * @return a {@link JSONObject} representing the cluster.
+   */
   @Override
   public JSONObject selectClusterById(BigInteger id) {
     return JSONUtil.parseObj(clusters.get(id.intValue()));
   }
 
-  //  @Override
-//  public List<Cluster1> selectAllHealthyCluster() {
-//    List<Cluster1> healthyClusters = new ArrayList<>();
-//    for (Cluster1 cluster : clusters) {
-//      if (cluster.isHealthy()) {
-//        healthyClusters.add(cluster);
-//      }
-//    }
-//    return healthyClusters;
-//  }
-//
-//  @Override
-//  public BigInteger selectFreeSpaceByCluster(String clusterName) {
-//    for (Cluster1 cluster : clusters) {
-//      if (cluster.getName().equals(clusterName)) {
-//        return cluster.getTotalSpace().subtract(cluster.getUsedSpace());
-//      }
-//    }
-//    return BigInteger.ZERO;
-//  }
-//
-//  @Override
-//  @SuppressWarnings({"unchecked", "rawtypes"})
-//  public void updateClusterBatch(List<Cluster1> clusters) {
-//    try {
-//      EthSendTransaction response = Web3JUtil.sendTransaction("updateClusterBatch",
-//          Collections.singletonList(new DynamicArray(DynamicStruct.class, clusters)));
-//      if (response.getError() == null) {
-//        log.info("Transaction succeeded: " + response.getResult());
-//        this.clusters = clusters;
-//      } else {
-//        log.error("Transaction encountered error: " + response.getError().getMessage());
-//      }
-//    } catch (ExecutionException | InterruptedException e) {
-//      e.printStackTrace();
-//    }
-//  }
-
+  /**
+   * Encrypt the clusters with symmetric algorithm and commit it to the data source.
+   *
+   * @param updatedClusters a {@link List} of {@link Cluster}
+   * @return true if succeeded, false otherwise
+   */
   private boolean commitChange(List<Cluster> updatedClusters) {
     String clusterDecodedStr = JSONUtil.parseArray(updatedClusters).toString();
     clusterDecodedStr = EncryptUtil.encryptAES(clusterDecodedStr);
@@ -179,7 +193,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
         return false;
       }
     } catch (ExecutionException | InterruptedException e) {
-      log.error("Unable to commit changes to the database");
+      log.error("Unable to commit changes to the data source");
       return false;
     }
 

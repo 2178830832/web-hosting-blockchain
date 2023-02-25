@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "chrome.version",
+      "type": "java.lang.String",
+      "description": "Version of the Chrome browser."
+    },
+    {
+      "name": "firefox.version",
+      "type": "java.lang.String",
+      "description": "Version of the Firefox browser."
+    }
+  ] }

@@ -3,8 +3,15 @@ package pers.yujie.dashboard.dao;
 import cn.hutool.json.JSONObject;
 import java.math.BigInteger;
 import java.util.List;
-import pers.yujie.dashboard.entity.Cluster;
 
+/**
+ * This is the interface providing cluster data access for outer usages.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see pers.yujie.dashboard.dao.impl.ClusterDaoImpl
+ * @since 29/12/2022
+ */
 public interface ClusterDao {
 
   List<JSONObject> selectAllCluster();
@@ -20,22 +27,4 @@ public interface ClusterDao {
   JSONObject selectMinCluster();
 
   JSONObject selectMinHealthyCluster();
-
-//  BigInteger selectFreeSpaceByCluster(String clusterName);
-//
-//  void updateClusterBatch(List<Cluster1> clusters);
-  // void insertCluster(Cluster cluster);
-  //
-  //  void deleteByClusterId(BigInteger cluster_id);
-  //
-  //  void updateCluster(Cluster cluster);
-  //
-  //  void updateClusterBatch(List<Cluster> clusters);
-  //
-
-  //  Cluster selectByClusterId(BigInteger cluster_id);
-  //
-  //  List<Cluster> selectAllCluster();
-  //
-  //  List<Cluster> selectMinCluster();
 }

@@ -21,13 +21,30 @@ import pers.yujie.dashboard.entity.Website;
 import pers.yujie.dashboard.utils.EncryptUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
+/**
+ * This is the Data Access Object (DAO) class for {@link Website}.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see BaseDaoImpl
+ * @since 29/12/2022
+ */
 @Repository
 @Slf4j
 public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
 
   private List<Website> websites = new ArrayList<>();
+
+  /**
+   * The deleted websites are not dropped.
+   */
   private List<Website> delWebsites = new ArrayList<>();
 
+  /**
+   * Select all websites as a list.
+   *
+   * @return a {@link List} of {@link JSONObject} representing the websites
+   */
   @Override
   public List<JSONObject> selectAllWebsite() {
     List<JSONObject> websiteList = new ArrayList<>();
@@ -37,20 +54,20 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
     return websiteList;
   }
 
-  @Override
-  public List<JSONObject> selectDelWebsite() {
-    List<JSONObject> websiteList = new ArrayList<>();
-    for (Website website : delWebsites) {
-      websiteList.add(JSONUtil.parseObj(website));
-    }
-    return websiteList;
-  }
-
+  /**
+   * Select a website given its ID.
+   *
+   * @param id {@link BigInteger} of the specified website ID
+   * @return a {@link JSONObject} of the selected website
+   */
   @Override
   public JSONObject selectWebsiteById(BigInteger id) {
     return JSONUtil.parseObj(websites.get(id.intValue()));
   }
 
+  /**
+   * Initialise this class by reading from the Ganache and decrypting with {@link EncryptUtil}.
+   */
   @Override
   public void initWebsiteDao() {
     try {
@@ -72,10 +89,16 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
         }
       }
     } catch (ExecutionException | InterruptedException e) {
-      log.error("Unable to retrieve website list from the database");
+      log.error("Unable to retrieve website list from the data source");
     }
   }
 
+  /**
+   * Insert a new website.
+   *
+   * @param website {@link JSONObject} of the website to be uploaded
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean insertWebsite(JSONObject website) {
     List<Website> updatedWebsites = SerializeUtil.clone(websites);
@@ -95,6 +118,12 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
     return commitChange(updatedWebsites);
   }
 
+  /**
+   * Encrypt the websites with symmetric algorithm and commit it to the data source.
+   *
+   * @param updatedWebsites a {@link List} of {@link Website}.
+   * @return true if succeeded, false otherwise
+   */
   private boolean commitChange(List<Website> updatedWebsites) {
     String websiteDecodedStr = JSONUtil.parseArray(updatedWebsites).toString();
     websiteDecodedStr = EncryptUtil.encryptAES(websiteDecodedStr);
@@ -111,12 +140,17 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
         return false;
       }
     } catch (ExecutionException | InterruptedException e) {
-      log.error("Unable to commit changes to the database");
+      log.error("Unable to commit changes to the data source");
       return false;
     }
-
   }
 
+  /**
+   * Update a specific website.
+   *
+   * @param website {@link JSONObject} representing the website to be updated
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean updateWebsite(JSONObject website) {
     List<Website> updatedWebsites = SerializeUtil.clone(websites);
@@ -132,6 +166,12 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
     return false;
   }
 
+  /**
+   * Delete a website.
+   *
+   * @param id {@link BigInteger} of the specified website ID
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean deleteWebsite(BigInteger id) {
     List<Website> updatedWebsites = SerializeUtil.clone(websites);

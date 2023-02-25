@@ -22,7 +22,6 @@ import okhttp3.OkHttpClient;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
-import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.dao.ClusterDao;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.dao.WebsiteDao;
@@ -31,6 +30,16 @@ import pers.yujie.dashboard.utils.DockerUtil;
 import pers.yujie.dashboard.utils.IPFSUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
+/**
+ * This class is responsible for providing website services.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see WebsiteDao
+ * @see ClusterDao
+ * @see NodeDao
+ * @since 05/01/2023
+ */
 @Service
 @Slf4j
 public class ConfigServiceImpl implements ConfigService {
@@ -46,28 +55,29 @@ public class ConfigServiceImpl implements ConfigService {
   @Resource
   private NodeDao nodeDao;
 
+  /**
+   * Initialise the configs when the app starts running.
+   *
+   * @see PostConstruct
+   */
   @PostConstruct
   private void initConfig() {
 //    connectIPFS(Constants.IPFS_ADDRESS);
 //    connectDocker(Constants.DOCKER_ADDRESS);
 //    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
 
-//    JSONObject website = JSONUtil
-//        .parseObj(new Website(BigInteger.ONE, "name", "online", BigInteger.ZERO, "location", "status"));
-//    nodeDao.insertNode(node);
-//    websiteDao.insertWebsite(website);
-
     if (Web3JUtil.getAddress() != null) {
       websiteDao.initWebsiteDao();
       nodeDao.initNodeDao();
       clusterDao.initClusterDao();
-//
-//          JSONObject node = JSONUtil
-//        .parseObj(new Node(BigInteger.ZERO));
-//          nodeDao.insertNode(node);
     }
   }
 
+  /**
+   * Clear instances before exiting.
+   *
+   * @see PreDestroy
+   */
   @PreDestroy
   private void exit() {
     exitDocker();
@@ -91,6 +101,12 @@ public class ConfigServiceImpl implements ConfigService {
     }
   }
 
+  /**
+   * Connect to IPFS API.
+   *
+   * @param address the address (port) of the IPFS API
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   public String connectIPFS(String address) {
     try {
@@ -105,6 +121,12 @@ public class ConfigServiceImpl implements ConfigService {
     return "";
   }
 
+  /**
+   * Connect to Docker.
+   *
+   * @param address the address (port) of the remote Docker server
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   @SuppressWarnings("deprecation")
   public String connectDocker(String address) {
@@ -113,16 +135,17 @@ public class ConfigServiceImpl implements ConfigService {
         .withDockerHost(address)
         .build();
 
+    // set timeout to 2 seconds
     DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory()
-        .withReadTimeout(1000)
-        .withConnectTimeout(1000);
+        .withReadTimeout(2000)
+        .withConnectTimeout(2000);
 
     try {
-      // Create a Docker client
+      // create a Docker client
       DockerUtil.setDocker(DockerClientBuilder.getInstance(config)
           .withDockerCmdExecFactory(dockerCmdExecFactory)
           .build());
-
+      // request the Docker info
       DockerUtil.getDocker().infoCmd().exec();
       log.info("Connected to Docker at: " + address);
       DockerUtil.setAddress(address);
@@ -136,11 +159,20 @@ public class ConfigServiceImpl implements ConfigService {
     return "";
   }
 
+  /**
+   * Connect to the Ganache server and valid the account and contract
+   *
+   * @param address  the address (port) of the Ganache
+   * @param account  Ethereum account
+   * @param contract Ethereum contract
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   public String connectWeb3(String address, String account, String contract) {
     if (address == null) {
       return "Ethereum address not configured.";
     }
+    // check if the account and contract is in the correct hash format
     String regex = "^0x[a-fA-F0-9]{40}$";
     if (account != null) {
       account = account.trim().toLowerCase(Locale.ROOT);
@@ -158,6 +190,7 @@ public class ConfigServiceImpl implements ConfigService {
       Web3JUtil.setContract(contract);
     }
 
+    // normalise the address and create a new Web3J instance
     address = address.trim().toLowerCase(Locale.ROOT);
     Web3JUtil.setWeb3(Web3j.build(new HttpService(address,
         new OkHttpClient.Builder().readTimeout(3, TimeUnit.SECONDS).build())));
@@ -174,6 +207,11 @@ public class ConfigServiceImpl implements ConfigService {
     return "";
   }
 
+  /**
+   * Get the current IPFS status, also check if the connection is still open.
+   *
+   * @return {@link JSONObject} containing information of the connected IPFS server
+   */
   @Override
   public JSONObject getIPFSStatus() {
     if (IPFSUtil.getIpfs() == null) {
@@ -191,6 +229,11 @@ public class ConfigServiceImpl implements ConfigService {
     return defaultObj;
   }
 
+  /**
+   * Get the current Docker status, also check if the connection is still open.
+   *
+   * @return {@link JSONObject} containing information of the connected Docker server
+   */
   @Override
   public JSONObject getDockerStatus() {
     if (DockerUtil.getDocker() == null) {
@@ -207,6 +250,11 @@ public class ConfigServiceImpl implements ConfigService {
     return defaultObj;
   }
 
+  /**
+   * Get the current Ethereum status, also check if the connection is still open.
+   *
+   * @return {@link JSONObject} containing information of the connected Ganache
+   */
   @Override
   public JSONObject getWeb3Status() {
     if (Web3JUtil.getWeb3() == null) {

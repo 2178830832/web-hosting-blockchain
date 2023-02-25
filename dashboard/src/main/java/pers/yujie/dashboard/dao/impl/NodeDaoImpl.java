@@ -17,18 +17,33 @@ import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import pers.yujie.dashboard.dao.NodeDao;
+import pers.yujie.dashboard.entity.Cluster;
 import pers.yujie.dashboard.entity.Node;
 import pers.yujie.dashboard.utils.EncryptUtil;
 import pers.yujie.dashboard.utils.Web3JUtil;
 
+/**
+ * This is the Data Access Object (DAO) class for {@link Cluster}.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see BaseDaoImpl
+ * @since 29/12/2022
+ */
 @Repository
 @Slf4j
 public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
 
   private List<Node> nodes = new ArrayList<>();
 
+  /**
+   * The deleted nodes are not dropped.
+   */
   private List<Node> delNodes = new ArrayList<>();
 
+  /**
+   * Initialise this class by reading from the Ganache and decrypting with {@link EncryptUtil}.
+   */
   @Override
   public void initNodeDao() {
     try {
@@ -50,10 +65,15 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
         }
       }
     } catch (ExecutionException | InterruptedException e) {
-      log.error("Unable to retrieve node list from the database");
+      log.error("Unable to retrieve node list from the data source");
     }
   }
 
+  /**
+   * Select all nodes as a list.
+   *
+   * @return a {@link List} of {@link JSONObject} representing the nodes
+   */
   @Override
   public List<JSONObject> selectAllNode() {
     List<JSONObject> nodeList = new ArrayList<>();
@@ -63,6 +83,12 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
     return nodeList;
   }
 
+  /**
+   * Select a list of nodes given a specific cluster.
+   *
+   * @param clusterId {@link BigInteger} of the cluster ID
+   * @return a {@link List} of {@link JSONObject} representing the selected nodes
+   */
   @Override
   public List<JSONObject> selectNodeByCluster(BigInteger clusterId) {
     List<JSONObject> nodeList = new ArrayList<>();
@@ -74,11 +100,23 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
     return nodeList;
   }
 
+  /**
+   * Select a specific node given its ID.
+   *
+   * @param id {@link BigInteger} of the specified node ID
+   * @return a {@link JSONObject} of the selected node
+   */
   @Override
   public JSONObject selectNodeById(BigInteger id) {
     return JSONUtil.parseObj(nodes.get(id.intValue()));
   }
 
+  /**
+   * Select a specific node given its name.
+   *
+   * @param name {@link String} of the specified node name
+   * @return a {@link JSONObject} of the selected node
+   */
   @Override
   public JSONObject selectNodeByName(String name) {
     for (Node node : nodes) {
@@ -89,6 +127,12 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
     return null;
   }
 
+  /**
+   * Insert a new node.
+   *
+   * @param node {@link JSONObject} of the node to be inserted
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean insertNode(JSONObject node) {
     List<Node> updatedNodes = SerializeUtil.clone(nodes);
@@ -107,6 +151,12 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
     return commitChange(updatedNodes);
   }
 
+  /**
+   * Encrypt the nodes with symmetric algorithm and commit it to the data source.
+   *
+   * @param updatedNodes a {@link List} of {@link Node}
+   * @return true if succeeded, false otherwise
+   */
   private boolean commitChange(List<Node> updatedNodes) {
     String nodeDecodedStr = JSONUtil.parseArray(updatedNodes).toString();
     nodeDecodedStr = EncryptUtil.encryptAES(nodeDecodedStr);
@@ -123,12 +173,18 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
         return false;
       }
     } catch (ExecutionException | InterruptedException e) {
-      log.error("Unable to commit changes to the database");
+      log.error("Unable to commit changes to the data source");
       return false;
     }
 
   }
 
+  /**
+   * Update a specific node.
+   *
+   * @param node {@link JSONObject} representing the node to be updated
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean updateNode(JSONObject node) {
     List<Node> updatedNodes = SerializeUtil.clone(nodes);
@@ -143,6 +199,12 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
     return false;
   }
 
+  /**
+   * Batch-update the nodes.
+   *
+   * @param nodeList a {@link List} of {@link JSONObject} representing the nodes
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean updateNodeBatch(List<JSONObject> nodeList) {
     List<Node> updatedNodes = SerializeUtil.clone(nodes);
@@ -155,6 +217,12 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
     return commitChange(updatedNodes);
   }
 
+  /**
+   * Delete an existing node.
+   *
+   * @param id {@link BigInteger} of the specified node ID.
+   * @return true if succeeded, false otherwise
+   */
   @Override
   public boolean deleteNode(BigInteger id) {
     List<Node> updatedNodes = SerializeUtil.clone(nodes);
@@ -177,61 +245,4 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
 
     return false;
   }
-
-//
-//
-//  @Override
-//  public List<Node> selectOnlineByCluster(String clusterName) {
-//    List<Node> onlineNodes = new ArrayList<>();
-//
-//    for (Node node : nodes) {
-//      if (node.isOnline() && node.getClusterName().equals(clusterName)) {
-//        onlineNodes.add(node);
-//      }
-//    }
-//    return onlineNodes;
-//  }
-//
-//  @Override
-//  @SuppressWarnings({"unchecked", "rawtypes"})
-//  public void updateNodeBatch(List<Node> nodes) {
-//    try {
-//      EthSendTransaction response = Web3JUtil.sendTransaction("updateNodeBatch",
-//          Collections.singletonList(new DynamicArray(DynamicStruct.class, nodes)));
-//      if (response.getError() == null) {
-//        log.info("Transaction succeeded: " + response.getResult());
-//        this.nodes = nodes;
-//      } else {
-//        log.error("Transaction encountered error: " + response.getError().getMessage());
-//      }
-//    } catch (ExecutionException | InterruptedException e) {
-//      e.printStackTrace();
-//    }
-//  }
-//
-//  @Override
-//  @SuppressWarnings({"unchecked", "rawtypes"})
-//  public void updateNodeBatchByCluster(List<Node> nodes) {
-//    try {
-//      EthSendTransaction response = Web3JUtil.sendTransaction("updateNodeBatchByCluster",
-//          Collections.singletonList(new DynamicArray(DynamicStruct.class, nodes)));
-//      if (response.getError() == null) {
-//        log.info("Transaction succeeded: " + response.getResult());
-//        String clusterName = nodes.get(0).getClusterName();
-//        int i = 0;
-//        for (Node node : this.nodes) {
-//          if (node.getClusterName().equals(clusterName)) {
-//            this.nodes.set(this.nodes.indexOf(node), nodes.get(i++));
-//            if (i >= nodes.size()) {
-//              return;
-//            }
-//          }
-//        }
-//      } else {
-//        log.error("Transaction encountered error: " + response.getError().getMessage());
-//      }
-//    } catch (ExecutionException | InterruptedException e) {
-//      e.printStackTrace();
-//    }
-//  }
 }

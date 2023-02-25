@@ -1,7 +1,5 @@
 package pers.yujie.dashboard.service.impl;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import io.ipfs.api.MerkleNode;
 import java.io.File;
@@ -13,33 +11,51 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pers.yujie.dashboard.dao.WebsiteDao;
 import pers.yujie.dashboard.entity.Block;
-import pers.yujie.dashboard.entity.Cluster;
-import pers.yujie.dashboard.entity.Website;
 import pers.yujie.dashboard.service.ClusterService;
 import pers.yujie.dashboard.service.WebsiteService;
 import pers.yujie.dashboard.utils.IPFSUtil;
 
+/**
+ * This class is responsible for providing website services.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see ClusterService
+ * @see WebsiteDao
+ * @since 18/11/2022
+ */
 @Service
 @Slf4j
 public class WebsiteServiceImpl implements WebsiteService {
 
   @Resource
   private ClusterService clusterService;
-
   @Resource
   private WebsiteDao websiteDao;
 
+  /**
+   * Retrieve all websites as a list.
+   *
+   * @return {@link List} of {@link JSONObject} representing the websites
+   */
   @Override
   public List<JSONObject> selectAllWebsite() {
     return websiteDao.selectAllWebsite();
   }
 
+  /**
+   * Update an existing website.
+   *
+   * @param website {@link JSONObject} of the website to be updated
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   public String updateWebsite(JSONObject website) {
     BigInteger id = website.getBigInteger("id");
     String name = website.getStr("name");
     String path = website.getStr("path");
 
+    // check if the object contains required info
     if (id == null || name == null || path == null) {
       return "Unexpected Json format";
     }
@@ -57,18 +73,24 @@ public class WebsiteServiceImpl implements WebsiteService {
       if (websiteDao.updateWebsite(website)) {
         return "";
       } else {
-        return "Unable to commit changes to the database";
+        return "Unable to commit changes to the data source";
       }
     } else {
       return message;
     }
   }
 
+  /**
+   * Upload a new website.
+   *
+   * @param website {@link JSONObject} of the website to be inserted
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   public String uploadWebsite(JSONObject website) {
     String name = website.getStr("name");
     String path = website.getStr("path");
-
+    // check if the object contains required info
     if (name == null || path == null) {
       return "Unexpected Json format";
     }
@@ -85,13 +107,20 @@ public class WebsiteServiceImpl implements WebsiteService {
       if (websiteDao.insertWebsite(website)) {
         return "";
       } else {
-        return "Unable to commit changes to the database";
+        return "Unable to commit changes to the data source";
       }
     } else {
       return message;
     }
   }
 
+  /**
+   * A helper method that sets necessary website information when uploading or updating.
+   *
+   * @param website {@link JSONObject} of a specific website
+   * @return a blank string if succeeded, an error message otherwise
+   * @see IPFSUtil
+   */
   private String uploadHelper(JSONObject website) {
     File file = new File(website.getStr("path"));
     if (IPFSUtil.getAddress() == null) {
@@ -100,8 +129,8 @@ public class WebsiteServiceImpl implements WebsiteService {
     if (file.exists()) {
       try {
         List<MerkleNode> resultList = IPFSUtil.uploadIPFS(file);
+        // set website cid and size using IPFS
         website.set("cid", resultList.get(resultList.size() - 1).hash.toString());
-
         List<Block> blockList = IPFSUtil.getBlockList(website.getStr("cid"));
         BigInteger listSize = BigInteger.ZERO;
         for (Block block : blockList) {
@@ -120,6 +149,12 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
   }
 
+  /**
+   * Delete an existing website.
+   *
+   * @param id {@link BigInteger} of the website ID
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   public String deleteWebsite(BigInteger id) {
     JSONObject rmWebsite = websiteDao.selectWebsiteById(id);
@@ -127,7 +162,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     if (websiteDao.deleteWebsite(id)) {
       return "";
     } else {
-      return "Unable to commit changes to the database";
+      return "Unable to commit changes to the data source";
     }
   }
 

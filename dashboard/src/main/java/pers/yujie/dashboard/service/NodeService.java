@@ -1,12 +1,18 @@
 package pers.yujie.dashboard.service;
 
 import cn.hutool.json.JSONObject;
-import io.ipfs.multihash.Multihash;
 import java.math.BigInteger;
 import java.util.List;
 import pers.yujie.dashboard.entity.Block;
-import pers.yujie.dashboard.entity.Node;
 
+/**
+ * This is the interface providing node services for outer usages.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see pers.yujie.dashboard.service.impl.NodeServiceImpl
+ * @since 20/01/2023
+ */
 public interface NodeService {
 
   List<JSONObject> selectAllNode();
@@ -22,12 +28,4 @@ public interface NodeService {
   void distribute(JSONObject cluster, JSONObject website, List<Block> blockList);
 
   void releaseWebsiteSpace(JSONObject cluster, JSONObject website);
-
-//  void distributeBlockList(String clusterName, List<Multihash> blockList, String cid);
-
-//  void distributeWebsite(BigInteger cluster_id, String cid);
-//
-//  void removeWebsite(BigInteger cluster_id, String cid);
-//
-//  void offlineNode(Node offNode);
 }

@@ -1,59 +1,68 @@
 package pers.yujie.dashboard.service.impl;
 
-import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.SerializeUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import io.ipfs.multihash.Multihash;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
-import javax.print.Doc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.dao.ClusterDao;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.entity.Block;
-import pers.yujie.dashboard.entity.Node;
 import pers.yujie.dashboard.service.NodeService;
 import pers.yujie.dashboard.utils.DockerUtil;
 import pers.yujie.dashboard.utils.IPFSUtil;
 
+/**
+ * This class is responsible for providing node services.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see NodeDao
+ * @see ClusterDao
+ * @since 20/01/2023
+ */
 @Service
 @Slf4j
 public class NodeServiceImpl implements NodeService {
 
   @Resource
   private NodeDao nodeDao;
-
   @Resource
   private ClusterDao clusterDao;
-
-//  private String cid;
-//  private List<Node> nodes;
-//  private Node masterNode;
-//  private List<Multihash> blockList;
 
   private List<JSONObject> nodeList = new ArrayList<>();
   private List<Block> blockList = new ArrayList<>();
   private BigInteger blockListSize = BigInteger.ZERO;
 
+  /**
+   * Retrieve all nodes as a list.
+   *
+   * @return {@link List} of {@link JSONObject} representing the nodes
+   */
   @Override
   public List<JSONObject> selectAllNode() {
     return nodeDao.selectAllNode();
   }
 
+  /**
+   * Update an existing node.
+   *
+   * @param node {@link JSONObject} of the node
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   public String updateNode(JSONObject node) {
     BigInteger id = node.getBigInteger("id");
     BigInteger totalSpace = node.getBigInteger("totalSpace");
 
+    // check if the node info is valid
     if (id == null || totalSpace == null) {
       return "Unexpected Json format";
     }
@@ -99,6 +108,12 @@ public class NodeServiceImpl implements NodeService {
     }
   }
 
+  /**
+   * Insert a new node.
+   *
+   * @param node {@link JSONObject} containing necessary information
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   public String insertNode(JSONObject node) {
     String name = node.getStr("name");
@@ -131,6 +146,12 @@ public class NodeServiceImpl implements NodeService {
     }
   }
 
+  /**
+   * Delete an existing node.
+   *
+   * @param id {@link BigInteger} of the specified node ID
+   * @return a blank string if succeeded, an error message otherwise
+   */
   @Override
   public String deleteNode(BigInteger id) {
     JSONObject rmNode = nodeDao.selectNodeById(id);
@@ -161,6 +182,12 @@ public class NodeServiceImpl implements NodeService {
     }
   }
 
+  /**
+   * Redistribute a list of blocks to other nodes when deleting a node
+   *
+   * @param node      {@link JSONObject} representing the node to be deleted
+   * @param blockList {@link List} of {@link Block} contained in the deleted node
+   */
   private void redistributeNode(JSONObject node, List<Block> blockList) {
     nodeList = nodeDao.selectNodeByCluster(node.getBigInteger("clusterId"));
     for (JSONObject nodeObj : nodeList) {
@@ -179,9 +206,15 @@ public class NodeServiceImpl implements NodeService {
     nodeDao.updateNodeBatch(nodeList);
   }
 
+  /**
+   * Distribute a website to nodes in a cluster
+   *
+   * @param cluster   the specified cluster
+   * @param website   the website to be distributed
+   * @param blockList {@link List} of Merkel nodes obtained from the website Merkel tree
+   */
   @Override
   public void distribute(JSONObject cluster, JSONObject website, List<Block> blockList) {
-
     nodeList = nodeDao.selectNodeByCluster(cluster.getBigInteger("id"));
     this.blockList = blockList;
     blockListSize = website.getBigInteger("size");
@@ -189,6 +222,12 @@ public class NodeServiceImpl implements NodeService {
     nodeDao.updateNodeBatch(nodeList);
   }
 
+  /**
+   * Free occupied space in a cluster when deleting a website
+   *
+   * @param cluster the specified cluster
+   * @param website the deleted website
+   */
   @Override
   public void releaseWebsiteSpace(JSONObject cluster, JSONObject website) {
     try {
@@ -201,6 +240,12 @@ public class NodeServiceImpl implements NodeService {
     }
   }
 
+  /**
+   * Change a node to online or offline
+   *
+   * @param id {@link BigInteger} of the node ID
+   * @return a blank string if succeeded, false otherwise
+   */
   @Override
   public String changeNodeStatus(BigInteger id) {
     JSONObject stNode = nodeDao.selectNodeById(id);
@@ -234,35 +279,9 @@ public class NodeServiceImpl implements NodeService {
     }
   }
 
-  //  @Override
-//  public void distributeBlockList(String clusterName, List<Multihash> blockList, String cid) {
-//    nodes = nodeDao.selectOnlineByCluster(clusterName);
-//    masterNode = nodes.get(0);
-//    this.blockList = blockList;
-//    this.cid = cid;
-//
-//    try {
-//      distributePointerBlocks();
-//      distributeStorageBlocks();
-//      nodeDao.updateNodeBatchByCluster(nodes);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-//  }
-//
-//  private void distributePointerBlocks() throws IOException {
-//    List<Multihash> pointerHashList = ipfsUtil.getPointerHashList(blockList, cid);
-//
-//    for (Multihash pointerHash : pointerHashList) {
-//      dockerUtil.execDockerCmd(masterNode.getName(), Constants.IPFS_PREFIX,
-//          "block", "pin", "add", "--recursive=false", pointerHash.toString());
-//    }
-//    dockerUtil.execDockerCmd(masterNode.getName(), Constants.IPFS_PREFIX, "repo", "gc");
-//    BigInteger pointerSize = BigInteger.valueOf(pointerHashList.size());
-//    masterNode.setUsedSpace(masterNode.getUsedSpace().add(pointerSize));
-//    blockList.removeAll(pointerHashList);
-//  }
-//
+  /**
+   * Remove a list of blocks from each node (container).
+   */
   private void removeStorageBlocks() {
     StringBuilder builder = new StringBuilder();
     for (Block block : blockList) {
@@ -296,7 +315,11 @@ public class NodeServiceImpl implements NodeService {
     }
   }
 
-
+  /**
+   * Distribute blocks to each node (container).
+   *
+   * @see DockerUtil
+   */
   private void distributeStorageBlocks() {
     List<List<Block>> partitions = partitionBlockList();
     int i = 0;
@@ -308,6 +331,7 @@ public class NodeServiceImpl implements NodeService {
         try {
           DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX,
               "pin", "add", "-r=false", block.getCid());
+          // clear cache
           DockerUtil.execDockerCmd(nodeName, Constants.IPFS_PREFIX, "repo", "gc");
         } catch (InterruptedException e) {
           log.error(e.getMessage());
@@ -320,6 +344,11 @@ public class NodeServiceImpl implements NodeService {
     }
   }
 
+  /**
+   * Proportionally divide a list according to capacity of each node in {@link #nodeList}.
+   *
+   * @return {@link List} of {@link List} of {@link Block}, ordered by the original node list
+   */
   private List<List<Block>> partitionBlockList() {
     List<List<Block>> partitionList = new ArrayList<>();
     int maxStorage = 0;
@@ -346,110 +375,4 @@ public class NodeServiceImpl implements NodeService {
 
     return partitionList;
   }
-//
-//  @Override
-//  public void removeWebsite(BigInteger cluster_id, String cid) {
-//    initNode(cluster_id, cid);
-//    if (masterNode == null) {
-//      log.info("There is no master node");
-//      return;
-//    }
-//    try {
-//      removeBlock(IPFSUtil.getRefList(cid));
-//      clusterMapper.updateClusterSpace(cluster_id);
-//    } catch (IOException | InterruptedException e) {
-//      e.printStackTrace();
-//    }
-//
-//  }
-//
-//  private void removeBlock(List<Multihash> refList) throws InterruptedException {
-//    StringBuilder builder = new StringBuilder();
-//    for (Multihash ref : refList) {
-//      builder.append(ref.toString());
-//      builder.append(" ");
-//    }
-//    String refHashList = builder.toString();
-//    for (Node node : nodeList) {
-//      dockerUtil.execDockerCmd(node.getNodeName(), Constants.IPFS_PREFIX,
-//          "block", "rm", "-f", refHashList);
-//      dockerUtil.execDockerCmd(node.getNodeName(), Constants.IPFS_PREFIX, "repo", "gc");
-////      node.setUsedSpace(node.getUsedSpace() - 0);
-//      node.setUpdateTime(new Date());
-////      cmd = "docker exec -it ipfs" + node.getNodeId() + " ipfs block rm -f " + refHashList;
-////      linuxUtil.executeCmd(cmd);
-//    }
-//    nodeMapper.updateNodeBatch(nodeList);
-//  }
-//
-//  @Override
-//  public void offlineNode(Node offNode) {
-//
-//    updateNodeHelper(offNode, false, false);
-//  }
-//
-//  public void onlineNode(Node onNode) {
-//    Cluster cluster = clusterMapper.selectByClusterId(onNode.getClusterId());
-//    nodeList = nodeMapper.selectByClusterId(cluster.getClusterId());
-//    nodeList.removeAll(nodeMapper.selectHealthyByClusterId(cluster.getClusterId()));
-//    if (nodeList.size() > 1) {
-////      clusterService.updateClusterContent(cluster);
-//      updateNodeHelper(onNode, true, false);
-//    } else {
-//      updateNodeHelper(onNode, true, true);
-//    }
-//  }
-//
-//  private void updateNodeHelper(Node node, boolean turnOnNode, boolean turnOnCluster) {
-//    node.setUpdateTime(new Date());
-//    node.setHealthy(turnOnNode);
-//    nodeMapper.updateNode(node);
-//    Cluster cluster = clusterMapper.selectByClusterId(node.getClusterId());
-//    cluster.setUpdateTime(new Date());
-//    cluster.setHealthy(turnOnCluster);
-//    clusterMapper.updateCluster(cluster);
-//  }
-//
-//  public void registerNode(Node inNode) {
-//    Cluster cluster = clusterMapper.selectMinCluster().get(0);
-//    inNode.setClusterId(cluster.getClusterId());
-//    inNode.setNodeId(nodeMapper.selectMaxNodeId().add(BigInteger.ONE));
-//    inNode.setUpdateTime(new Date());
-//    inNode.setCreateTime(new Date());
-//
-//    cluster.setUpdateTime(new Date());
-//    cluster.setTotalSpace(cluster.getTotalSpace() + inNode.getTotalSpace());
-//    clusterMapper.updateCluster(cluster);
-//    nodeMapper.insertNode(inNode);
-////    clusterService.checkClusterStatus();
-//  }
-//
-//
-//  public boolean removeDamagedNode(Node rmNode) {
-//    if (!rmNode.isHealthy()) {
-//      return false;
-//    }
-//    rmNode.setHealthy(false);
-//    nodeList = nodeMapper.selectHealthyByClusterId(rmNode.getClusterId());
-//    if (rmNode.isMaster()) {
-//
-//    }
-//    rmNode.setUpdateTime(new Date());
-//    nodeMapper.updateNode(rmNode);
-//    return true;
-//  }
-//
-//  private boolean removeMasterNode() {
-//    for (Node node : nodeList) {
-////      if (!node.isMaster()) {
-////        masterNodeName = node.getNodeName();
-////        break;
-////      }
-////      if (masterNodeName == null) {
-////        return false;
-////      }
-////      rmNode.setMaster(false);
-//    }
-//    return true;
-//  }
 }

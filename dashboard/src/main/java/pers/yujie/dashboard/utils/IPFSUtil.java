@@ -15,6 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import pers.yujie.dashboard.entity.Block;
 
+/**
+ * This is a utility class responsible for controlling IPFS API.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @since 21/10/2022
+ */
 @Component
 @Slf4j
 public class IPFSUtil {
@@ -26,58 +33,26 @@ public class IPFSUtil {
   @Getter
   @Setter
   private static String address;
-  private static List<Multihash> blockHashList;
 
-//  private static IPFS getClient() {
-//    if (ipfs == null) {
-//      synchronized (IPFSUtil.class) {
-//        if (ipfs == null) {
-//          ipfs = new IPFS(Constants.IPFS_ADDRESS);
-//        }
-//      }
-//    }
-//    return ipfs;
-//  }
-
+  /**
+   * Upload a file or directory to IPFS.
+   *
+   * @param file {@link File} object
+   * @return {@link List} or the uploaded CIDs
+   * @throws IOException thrown by {@link IPFS#add(NamedStreamable)}
+   */
   public static List<MerkleNode> uploadIPFS(File file) throws IOException {
     NamedStreamable.FileWrapper fileWrapper = new NamedStreamable.FileWrapper(file);
     return ipfs.add(fileWrapper);
   }
 
-//  public List<Multihash> getPointerHashList(List<Multihash> blockHashList, String cid)
-//      throws IOException {
-//    List<Multihash> pointerHashList = new ArrayList<>(getBlockList(cid));
-//    pointerHashList.removeAll(blockHashList);
-//
-//    return pointerHashList;
-//  }
-//
-//  public List<Multihash> getBlockHashList(String cid) throws IOException {
-//    blockHashList = new ArrayList<>();
-//    blockHashList.add(Multihash.fromBase58(cid));
-//    getRecursiveBlockList(Multihash.fromBase58(cid));
-//    return blockHashList;
-//  }
-
-  public static BigInteger getBlockListSize(String cid) throws IOException {
-    List<Block> blockList = getBlockList(cid);
-    BigInteger result = BigInteger.ZERO;
-
-    for (Block block : blockList) {
-      result = result.add((BigInteger) ipfs.block.stat(Multihash.fromBase58("hash")).get("Size"));
-    }
-    return result;
-  }
-
-  public static BigInteger getBlockListSize(List<String> blockList) throws IOException {
-    BigInteger result = BigInteger.ZERO;
-
-    for (String hash : blockList) {
-      result = result.add((BigInteger) ipfs.block.stat(Multihash.fromBase58(hash)).get("Size"));
-    }
-    return result;
-  }
-
+  /**
+   * Given a Merkle node, get the block list under this node
+   *
+   * @param cid the Merkle node
+   * @return {@link List} of {@link Block}
+   * @throws IOException thrown by {@link IPFS#stats}
+   */
   public static List<Block> getBlockList(String cid) throws IOException {
     List<Multihash> refList = ipfs.refs(Multihash.fromBase58(cid), true);
     refList.add(Multihash.fromBase58(cid));
@@ -90,20 +65,5 @@ public class IPFSUtil {
     return blockList;
   }
 
-//  private static void getRecursiveBlockList(Multihash cid) throws IOException {
-//    List<MerkleNode> lsResponse = ipfs.ls(cid);
-//    if (lsResponse.size() < 1) {
-//      return;
-//    }
-//    for (MerkleNode node : lsResponse) {
-//      List<Multihash> refList = getBlockList(node.hash.toString());
-//      if (refList.size() < 1) {
-//        blockHashList.add(node.hash);
-//        continue;
-//      }
-//      getRecursiveBlockList(node.hash);
-//    }
-
-//  }
 
 }

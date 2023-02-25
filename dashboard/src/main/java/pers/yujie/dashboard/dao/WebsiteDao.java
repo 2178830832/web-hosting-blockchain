@@ -1,11 +1,17 @@
 package pers.yujie.dashboard.dao;
 
-
 import cn.hutool.json.JSONObject;
 import java.math.BigInteger;
 import java.util.List;
-import pers.yujie.dashboard.entity.Website;
 
+/**
+ * This is the interface providing website data access for outer usages.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @see pers.yujie.dashboard.dao.impl.WebsiteDaoImpl
+ * @since 29/12/2022
+ */
 public interface WebsiteDao {
 
   void initWebsiteDao();
@@ -18,13 +24,5 @@ public interface WebsiteDao {
 
   JSONObject selectWebsiteById(BigInteger id);
 
-  //  int deleteByWebsiteId(BigInteger website_id);
-//
-//  int updateWebsite(Website website);
-//
-//  Website selectByWebsiteId(BigInteger website_id);
-//
   List<JSONObject> selectAllWebsite();
-
-  List<JSONObject> selectDelWebsite();
 }
