@@ -64,7 +64,7 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
           }
         }
       }
-    } catch (ExecutionException | InterruptedException e) {
+    } catch (IndexOutOfBoundsException | ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve node list from the data source");
     }
   }

@@ -59,7 +59,8 @@ public class IPFSUtil {
 
     List<Block> blockList = new ArrayList<>();
     for (Multihash hash : refList) {
-      blockList.add(new Block(hash.toString(), (BigInteger) ipfs.block.stat(hash).get("Size")));
+      blockList.add(
+          new Block(hash.toString(), new BigInteger(ipfs.block.stat(hash).get("Size").toString())));
     }
 
     return blockList;

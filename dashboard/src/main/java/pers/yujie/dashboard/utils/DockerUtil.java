@@ -44,9 +44,11 @@ public class DockerUtil {
    *
    * @return {@link List} of names
    */
-  public List<String> getContainerNameList() {
-    List<Container> containers = docker.listContainersCmd().withNameFilter(
-        Collections.singleton(Constants.IPFS_PREFIX)).exec();
+  public static List<String> getContainerNameList() {
+    List<Container> containers = DockerUtil.getDocker().listContainersCmd()
+        .withNameFilter(Collections.singleton(Constants.IPFS_PREFIX))
+        .withShowAll(true)
+        .exec();
 
     List<String> containerNameList = new ArrayList<>();
     for (Container container : containers) {

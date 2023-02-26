@@ -12,9 +12,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pers.yujie.dashboard.common.Encrypted;
-import pers.yujie.dashboard.entity.Node;
 import pers.yujie.dashboard.service.NodeService;
 
+/**
+ * Contains the {@link Controller} related to the controller page. The business logic is in {@link
+ * NodeService}.
+ *
+ * @author Yujie Chen
+ * @version 1.0.2
+ * @since 15/01/2023
+ */
 @Controller
 @RequestMapping("/node")
 public class NodeController {
@@ -22,6 +29,11 @@ public class NodeController {
   @Resource
   private NodeService nodeService;
 
+  /**
+   * List available nodes.
+   *
+   * @return {@link ResponseEntity} containing the node information
+   */
   @Encrypted
   @GetMapping("/list")
   public ResponseEntity<String> listNode() {
@@ -30,6 +42,12 @@ public class NodeController {
     return new ResponseEntity<>(JSONUtil.toJsonStr(nodes), HttpStatus.OK);
   }
 
+  /**
+   * Update an existing node.
+   *
+   * @param node {@link JSONObject} representing the node to be updated
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise
+   */
   @Encrypted
   @PostMapping("/update")
   public ResponseEntity<String> updateNode(@RequestBody JSONObject node) {
@@ -41,6 +59,12 @@ public class NodeController {
     }
   }
 
+  /**
+   * Insert a new node.
+   *
+   * @param node {@link JSONObject} representing the node to be inserted
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise
+   */
   @Encrypted
   @PostMapping("/insert")
   public ResponseEntity<String> insertNode(@RequestBody JSONObject node) {
@@ -52,6 +76,12 @@ public class NodeController {
     }
   }
 
+  /**
+   * Delete an existing node.
+   *
+   * @param node {@link JSONObject} representing the node to be deleted
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise
+   */
   @Encrypted
   @PostMapping("/delete")
   public ResponseEntity<String> deleteNode(@RequestBody JSONObject node) {
@@ -63,6 +93,12 @@ public class NodeController {
     }
   }
 
+  /**
+   * Change the status of a node to online or offline.
+   *
+   * @param node {@link JSONObject} representing the node to be changed
+   * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} otherwise
+   */
   @Encrypted
   @PostMapping("/status")
   public ResponseEntity<String> changeNodeStatus(@RequestBody JSONObject node) {

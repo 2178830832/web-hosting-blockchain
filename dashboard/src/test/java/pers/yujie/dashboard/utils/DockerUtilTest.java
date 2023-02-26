@@ -1,158 +1,88 @@
 package pers.yujie.dashboard.utils;
 
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.ExecCreateCmdResponse;
-import com.github.dockerjava.api.command.PullImageResultCallback;
-import com.github.dockerjava.api.model.Bind;
-import com.github.dockerjava.api.model.Binds;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Info;
+import com.github.dockerjava.api.model.Image;
 import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
 import com.github.dockerjava.api.model.Ports.Binding;
-import com.github.dockerjava.api.model.PullResponseItem;
-import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
-import com.github.dockerjava.core.command.ExecStartResultCallback;
-import com.github.dockerjava.transport.DockerHttpClient;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class DockerUtilTest {
 
-  static DockerClient docker;
-  DockerClientConfig custom;
-  DockerHttpClient httpClient;
+  static final String DOCKER_ADDRESS = "tcp://124.223.10.94:2375";
 
   @BeforeAll
   static void setUp() {
     DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-        .withDockerHost("tcp://124.223.10.94:2375")
-//        .withDockerHost("tcp://192.168.80.128:2375")
+        .withDockerHost(DOCKER_ADDRESS)
         .build();
-
-    // Create a Docker client
-    docker = DockerClientBuilder.getInstance(config).build();
+    // create a Docker client
+    DockerUtil.setDocker(DockerClientBuilder.getInstance(config).build());
   }
 
   @AfterAll
-  static void clear() throws IOException {
-    docker.close();
+  static void tearDown() {
+    assertDoesNotThrow(() -> DockerUtil.getDocker().close());
   }
 
   @Test
-  void testConnect() {
-    Info info = docker.infoCmd().exec();
-    System.out.println(info.toString());
+  void testConnectDocker() {
+    DockerUtil.getDocker().infoCmd().exec();
   }
 
   @Test
-  void start() {
-    for (int i = 0; i<100;i++) {
-      CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo")
-          .withName("test" + i)
-          .withBinds(new Bind("/home/yujie/Desktop/FYP/compose/test" + i, new Volume("/data/ipfs")))
-          .exec();
-
-      // Start the container
-      docker.startContainerCmd(container.getId()).exec();
-    }
-  }
-
-  void execCmd() {
-    //
+  void testImage() {
+    String imageName = "ipfs/kubo:latest";
+    List<Image> images = DockerUtil.getDocker().listImagesCmd()
+        .withImageNameFilter(imageName).exec();
+    assertFalse(images.isEmpty());
   }
 
   @Test
-  void testExec() throws InterruptedException {
+  void testContainerNameList() {
+    List<String> nameList = DockerUtil.getContainerNameList();
+    assertFalse(nameList.isEmpty());
+  }
+
+  @Test
+  @SuppressWarnings("deprecation")
+  void testContainerAndExec() {
+    String containerName = "test";
     List<PortBinding> portBindings = new ArrayList<>();
+    portBindings.add(new PortBinding(
+        new Binding(null, "5001"), ExposedPort.tcp(5002)));
 
-// Bind container port 443 to host port 8443
-    portBindings.add(new PortBinding(new Binding(null, "5001"), ExposedPort.tcp(5001)));
-    portBindings.add(new PortBinding(new Binding(null, "8080"), ExposedPort.tcp(8080)));
-    portBindings.add(new PortBinding(new Binding(null, "4001"), ExposedPort.tcp(4001)));
-
-    // Create a container
-    CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo")
-        .withName("test1")
-//        .withPortBindings(portBindings)
-        .withBinds(new Bind("/home/lighthouse/fyp/compose/test1", new Volume("/data/ipfs")))
+    // create a test container
+    DockerUtil.getDocker().createContainerCmd("ipfs/kubo")
+        .withName(containerName)
+        .withPortBindings(portBindings)
         .exec();
 
-    // Start the container
-    docker.startContainerCmd(container.getId()).exec();
-
-
-  }
-
-  @Test
-  void testImage() throws InterruptedException {
-//    docker.pullImageCmd("hello-world").exec(new PullImageResultCallback()).aw);
-    docker.pullImageCmd("hello-world")
-        .exec(new PullImageResultCallback() {
-          public void onNext(PullResponseItem item) {
-            // Display progress updates
-            System.out.println("Received progress update: " + item.getStatus());
-          }
-
-          public void onError(Throwable throwable) {
-            // Handle errors
-            System.out.println("Error pulling image: " + throwable.getMessage());
-          }
-
-          public void onComplete() {
-            // Image pull complete
-            System.out.println("Image pull complete");
-          }
-        }).awaitCompletion();
-  }
-
-
-  @Test
-  void testContainer() {
-
-//    List<Network> networks = docker.listNetworksCmd()
-//        .withNameFilter("java-docker-mssql")
-//        .exec();
-//    Network network = null;
-//
-//    while (networks.size() > 0) {
-//      docker.removeNetworkCmd("java-docker-mssql");
-//      networks.remove(0);
-//    }
-//    docker.createNetworkCmd()
-//        .withName("java-docker-mssql")
-//        .withIpam(new Ipam().withConfig(new Config().withSubnet("10.176.32.0/20")))
-//        .withDriver("bridge").exec();
-
-    String containerName = "ipfs-net";
-    List<Container> containers = docker.listContainersCmd()
+    List<Container> containers = DockerUtil.getDocker().listContainersCmd()
         .withNameFilter(Collections.singleton(containerName))
         .withShowAll(true)
         .exec();
+    assertFalse(containers.isEmpty());
 
-    if (containers.size() > 0) {
-      docker.stopContainerCmd(containers.get(0).getId()).exec();
-      docker.removeContainerCmd(containers.get(0).getId()).exec();
-    }
-    CreateContainerResponse container = docker.createContainerCmd("ipfs/kubo:latest")
-        .withName(containerName)
-        .withPortBindings(PortBinding.parse("5001:5001"),
-            PortBinding.parse("8080:8080"), PortBinding.parse("4001:4001"))
-        .exec();
-    docker.startContainerCmd(container.getId()).exec();
+    // start the test container
+    DockerUtil.getDocker().startContainerCmd(containers.get(0).getId()).exec();
+
+    // execute a command inside the container
+    assertDoesNotThrow(() -> DockerUtil.execDockerCmd(containerName, "ipfs", "id"));
+
+    // stop and delete the test container
+    DockerUtil.getDocker().stopContainerCmd(containers.get(0).getId()).exec();
+    DockerUtil.getDocker().removeContainerCmd(containers.get(0).getId()).exec();
   }
 }

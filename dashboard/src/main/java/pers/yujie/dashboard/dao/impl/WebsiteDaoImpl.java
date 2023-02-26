@@ -88,7 +88,7 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
           }
         }
       }
-    } catch (ExecutionException | InterruptedException e) {
+    } catch (IndexOutOfBoundsException | ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve website list from the data source");
     }
   }

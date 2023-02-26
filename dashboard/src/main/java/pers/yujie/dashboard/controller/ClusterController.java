@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pers.yujie.dashboard.common.Encrypted;
 import pers.yujie.dashboard.service.ClusterService;
-import pers.yujie.dashboard.service.ConfigService;
 
 /**
- * Contains the {@link Controller} related to the controller page. The business logic is in
- * {@link ClusterService}.
+ * Contains the {@link Controller} related to the controller page. The business logic is in {@link
+ * ClusterService}.
  *
  * @author Yujie Chen
  * @version 1.0.2
@@ -30,6 +29,7 @@ public class ClusterController {
 
   /**
    * List available clusters.
+   *
    * @return {@link ResponseEntity} containing the cluster information
    */
   @Encrypted

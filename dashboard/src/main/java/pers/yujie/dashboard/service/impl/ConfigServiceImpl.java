@@ -192,6 +192,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     // normalise the address and create a new Web3J instance
     address = address.trim().toLowerCase(Locale.ROOT);
+    // set timeout to three seconds
     Web3JUtil.setWeb3(Web3j.build(new HttpService(address,
         new OkHttpClient.Builder().readTimeout(3, TimeUnit.SECONDS).build())));
 

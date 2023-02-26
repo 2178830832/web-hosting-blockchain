@@ -103,7 +103,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
       }
       clusterEncodedStr = EncryptUtil.decryptAES(clusterEncodedStr);
       clusters = JSONUtil.toList(JSONUtil.parseArray(clusterEncodedStr), Cluster.class);
-    } catch (ExecutionException | InterruptedException e) {
+    } catch (IndexOutOfBoundsException | ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve cluster list from the data source");
     }
   }

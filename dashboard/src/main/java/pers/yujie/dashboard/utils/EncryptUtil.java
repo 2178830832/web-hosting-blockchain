@@ -1,18 +1,21 @@
 package pers.yujie.dashboard.utils;
 
 import cn.hutool.core.codec.Base64;
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
-import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.crypto.GlobalBouncyCastleProvider;
 import cn.hutool.crypto.PemUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
+import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import io.netty.util.CharsetUtil;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,19 +31,26 @@ public class EncryptUtil {
 
   private static SymmetricCrypto aes;
   private static RSA rsa;
+  private static Sign sign;
 
   // Initialise the AES and RSA instances by reading the keys from local files.
   static {
+    // disable global BC to bypass digital authentication for Jar files
+    GlobalBouncyCastleProvider.setUseBouncyCastle(false);
+    // read encryption keys and create Crypto instances
     try {
-      byte[] key = IoUtil.readBytes(FileUtil.getInputStream(
-          ResourceUtil.getResource("encryption/key").getPath()), true);
+      byte[] key = IoUtil.readBytes(
+          new ClassPathResource("encryption/key").getInputStream(), true);
       aes = new SymmetricCrypto(SymmetricAlgorithm.AES, key);
 
-      rsa = new RSA(PemUtil.readPemPrivateKey(FileUtil.getInputStream(
-          ResourceUtil.getResource("encryption/private").getPath())),
-          PemUtil.readPemPublicKey(FileUtil.getInputStream(
-              ResourceUtil.getResource("encryption/public").getPath())));
-    } catch (NullPointerException e) {
+      rsa = new RSA(PemUtil.readPemPrivateKey(
+          new ClassPathResource("encryption/private").getInputStream()),
+          PemUtil.readPemPublicKey(
+              new ClassPathResource("encryption/public").getInputStream()));
+
+      sign = SecureUtil.sign(SignAlgorithm.SHA256withRSA, rsa.getPrivateKeyBase64(),
+          rsa.getPublicKeyBase64());
+    } catch (NullPointerException | IOException e) {
       log.error("Unable to locate the encryption key");
     }
   }
@@ -71,7 +81,7 @@ public class EncryptUtil {
    * @param content {@link String} to be encrypted
    * @return encrypted content
    */
-  public static String rsaEncryptPublic(String content) {
+  public static String encryptPublicRSA(String content) {
     return rsa.encryptHex(content, CharsetUtil.UTF_8, KeyType.PublicKey);
   }
 
@@ -86,13 +96,23 @@ public class EncryptUtil {
   }
 
   /**
-   * SHA256 digital sign.
+   * SHA256 digital sign with RSA.
    *
    * @param content {@link String} to be signed
    * @return signed content
    */
   public static String signSHA256withRSA(String content) {
-    return Base64.encode(SecureUtil.sign(SignAlgorithm.SHA256withRSA, rsa.getPrivateKeyBase64(),
-        rsa.getPublicKeyBase64()).sign(content));
+    return Base64.encode(sign.sign(content));
+  }
+
+  /**
+   * Verify the signature of a string using SHA256 with RSA.
+   *
+   * @param content original content
+   * @param signed  signed content
+   * @return true if validate, false otherwise
+   */
+  public static boolean verifySHA256withRSA(String content, String signed) {
+    return sign.verify(content.getBytes(StandardCharsets.UTF_8), Base64.decode(signed));
   }
 }
