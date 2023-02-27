@@ -34,7 +34,7 @@ table.on('click', 'tr', function () {
           url: '/node/status',
           contentType: "application/json",
           data: JSON.stringify(dataToUpdate),
-          headers: setHeaders('/node/status'),
+          headers: setHeaders('/node/status', JSON.stringify(dataToUpdate)),
           complete: function () {
             checkAuth(jqXHR)
           },
@@ -67,7 +67,7 @@ table.on('click', 'tr', function () {
           url: '/node/delete',
           contentType: "application/json",
           data: JSON.stringify(dataToUpdate),
-          headers: setHeaders('/node/delete'),
+          headers: setHeaders('/node/delete', JSON.stringify(dataToUpdate)),
           complete: function () {
             checkAuth(jqXHR)
           },
@@ -106,7 +106,7 @@ table.on('click', 'tr', function () {
           url: '/node/update',
           contentType: "application/json",
           data: formData,
-          headers: setHeaders('/node/update'),
+          headers: setHeaders('/node/update', formData),
           complete: function () {
             checkAuth(jqXHR)
           },
@@ -154,7 +154,7 @@ createForm.submit(function (e) {
         url: '/node/insert',
         contentType: 'application/json',
         data: formData,
-        headers: setHeaders('/node/insert'),
+        headers: setHeaders('/node/insert', formData),
         complete: function () {
           checkAuth(jqXHR)
         },

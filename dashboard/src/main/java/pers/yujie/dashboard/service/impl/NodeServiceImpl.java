@@ -130,6 +130,7 @@ public class NodeServiceImpl implements NodeService {
     }
 
     JSONObject minCluster = clusterDao.selectMinCluster();
+
     node.set("clusterId", minCluster.getBigInteger("clusterId"));
     minCluster.set("totalSpace", minCluster.getBigInteger("totalSpace").add(totalSpace));
 

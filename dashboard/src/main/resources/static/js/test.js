@@ -122,7 +122,7 @@ function sendRequest() {
         url: '/test/param',
         contentType: 'application/json',
         data: formData,
-        headers: setHeaders('/test/param'),
+        headers: setHeaders('/test/param', formData),
         complete: function () {
           checkAuth(jqXHR)
         },

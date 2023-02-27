@@ -5,6 +5,8 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.google.common.util.concurrent.RateLimiter;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,6 +20,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.savedrequest.Enumerator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -107,18 +110,27 @@ public class RequestManagerConfig implements Filter {
     try {
       // decrypt the encrypted string using the RSA public key
       String decryptedStr = EncryptUtil.decryptPrivateRSA(encryptedStr);
-
-      // check the correctness of time and URL
       JSONObject authObj = JSONUtil.parseObj(decryptedStr);
-      DateUtil.parse(authObj.getStr("time"));
+
+      // check if the request URL matches
       String requestedUrl = request.getRequestURI();
       if (!authObj.getStr("url").equals(requestedUrl)) {
-        return new ResponseEntity<>("Encrypted data not found in request header",
+        return new ResponseEntity<>("Failed to pass authentication",
             HttpStatus.UNAUTHORIZED);
       }
+
+      // validate the parameters for PostMapping
+      Object[] args = joinPoint.getArgs();
+      if (args.length > 0) {
+        JSONObject object = JSONUtil.parseObj(joinPoint.getArgs()[0]);
+        if (!object.equals(authObj.getJSONObject("params"))){
+          return new ResponseEntity<>("Failed to pass authentication",
+              HttpStatus.UNAUTHORIZED);
+        }
+      }
     } catch (Exception e) {
-      // the string cannot be deprecated or is not in the correct format
-      return new ResponseEntity<>("Encrypted data not found in request header",
+      // the string cannot be deprecated
+      return new ResponseEntity<>("Failed to pass authentication",
           HttpStatus.UNAUTHORIZED);
     }
 

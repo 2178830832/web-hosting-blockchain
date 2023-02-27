@@ -24,7 +24,7 @@ table.on('click', 'tr', function () {
           url: '/website/delete',
           contentType: "application/json",
           data: JSON.stringify(dataToUpdate),
-          headers: setHeaders('/website/delete'),
+          headers: setHeaders('/website/delete', JSON.stringify(dataToUpdate)),
           complete: function () {
             checkAuth(jqXHR)
           },
@@ -58,7 +58,7 @@ table.on('click', 'tr', function () {
           url: '/website/update',
           contentType: "application/json",
           data: data,
-          headers: setHeaders('/website/update'),
+          headers: setHeaders('/website/update', data),
           complete: function () {
             checkAuth(jqXHR)
           },
@@ -107,7 +107,7 @@ createForm.submit(function (e) {
         url: '/website/insert',
         contentType: 'application/json',
         data: formData,
-        headers: setHeaders('/website/insert'),
+        headers: setHeaders('/website/insert', formData),
         complete: function () {
           checkAuth(jqXHR)
         },

@@ -30,8 +30,8 @@ import pers.yujie.dashboard.service.TestService;
 @Service
 public class TestServiceImpl implements TestService {
 
-  List<Double> results = new ArrayList<>();
-  private static final JSONObject resultObj = JSONUtil.createObj();
+  private static List<Double> results = new ArrayList<>();
+  private static JSONObject resultObj = JSONUtil.createObj();
   private static boolean isRunning = false;
 
   /**
@@ -81,7 +81,6 @@ public class TestServiceImpl implements TestService {
       return "Unexpected Json format";
     }
     try {
-      url = URLUtil.normalize(url);
       // validate the URL by constructing it to an object
       new URL(url);
     } catch (MalformedURLException e) {
@@ -114,6 +113,7 @@ public class TestServiceImpl implements TestService {
   @Override
   public void stopTest() {
     results = new ArrayList<>();
+    resultObj = JSONUtil.createObj();
     isRunning = false;
   }
 }

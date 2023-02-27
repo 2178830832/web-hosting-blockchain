@@ -9,6 +9,7 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
 import io.ipfs.api.IPFS;
+import io.micrometer.core.lang.Nullable;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -65,7 +66,7 @@ public class ConfigServiceImpl implements ConfigService {
   private void initConfig() {
 //    connectIPFS(Constants.IPFS_ADDRESS);
     connectDocker(Constants.DOCKER_ADDRESS);
-//    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
+    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
 
     if (Web3JUtil.getAddress() != null) {
       websiteDao.initWebsiteDao();
@@ -169,7 +170,7 @@ public class ConfigServiceImpl implements ConfigService {
    * @return a blank string if succeeded, an error message otherwise
    */
   @Override
-  public String connectWeb3(String address, String account, String contract) {
+  public String connectWeb3(String address, @Nullable String account, @Nullable String contract) {
     if (address == null) {
       return "Ethereum address not configured.";
     }

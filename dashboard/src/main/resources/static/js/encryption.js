@@ -8,10 +8,10 @@ const jsEncrypt = new JSEncrypt();
 jsEncrypt.setPublicKey(publicKey);
 const signature = 'WEB_CHAIN'
 
-function setHeaders(url) {
+function setHeaders(url, params) {
   const authentication = {
-    time: new Date().toISOString(),
-    url: url
+    url: url,
+    params: params
   }
   return {
     "Authorization": jsEncrypt.encrypt(JSON.stringify(authentication))

@@ -8,33 +8,21 @@ import cn.hutool.json.JSONUtil;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.entity.Node;
-import pers.yujie.dashboard.service.ConfigService;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class NodeDaoImplTest {
 
   @Autowired
-  ConfigService configService;
-  @Autowired
   NodeDao nodeDao;
-
-  @BeforeEach
-  void setUp() {
-    configService
-        .connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
-    nodeDao.initNodeDao();
-  }
 
   @Test
   @Order(1)

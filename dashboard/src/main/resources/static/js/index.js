@@ -36,7 +36,7 @@ function connect(url, data) {
     type: 'POST',
     contentType: "application/json",
     data: data,
-    headers: setHeaders('/config/' + url),
+    headers: setHeaders('/config/' + url, data),
     complete: function () {
       checkAuth(jqXHR)
     },
