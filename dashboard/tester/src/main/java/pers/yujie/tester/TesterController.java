@@ -52,7 +52,7 @@ public class TesterController {
    * @return {@link HttpStatus#OK} if succeeded, {@link HttpStatus#BAD_REQUEST} if failed
    */
   @GetMapping("webdriver")
-  public ResponseEntity<String> testChrome(@RequestParam(value = "mode") String mode,
+  public ResponseEntity<String> startTest(@RequestParam(value = "mode") String mode,
       @RequestParam(value = "url") String url) {
     // check the input parameters
     if (mode == null || mode.length() < 1 || url == null || url.length() < 1 || !validateURL(url)) {

@@ -2,7 +2,6 @@ package pers.yujie.dashboard.dao.impl;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.SerializeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -101,7 +100,7 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
    */
   @Override
   public boolean insertWebsite(JSONObject website) {
-    List<Website> updatedWebsites = SerializeUtil.clone(websites);
+    List<Website> updatedWebsites = new ArrayList<>(websites);
     updatedWebsites = ListUtil.sortByProperty(updatedWebsites, "id");
 
     BigInteger id;
@@ -153,12 +152,13 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
    */
   @Override
   public boolean updateWebsite(JSONObject website) {
-    List<Website> updatedWebsites = SerializeUtil.clone(websites);
+    List<Website> updatedWebsites = new ArrayList<>(websites);
     for (Website upWebsite : websites) {
       if (upWebsite.getId().equals(website.getBigInteger("id"))) {
+        int index = updatedWebsites.indexOf(upWebsite);
         setUpHelper(upWebsite, website);
         upWebsite.setUpdateTime(DateTime.now().toString());
-        updatedWebsites.set(updatedWebsites.indexOf(upWebsite), upWebsite);
+        updatedWebsites.set(index, upWebsite);
         updatedWebsites.addAll(delWebsites);
         return commitChange(updatedWebsites);
       }
@@ -174,8 +174,8 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
    */
   @Override
   public boolean deleteWebsite(BigInteger id) {
-    List<Website> updatedWebsites = SerializeUtil.clone(websites);
-    List<Website> updatedDelWebsites = SerializeUtil.clone(delWebsites);
+    List<Website> updatedWebsites = new ArrayList<>(websites);
+    List<Website> updatedDelWebsites = new ArrayList<>(delWebsites);
 
     for (Website website : updatedWebsites) {
       if (website.getId().equals(id)) {

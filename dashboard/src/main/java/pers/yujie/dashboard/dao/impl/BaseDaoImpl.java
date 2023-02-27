@@ -40,8 +40,14 @@ public abstract class BaseDaoImpl {
   protected void setUpHelper(Node node, JSONObject nodeObj) {
     node.setUpdateTime(DateTime.now().toString());
     this.node = node;
+    if (!StrUtil.isEmptyOrUndefined(nodeObj.getStr("clusterId"))) {
+      node.setClusterId(nodeObj.getBigInteger("clusterId"));
+    }
     if (!StrUtil.isEmptyOrUndefined(nodeObj.getStr("name"))) {
       node.setName(nodeObj.getStr("name"));
+    }
+    if (!StrUtil.isEmptyOrUndefined(nodeObj.getStr("blockList"))) {
+      node.setBlockList(nodeObj.getJSONArray("blockList"));
     }
     innerHelper(nodeObj, true);
   }

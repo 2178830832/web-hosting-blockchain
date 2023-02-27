@@ -22,6 +22,7 @@ import okhttp3.OkHttpClient;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
+import pers.yujie.dashboard.common.Constants;
 import pers.yujie.dashboard.dao.ClusterDao;
 import pers.yujie.dashboard.dao.NodeDao;
 import pers.yujie.dashboard.dao.WebsiteDao;
@@ -63,7 +64,7 @@ public class ConfigServiceImpl implements ConfigService {
   @PostConstruct
   private void initConfig() {
 //    connectIPFS(Constants.IPFS_ADDRESS);
-//    connectDocker(Constants.DOCKER_ADDRESS);
+    connectDocker(Constants.DOCKER_ADDRESS);
 //    connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
 
     if (Web3JUtil.getAddress() != null) {

@@ -2,7 +2,6 @@ package pers.yujie.dashboard.dao.impl;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.SerializeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -135,7 +134,7 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
    */
   @Override
   public boolean insertNode(JSONObject node) {
-    List<Node> updatedNodes = SerializeUtil.clone(nodes);
+    List<Node> updatedNodes = new ArrayList<>(nodes);
     updatedNodes = ListUtil.sortByProperty(updatedNodes, "id");
     BigInteger id;
     if (updatedNodes.size() < 1) {
@@ -187,11 +186,12 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
    */
   @Override
   public boolean updateNode(JSONObject node) {
-    List<Node> updatedNodes = SerializeUtil.clone(nodes);
+    List<Node> updatedNodes = new ArrayList<>(nodes);
     for (Node upNode : updatedNodes) {
       if (upNode.getId().equals(node.getBigInteger("id"))) {
+        int index = updatedNodes.indexOf(upNode);
         setUpHelper(upNode, node);
-        updatedNodes.set(updatedNodes.indexOf(upNode), upNode);
+        updatedNodes.set(index, upNode);
         updatedNodes.addAll(delNodes);
         return commitChange(updatedNodes);
       }
@@ -207,7 +207,7 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
    */
   @Override
   public boolean updateNodeBatch(List<JSONObject> nodeList) {
-    List<Node> updatedNodes = SerializeUtil.clone(nodes);
+    List<Node> updatedNodes = new ArrayList<>(nodes);
     for (JSONObject node : nodeList) {
       if (updatedNodes.contains(node.toBean(Node.class))) {
         node.set("updateTime", DateTime.now().toString());
@@ -225,8 +225,8 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
    */
   @Override
   public boolean deleteNode(BigInteger id) {
-    List<Node> updatedNodes = SerializeUtil.clone(nodes);
-    List<Node> updatedDelNodes = SerializeUtil.clone(delNodes);
+    List<Node> updatedNodes = new ArrayList<>(nodes);
+    List<Node> updatedDelNodes = new ArrayList<>(delNodes);
 
     for (Node node : updatedNodes) {
       if (node.getId().equals(id)) {

@@ -1,7 +1,6 @@
 package pers.yujie.dashboard.dao.impl;
 
 import cn.hutool.core.date.DateTime;
-import cn.hutool.core.util.SerializeUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import java.math.BigInteger;
@@ -113,7 +112,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
    */
   private void createInitialClusters() {
     if (clusters.size() < 4) {
-      List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
+      List<Cluster> updatedClusters = new ArrayList<>(clusters);
       for (int i = 0; i < 3; i++) {
         Cluster cluster = new Cluster(BigInteger.valueOf(i), "cluster" + i,
             "healthy", BigInteger.ZERO, BigInteger.ZERO);
@@ -131,11 +130,12 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
    */
   @Override
   public boolean updateCluster(JSONObject cluster) {
-    List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
+    List<Cluster> updatedClusters = new ArrayList<>(clusters);
     for (Cluster upCluster : updatedClusters) {
       if (upCluster.getId().equals(cluster.getBigInteger("id"))) {
+        int index = updatedClusters.indexOf(upCluster);
         setUpHelper(upCluster, cluster);
-        updatedClusters.set(updatedClusters.indexOf(upCluster), upCluster);
+        updatedClusters.set(index, upCluster);
         return commitChange(updatedClusters);
       }
     }
@@ -150,7 +150,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
    */
   @Override
   public boolean updateClusterBatch(List<JSONObject> clusterList) {
-    List<Cluster> updatedClusters = SerializeUtil.clone(clusters);
+    List<Cluster> updatedClusters = new ArrayList<>(clusters);
     for (JSONObject cluster : clusterList) {
       if (updatedClusters.contains(cluster.toBean(Cluster.class))) {
         cluster.set("updateTime", DateTime.now().toString());

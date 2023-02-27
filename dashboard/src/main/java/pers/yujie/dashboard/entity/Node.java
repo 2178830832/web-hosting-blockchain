@@ -19,13 +19,14 @@ import lombok.EqualsAndHashCode;
 public class Node extends BaseEntity {
 
   public Node(BigInteger id, BigInteger clusterId, String name, String status, BigInteger usedSpace,
-      BigInteger totalSpace) {
+      BigInteger totalSpace, JSONArray blockList) {
     super(id);
     this.clusterId = clusterId;
     this.name = name;
     this.status = status;
     this.usedSpace = usedSpace;
     this.totalSpace = totalSpace;
+    this.blockList = blockList;
   }
 
   /**

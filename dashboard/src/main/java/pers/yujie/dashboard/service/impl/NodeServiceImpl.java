@@ -1,6 +1,5 @@
 package pers.yujie.dashboard.service.impl;
 
-import cn.hutool.core.util.SerializeUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import java.io.IOException;
@@ -357,7 +356,7 @@ public class NodeServiceImpl implements NodeService {
       maxStorage += (node.getBigInteger("totalSpace").subtract(
           node.getBigInteger("usedSpace"))).intValue();
     }
-    List<Block> copyBlockList = SerializeUtil.clone(blockList);
+    List<Block> copyBlockList = new ArrayList<>(blockList);
     DecimalFormat df = new DecimalFormat("0.00");
     for (JSONObject node : nodeList) {
       if (nodeList.indexOf(node) == node.size() - 1) {
