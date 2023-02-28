@@ -67,7 +67,9 @@ public class WebsiteServiceImpl implements WebsiteService {
         return "Cluster " + cluster.get("id") + " is not available";
       }
     }
-    clusterService.removeWebsite(upWebsite);
+    if (!clusterService.removeWebsite(upWebsite)) {
+      return "Unable to commit changes to the data source";
+    }
     String message = uploadHelper(website);
     if (message.equals("")) {
       if (websiteDao.updateWebsite(website)) {
@@ -158,8 +160,7 @@ public class WebsiteServiceImpl implements WebsiteService {
   @Override
   public String deleteWebsite(BigInteger id) {
     JSONObject rmWebsite = websiteDao.selectWebsiteById(id);
-    clusterService.removeWebsite(rmWebsite);
-    if (websiteDao.deleteWebsite(id)) {
+    if (clusterService.removeWebsite(rmWebsite) && websiteDao.deleteWebsite(id)) {
       return "";
     } else {
       return "Unable to commit changes to the data source";

@@ -11,6 +11,7 @@ import pers.yujie.dashboard.dao.ClusterDao;
 import pers.yujie.dashboard.entity.Block;
 import pers.yujie.dashboard.service.ClusterService;
 import pers.yujie.dashboard.service.NodeService;
+import pers.yujie.dashboard.utils.IPFSUtil;
 
 /**
  * This class is responsible for providing cluster services.
@@ -79,22 +80,24 @@ public class ClusterServiceImpl implements ClusterService {
    * Remove an existing website from the system.
    *
    * @param website {@link JSONObject} of the specified website
+   * @return true if succeeded, false otherwise
    */
   @Override
-  public void removeWebsite(JSONObject website) {
+  public boolean removeWebsite(JSONObject website) {
     List<JSONObject> clusters = clusterDao.selectAllCluster();
 
     List<BigInteger> locations = website.getJSONArray("location").toList(BigInteger.class);
     for (JSONObject cluster : clusters) {
       if (cluster.getStr("status").equals("healthy")) {
-        nodeService.releaseWebsiteSpace(cluster, website);
+        if (IPFSUtil.getAddress() != null) {
+          nodeService.releaseWebsiteSpace(cluster, website);
+        }
         cluster.set("usedSpace", cluster.getBigInteger("usedSpace")
             .subtract(website.getBigInteger("size")));
         locations.remove(cluster.getBigInteger("id"));
       }
     }
     website.set("location", locations);
-    clusterDao.updateClusterBatch(clusters);
-
+    return clusterDao.updateClusterBatch(clusters);
   }
 }

@@ -54,7 +54,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
   @Override
   public JSONObject selectMinCluster() {
     JSONObject minCluster = JSONUtil.createObj();
-    BigInteger size = BigInteger.ZERO;
+    BigInteger size = BigInteger.valueOf(Integer.MAX_VALUE);
     for (Cluster cluster : clusters) {
       BigInteger clusterSize = cluster.getTotalSpace().subtract(cluster.getUsedSpace());
       if (clusterSize.compareTo(size) <= 0) {
@@ -73,7 +73,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
   @Override
   public JSONObject selectMinHealthyCluster() {
     JSONObject minCluster = JSONUtil.createObj();
-    BigInteger size = BigInteger.ZERO;
+    BigInteger size = BigInteger.valueOf(Integer.MAX_VALUE);
     for (Cluster cluster : clusters) {
       if (cluster.getStatus().equals("healthy")) {
         BigInteger clusterSize = cluster.getTotalSpace().subtract(cluster.getUsedSpace());
@@ -115,7 +115,7 @@ public class ClusterDaoImpl extends BaseDaoImpl implements ClusterDao {
       List<Cluster> updatedClusters = new ArrayList<>(clusters);
       for (int i = 0; i < 3; i++) {
         Cluster cluster = new Cluster(BigInteger.valueOf(i), "cluster" + i,
-            "healthy", BigInteger.ZERO, BigInteger.ZERO);
+            "healthy", BigInteger.ZERO, new BigInteger("1000"));
         updatedClusters.add(cluster);
       }
       commitChange(updatedClusters);

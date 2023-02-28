@@ -38,7 +38,7 @@ public class TestController {
    */
   @ResponseBody
   @PostMapping("/receive")
-  public ResponseEntity<String> getRequest(@RequestBody JSONObject matrix) {
+  public ResponseEntity<String> receiveResult(@RequestBody JSONObject matrix) {
     if (matrix.getStr("name").equalsIgnoreCase("TTFB")) {
       double result = matrix.getDouble("value");
       if (result > 0) {

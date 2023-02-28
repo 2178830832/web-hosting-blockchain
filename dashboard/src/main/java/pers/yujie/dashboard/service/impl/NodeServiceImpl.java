@@ -76,6 +76,8 @@ public class NodeServiceImpl implements NodeService {
     }
 
     BigInteger relocateSize = upNode.getBigInteger("usedSpace").subtract(totalSpace);
+    BigInteger originalSize = upNode.getBigInteger("totalSpace");
+    // if used space is greater than the updated space, then relocate files to other nodes
     if (relocateSize.compareTo(BigInteger.ZERO) > 0) {
       if (upCluster.getBigInteger("usedSpace").compareTo(relocateSize) < 0) {
         // cluster becomes overwhelmed
@@ -98,8 +100,11 @@ public class NodeServiceImpl implements NodeService {
       redistributeNode(upNode, relocateList);
       upNode.set("blockList", originList.removeAll(relocateList));
     }
-    upCluster.set("totalSpace", upCluster.getBigInteger("totalSpace").subtract(totalSpace));
-    if (nodeDao.updateNode(node)) {
+
+    upCluster.set("totalSpace",
+        upCluster.getBigInteger("totalSpace").subtract(originalSize).add(totalSpace));
+    upNode.set("totalSpace", totalSpace);
+    if (nodeDao.updateNode(upNode)) {
       clusterDao.updateCluster(upCluster);
       return "";
     } else {
@@ -131,7 +136,7 @@ public class NodeServiceImpl implements NodeService {
 
     JSONObject minCluster = clusterDao.selectMinCluster();
 
-    node.set("clusterId", minCluster.getBigInteger("clusterId"));
+    node.set("clusterId", minCluster.getBigInteger("id"));
     minCluster.set("totalSpace", minCluster.getBigInteger("totalSpace").add(totalSpace));
 
     if (DockerUtil.getAddress() != null) {
@@ -163,7 +168,7 @@ public class NodeServiceImpl implements NodeService {
 
     BigInteger clusterSize = rmCluster.getBigInteger("totalSpace")
         .subtract(rmNode.getBigInteger("totalSpace"));
-    if (rmCluster.getBigInteger("usedSpace").compareTo(clusterSize) < 0) {
+    if (rmCluster.getBigInteger("usedSpace").compareTo(clusterSize) > 0) {
       // cluster becomes overwhelmed
       return "Cluster space not enough";
     }

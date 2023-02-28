@@ -35,11 +35,6 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
   private List<Website> websites = new ArrayList<>();
 
   /**
-   * The deleted websites are not dropped.
-   */
-  private List<Website> delWebsites = new ArrayList<>();
-
-  /**
    * Select all websites as a list.
    *
    * @return a {@link List} of {@link JSONObject} representing the websites
@@ -76,16 +71,7 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(websiteEncodedStr)) {
         websiteEncodedStr = EncryptUtil.decryptAES(websiteEncodedStr);
-        List<Website> websiteList = JSONUtil.toList(
-            JSONUtil.parseArray(websiteEncodedStr), Website.class);
-        websiteList = ListUtil.sortByProperty(websiteList, "id");
-        for (Website website : websiteList) {
-          if (!website.getId().equals(new BigInteger("-1"))) {
-            delWebsites = websiteList.subList(0, websiteList.indexOf(website));
-            websites = websiteList.subList(websiteList.indexOf(website), websiteList.size());
-            break;
-          }
-        }
+        websites = JSONUtil.toList(JSONUtil.parseArray(websiteEncodedStr), Website.class);
       }
     } catch (IndexOutOfBoundsException | ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve website list from the data source");
@@ -112,7 +98,6 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
     Website addWebsite = new Website(id);
     setUpHelper(addWebsite, website);
     updatedWebsites.add(addWebsite);
-    updatedWebsites.addAll(delWebsites);
 
     return commitChange(updatedWebsites);
   }
@@ -159,7 +144,6 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
         setUpHelper(upWebsite, website);
         upWebsite.setUpdateTime(DateTime.now().toString());
         updatedWebsites.set(index, upWebsite);
-        updatedWebsites.addAll(delWebsites);
         return commitChange(updatedWebsites);
       }
     }
@@ -175,20 +159,16 @@ public class WebsiteDaoImpl extends BaseDaoImpl implements WebsiteDao {
   @Override
   public boolean deleteWebsite(BigInteger id) {
     List<Website> updatedWebsites = new ArrayList<>(websites);
-    List<Website> updatedDelWebsites = new ArrayList<>(delWebsites);
 
     for (Website website : updatedWebsites) {
       if (website.getId().equals(id)) {
         website.setStatus("deleted");
-        updatedDelWebsites.add(website);
         updatedWebsites.remove(website);
         for (Website websiteIter : updatedWebsites) {
           if (websiteIter.getId().compareTo(id) > 0) {
             websiteIter.setId(websiteIter.getId().subtract(BigInteger.ONE));
           }
         }
-        updatedWebsites.addAll(updatedDelWebsites);
-
         return commitChange(updatedWebsites);
       }
     }

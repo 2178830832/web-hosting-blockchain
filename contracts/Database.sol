@@ -33,4 +33,10 @@ contract Database {
         nodes = _nodes;
     }
 
+    function clearData() external {
+        websites = "";
+        nodes = "";
+        clusters = "";
+    }
+
 }

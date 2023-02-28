@@ -108,7 +108,7 @@ public class EncryptUtil {
   /**
    * Verify the signature of a string using SHA256 with RSA.
    *
-   * @param content original content
+   * @param content original signature
    * @param signed  signed content
    * @return true if validate, false otherwise
    */

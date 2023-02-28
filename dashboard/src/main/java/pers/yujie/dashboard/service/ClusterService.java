@@ -16,7 +16,7 @@ public interface ClusterService {
 
   String distributeWebsite(JSONObject website, List<Block> blockList);
 
-  void removeWebsite(JSONObject website);
+  boolean removeWebsite(JSONObject website);
 
   List<JSONObject> selectAllCluster();
 }

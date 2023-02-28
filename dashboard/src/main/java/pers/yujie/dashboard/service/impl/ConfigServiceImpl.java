@@ -64,7 +64,7 @@ public class ConfigServiceImpl implements ConfigService {
    */
   @PostConstruct
   private void initConfig() {
-//    connectIPFS(Constants.IPFS_ADDRESS);
+    connectIPFS(Constants.IPFS_ADDRESS);
     connectDocker(Constants.DOCKER_ADDRESS);
     connectWeb3(Constants.WEB3_ADDRESS, Constants.WEB3_ACCOUNT, Constants.WEB3_CONTRACT);
 
@@ -139,7 +139,6 @@ public class ConfigServiceImpl implements ConfigService {
 
     // set timeout to 2 seconds
     DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory()
-        .withReadTimeout(2000)
         .withConnectTimeout(2000);
 
     try {

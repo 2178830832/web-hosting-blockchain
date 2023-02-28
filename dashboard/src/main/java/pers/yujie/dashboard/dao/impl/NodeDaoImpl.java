@@ -36,11 +36,6 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
   private List<Node> nodes = new ArrayList<>();
 
   /**
-   * The deleted nodes are not dropped.
-   */
-  private List<Node> delNodes = new ArrayList<>();
-
-  /**
    * Initialise this class by reading from the Ganache and decrypting with {@link EncryptUtil}.
    */
   @Override
@@ -52,16 +47,7 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
           })).get(0).getValue();
       if (!StrUtil.isEmptyOrUndefined(nodeEncodedStr)) {
         nodeEncodedStr = EncryptUtil.decryptAES(nodeEncodedStr);
-        List<Node> nodeList = JSONUtil.toList(JSONUtil.parseArray(nodeEncodedStr), Node.class);
-        nodeList = ListUtil.sortByProperty(nodeList, "id");
-
-        for (Node node : nodeList) {
-          if (!node.getId().equals(new BigInteger("-1"))) {
-            delNodes = nodeList.subList(0, nodeList.indexOf(node));
-            nodes = nodeList.subList(nodeList.indexOf(node), nodeList.size());
-            break;
-          }
-        }
+        nodes = JSONUtil.toList(JSONUtil.parseArray(nodeEncodedStr), Node.class);
       }
     } catch (IndexOutOfBoundsException | ExecutionException | InterruptedException e) {
       log.error("Unable to retrieve node list from the data source");
@@ -146,7 +132,6 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
     setUpHelper(addNode, node);
     addNode.setUsedSpace(BigInteger.ZERO);
     updatedNodes.add(addNode);
-    updatedNodes.addAll(delNodes);
     return commitChange(updatedNodes);
   }
 
@@ -192,7 +177,6 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
         int index = updatedNodes.indexOf(upNode);
         setUpHelper(upNode, node);
         updatedNodes.set(index, upNode);
-        updatedNodes.addAll(delNodes);
         return commitChange(updatedNodes);
       }
     }
@@ -226,19 +210,16 @@ public class NodeDaoImpl extends BaseDaoImpl implements NodeDao {
   @Override
   public boolean deleteNode(BigInteger id) {
     List<Node> updatedNodes = new ArrayList<>(nodes);
-    List<Node> updatedDelNodes = new ArrayList<>(delNodes);
 
     for (Node node : updatedNodes) {
       if (node.getId().equals(id)) {
         node.setStatus("deleted");
-        updatedDelNodes.add(node);
         updatedNodes.remove(node);
         for (Node nodeIter : updatedNodes) {
           if (nodeIter.getId().compareTo(id) > 0) {
             nodeIter.setId(nodeIter.getId().subtract(BigInteger.ONE));
           }
         }
-        updatedNodes.addAll(updatedDelNodes);
         return commitChange(updatedNodes);
       }
     }
