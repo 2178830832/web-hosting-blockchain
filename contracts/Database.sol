@@ -1,42 +1,38 @@
 pragma solidity ^0.8.10;
 // SPDX-License-Identifier: UNLICENSED
-
-contract Database {
-
-    string private websites;
-
-    string private clusters;
-   
-    string private nodes;
-
-    function getWebsites() view external returns (string memory) {
-        return websites;
+ 
+contract Voting {
+ 
+    string[] private candidateList;
+    mapping (string => uint8) private votesReceived;
+    
+    constructor(string[] memory candidateNames) {
+        candidateList = candidateNames;
     }
-
-    function setWebsites(string memory _websites) external {
-        websites = _websites;
+ 
+    function voteForCandidate(string memory candidate) public {
+        require(validCandidate(candidate));
+        votesReceived[candidate] += 1;
     }
-
-    function getClusters() view external returns (string memory) {
-        return clusters;
+ 
+    function totalVotesFor(string memory candidate) view public returns (uint8) {
+        require(validCandidate(candidate));
+        return votesReceived[candidate];
     }
-
-    function setClusters(string memory _clusters) external {
-        clusters = _clusters;
+ 
+    function validCandidate(string memory candidate) view public returns (bool) {
+        for(uint8 i = 0; i < candidateList.length; i++) {
+            if (bytes(candidateList[i]).length != bytes(candidate).length) {
+                continue;
+            }
+            for (uint j = 0; j < bytes(candidateList[i]).length; j++) {
+                if(bytes(candidateList[i])[j] != bytes(candidate)[j]) {
+                    break;
+                }
+                return true;
+            }
+        }
+        return false;
     }
-
-    function getNodes() view external returns (string memory) {
-        return nodes;
-    }
-
-    function setNodes(string memory _nodes) external {
-        nodes = _nodes;
-    }
-
-    function clearData() external {
-        websites = "";
-        nodes = "";
-        clusters = "";
-    }
-
+    
 }
