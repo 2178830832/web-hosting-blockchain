@@ -1,28 +1,36 @@
-pragma solidity ^0.4.22;
+pragma solidity ^0.8.10;
+// SPDX-License-Identifier: UNLICENSED
  
 contract Voting {
  
-    bytes32[] public candidateList;
-    mapping (bytes32 => uint8) public votesReceived;
+    string[] private candidateList;
+    mapping (string => uint8) private votesReceived;
     
-    constructor(bytes32[] candidateNames) public {
+    constructor(string[] memory candidateNames) {
         candidateList = candidateNames;
     }
  
-    function voteForCandidate(bytes32 candidate) public {
+    function voteForCandidate(string memory candidate) public {
         require(validCandidate(candidate));
         votesReceived[candidate] += 1;
     }
  
-    function totalVotesFor(bytes32 candidate) view public returns (uint8) {
+    function totalVotesFor(string memory candidate) view public returns (uint8) {
         require(validCandidate(candidate));
         return votesReceived[candidate];
     }
  
-    function validCandidate(bytes32 candidate) view public returns (bool) {
+    function validCandidate(string memory candidate) view public returns (bool) {
         for(uint8 i = 0; i < candidateList.length; i++) {
-            if(candidateList[i] == candidate)
+            if (bytes(candidateList[i]).length != bytes(candidate).length) {
+                continue;
+            }
+            for (uint j = 0; j < bytes(candidateList[i]).length; j++) {
+                if(bytes(candidateList[i])[j] != bytes(candidate)[j]) {
+                    break;
+                }
                 return true;
+            }
         }
         return false;
     }
