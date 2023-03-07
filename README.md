@@ -48,7 +48,7 @@ $ vi /lib/systemd/system/docker.service
 
 **2. Find the line `Execstart=/usr/bin/dockerd`, and insert `-H tcp://0.0.0.0:2375`**
 
-![vi](.\img\vi.png)
+![vi](img/vi.png)
 
 **3. Execute the following commands to restart the Docker server**
 
@@ -63,7 +63,7 @@ $ service docker restart
 $ systemctl status docker
 ```
 
-![status](.\img\status.png)
+![status](img/status.png)
 
 **5. If your firewall is running, then execute the following commands to open the `2375` port**
 
@@ -78,15 +78,15 @@ $ firewall-cmd --reload
 
 In theory, you can use any type of Ethereum server, provided that it is supported by [Web3j](https://github.com/web3j/web3j). The following example uses [Ganache](https://trufflesuite.com/ganache/), which can easily create Ethereum accounts for simulation.
 
-![ganache](.\img\ganache.png)
+![ganache](img/ganache.png)
 
 _**Tip**: you can change the server address (port) to a custom one._
 
-**2. Compile and deploy this [contract](.\contracts\Database.sol) to the Ethereum, get the contract address**
+**2. Compile and deploy this [contract](contracts/Database.sol) to the Ethereum, get the contract address**
 
 The following example uses [Remix](https://remix.ethereum.org/), a web-based Solidity IDE that does not require installation.
 
-<img src=".\img\remix.png" alt="remix" style="zoom:50%;" />
+<img src="img/remix.png" alt="remix" style="zoom:50%;" />
 
 #### IPFS
 
@@ -130,7 +130,7 @@ If you want to manually build the application, then take the following steps:
 
 **2. Open IDEA and import this repository as a project,  wait for the Maven resolving the dependencies**
 
-**3. Navigate to the [`application.properties`](.\dashboard\src\main\resources\application.properties) (dashboard) and [`application.properties`](.\dashboard/tester/src/main/resources/application.properties) (tester), set your custom configurations**
+**3. Navigate to the [`application.properties`](./dashboard/src/main/resources/application.properties) (dashboard) and [`application.properties`](./dashboard/tester/src/main/resources/application.properties) (tester), set your custom configurations**
 
 - Dashboard
   - `ipfs.address`: IPFS server address, e.g.` /ip4/127.0.0.1/tcp/5001`
@@ -210,7 +210,7 @@ contractInstance.methods.voteForCandidate(candidateName).send({from:'0xcB95417EE
 
 ## API
 
-[Javadoc](./docs/index.html) for references
+[Javadoc](docs/index.html) for references
 
 ## Limitations
 
