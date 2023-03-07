@@ -10,7 +10,7 @@
     - [Use the Packages](#packages)
     - [Use the IDEA](#idea)
 - [Usage](#usage)
-- [Demo](demo)
+- [Demo](#demo)
 - [API](#api)
 - [Limitations](#limitations)
 - [License](#license)
